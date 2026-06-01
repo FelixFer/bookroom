@@ -59,3 +59,5 @@ yarn-error.log*
 *.pem
 
 *.agents
+AGENTS.md
+CLAUDE.md
