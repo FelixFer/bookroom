@@ -1,0 +1,65 @@
+@reference "tailwindcss";
+
+// ─── Page layout ─────────────────────────────────────────────────────────────
+
+.page-center {
+  @apply flex flex-1 items-center justify-center bg-zinc-50 p-6 dark:bg-black;
+}
+
+// ─── Cards ───────────────────────────────────────────────────────────────────
+
+.auth-card {
+  @apply w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-950;
+}
+
+.home-card {
+  @apply w-full max-w-xl rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-950;
+}
+
+// ─── Typography ───────────────────────────────────────────────────────────────
+
+.page-title {
+  @apply text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50;
+}
+
+// ─── Forms ───────────────────────────────────────────────────────────────────
+
+.auth-form {
+  @apply mt-6 flex flex-col gap-4;
+}
+
+.form-label {
+  @apply flex flex-col gap-1 text-sm text-zinc-700 dark:text-zinc-300;
+}
+
+.form-input {
+  @apply h-10 rounded-lg border border-zinc-200 bg-white px-3 text-zinc-950 outline-none
+    focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-50;
+}
+
+.form-error {
+  @apply text-sm text-red-600 dark:text-red-500;
+}
+
+.form-help {
+  @apply text-sm text-zinc-500 dark:text-zinc-400;
+}
+
+// ─── Buttons ─────────────────────────────────────────────────────────────────
+
+.btn-primary {
+  @apply mt-2 h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white
+    disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900;
+}
+
+.btn-secondary {
+  @apply h-10 rounded-lg border border-zinc-200 px-4 text-sm font-medium
+    text-zinc-900 dark:border-zinc-800 dark:text-zinc-50;
+}
+
+// ─── Info box ────────────────────────────────────────────────────────────────
+
+.info-box {
+  @apply mt-6 rounded-lg border border-zinc-200 bg-zinc-50 p-3 text-sm text-zinc-700
+    dark:border-zinc-800 dark:bg-zinc-900/30 dark:text-zinc-300;
+}
