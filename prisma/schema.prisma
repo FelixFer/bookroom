@@ -13,10 +13,12 @@ datasource db {
 }
 
 enum ReadingStatus {
-  WISHLIST
-  WANT_TO_READ
+  PLAN_TO_READ
   READING
-  DONE
+  ON_HOLD
+  DROPPED
+  COMPLETED
+  RE_READING
 }
 
 model User {
@@ -46,7 +48,7 @@ model UserBook {
   id        String        @id @default(cuid())
   userId    String
   bookId    String
-  status    ReadingStatus @default(WANT_TO_READ)
+  status    ReadingStatus @default(PLAN_TO_READ)
   rating    Int?          // 1-5
   notes     String?
   favorite  Boolean       @default(false)

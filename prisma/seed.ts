@@ -92,14 +92,14 @@ const main = async () => {
   await prisma.userBook.upsert({
     where: { userId_bookId: { userId: alice.id, bookId: "book_dune" } },
     update: {
-      status: ReadingStatus.WANT_TO_READ,
+      status: ReadingStatus.PLAN_TO_READ,
       favorite: false,
       notes: "Want to read next month.",
     },
     create: {
       userId: alice.id,
       bookId: "book_dune",
-      status: ReadingStatus.WANT_TO_READ,
+      status: ReadingStatus.PLAN_TO_READ,
       favorite: false,
       notes: "Want to read next month.",
     },
@@ -110,7 +110,7 @@ const main = async () => {
       userId_bookId: { userId: bob.id, bookId: "book_atomic_habits" },
     },
     update: {
-      status: ReadingStatus.DONE,
+      status: ReadingStatus.COMPLETED,
       rating: 4,
       favorite: false,
       notes: "Simple and actionable.",
@@ -118,7 +118,7 @@ const main = async () => {
     create: {
       userId: bob.id,
       bookId: "book_atomic_habits",
-      status: ReadingStatus.DONE,
+      status: ReadingStatus.COMPLETED,
       rating: 4,
       favorite: false,
       notes: "Simple and actionable.",
