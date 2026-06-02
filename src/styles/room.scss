@@ -131,7 +131,7 @@
   }
 }
 
-@keyframes plant-sway {
+@keyframes globe-sway {
   0%,
   100% {
     transform: rotate(0deg);
@@ -147,7 +147,7 @@
   }
 }
 
-@keyframes poster-flutter {
+@keyframes notebook-flutter {
   0%,
   100% {
     transform: skewX(0deg);
@@ -170,7 +170,7 @@
   }
 }
 
-.room-hotspot[data-id="bookshelf-left"],
+.room-hotspot[data-id="bookshelf"],
 .room-hotspot[data-id="bookshelf-right"] {
   animation: brightness-pulse 4s ease-in-out infinite;
   &:hover {
@@ -178,7 +178,7 @@
   }
 }
 
-.room-hotspot[data-id="monitor"] {
+.room-hotspot[data-id="statspaper"] {
   animation: crt-flicker 6s ease-in-out infinite;
   &:hover {
     animation-duration: 1.5s;
@@ -199,15 +199,15 @@
   }
 }
 
-.room-hotspot[data-id="plant"] {
-  animation: plant-sway 3.5s ease-in-out infinite;
+.room-hotspot[data-id="globe"] {
+  animation: globe-sway 3.5s ease-in-out infinite;
   &:hover {
     animation-duration: 1s;
   }
 }
 
-.room-hotspot[data-id="poster"] {
-  animation: poster-flutter 5s ease-in-out infinite;
+.room-hotspot[data-id="notebook"] {
+  animation: notebook-flutter 5s ease-in-out infinite;
   &:hover {
     animation-duration: 1.5s;
   }

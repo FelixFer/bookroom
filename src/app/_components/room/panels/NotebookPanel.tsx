@@ -11,7 +11,7 @@ type NoteBook = {
   updatedAt: string;
 };
 
-export const PosterPanel = () => {
+export const NotebookPanel = () => {
   const [books, setBooks] = useState<NoteBook[]>([]);
   const [loading, setLoading] = useState(true);
 

@@ -12,18 +12,18 @@ import { StatsPanel } from "./panels/StatsPanel";
 import { CatPanel } from "./panels/CatPanel";
 import { CouchPanel } from "./panels/CouchPanel";
 import { DiscoverPanel } from "./panels/DiscoverPanel";
-import { PosterPanel } from "./panels/PosterPanel";
+import { NotebookPanel } from "./panels/NotebookPanel";
 import { TrashPanel } from "./panels/TrashPanel";
 import { AddBookPanel } from "./panels/AddBookPanel";
 
 type HotspotId =
-  | "bookshelf-left"
+  | "bookshelf"
   | "bookshelf-right"
-  | "monitor"
+  | "statspaper"
   | "cat"
   | "couch"
-  | "plant"
-  | "poster"
+  | "globe"
+  | "notebook"
   | "trash"
   | "window";
 
@@ -37,30 +37,30 @@ type HotspotDef = {
 };
 
 const HOTSPOTS: HotspotDef[] = [
-  { id: "bookshelf-left", label: "Add Book", top: 15, left: 9, width: 13.7, height: 38.5 },
+  { id: "bookshelf", label: "Add Book", top: 15, left: 9, width: 13.7, height: 38.5 },
   { id: "bookshelf-right", label: "Collection", top: 14, left: 79.3, width: 13.2, height: 49 },
   { id: "window", label: "Relax", top: 9, left: 30, width: 39.5, height: 41 },
-  { id: "monitor", label: "Stats", top: 34.2, left: 23, width: 1.6, height: 7.5 },
+  { id: "statspaper", label: "Stats", top: 34.2, left: 23, width: 1.6, height: 7.5 },
   { id: "cat", label: "Surprise", top: 80, left: 10, width: 19, height: 15.5 },
   { id: "couch", label: "Reading", top: 78, left: 40, width: 15, height: 15.5 },
-  { id: "plant", label: "Discover", top: 1, left: 10.6, width: 9.25, height: 15 },
-  { id: "poster", label: "Notes", top: 52, left: 48, width: 10.5, height: 5 },
+  { id: "globe", label: "Discover", top: 1, left: 10.6, width: 9.25, height: 15 },
+  { id: "notebook", label: "Notes", top: 52, left: 48, width: 10.5, height: 5 },
   { id: "trash", label: "Dropped", top: 71, left: 55, width: 4.8, height: 10 },
 ];
 
-const MODAL_HOTSPOTS = new Set<HotspotId>(["monitor", "cat", "bookshelf-left"]);
-const DRAWER_HOTSPOTS = new Set<HotspotId>(["couch", "plant", "poster", "trash"]);
+const MODAL_HOTSPOTS = new Set<HotspotId>(["statspaper", "cat", "bookshelf"]);
+const DRAWER_HOTSPOTS = new Set<HotspotId>(["couch", "globe", "notebook", "trash"]);
 
 const MODAL_TITLES: Record<string, string> = {
-  monitor: "📊 Reading Stats",
+  statspaper: "📊 Reading Stats",
   cat: "🐱 Surprise Me",
-  "bookshelf-left": "📚 Add Book",
+  "bookshelf": "📚 Add Book",
 };
 
 const DRAWER_TITLES: Record<string, string> = {
   couch: "🛋️ Currently Reading",
-  plant: "🔍 Discover Books",
-  poster: "📋 My Notes",
+  globe: "🔍 Discover Books",
+  notebook: "📋 My Notes",
   trash: "🗑️ Dropped Books",
 };
 
@@ -72,12 +72,12 @@ type MobileIcon = {
 
 const MOBILE_ICONS: MobileIcon[] = [
   { emoji: "📚", label: "Collection", action: "collection" },
-  { emoji: "➕", label: "Add Book", action: "bookshelf-left" },
-  { emoji: "📊", label: "Stats", action: "monitor" },
+  { emoji: "➕", label: "Add Book", action: "bookshelf" },
+  { emoji: "📊", label: "Stats", action: "statspaper" },
   { emoji: "🛋️", label: "Reading", action: "couch" },
   { emoji: "🐱", label: "Surprise", action: "cat" },
-  { emoji: "🔍", label: "Discover", action: "plant" },
-  { emoji: "📋", label: "Notes", action: "poster" },
+  { emoji: "🔍", label: "Discover", action: "globe" },
+  { emoji: "📋", label: "Notes", action: "notebook" },
   { emoji: "🗑️", label: "Dropped", action: "trash" },
   { emoji: "🪟", label: "Relax", action: "window" },
 ];
@@ -164,9 +164,9 @@ export const RoomScene = ({ userName }: Props) => {
           title={MODAL_TITLES[activeModal ?? ""] ?? ""}
           onClose={() => setActiveModal(null)}
         >
-          {activeModal === "monitor" && <StatsPanel />}
+          {activeModal === "statspaper" && <StatsPanel />}
           {activeModal === "cat" && <CatPanel />}
-          {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
+          {activeModal === "bookshelf" && <AddBookPanel onClose={() => setActiveModal(null)} />}
         </RoomModal>
         <RoomDrawer
           open={activeDrawer !== null}
@@ -174,8 +174,8 @@ export const RoomScene = ({ userName }: Props) => {
           onClose={() => setActiveDrawer(null)}
         >
           {activeDrawer === "couch" && <CouchPanel />}
-          {activeDrawer === "plant" && <DiscoverPanel />}
-          {activeDrawer === "poster" && <PosterPanel />}
+          {activeDrawer === "globe" && <DiscoverPanel />}
+          {activeDrawer === "notebook" && <NotebookPanel />}
           {activeDrawer === "trash" && <TrashPanel />}
         </RoomDrawer>
       </>
@@ -207,9 +207,9 @@ export const RoomScene = ({ userName }: Props) => {
         title={MODAL_TITLES[activeModal ?? ""] ?? ""}
         onClose={() => setActiveModal(null)}
       >
-        {activeModal === "monitor" && <StatsPanel />}
+        {activeModal === "statspaper" && <StatsPanel />}
         {activeModal === "cat" && <CatPanel />}
-        {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
+        {activeModal === "bookshelf" && <AddBookPanel onClose={() => setActiveModal(null)} />}
       </RoomModal>
 
       <RoomDrawer
@@ -218,8 +218,8 @@ export const RoomScene = ({ userName }: Props) => {
         onClose={() => setActiveDrawer(null)}
       >
         {activeDrawer === "couch" && <CouchPanel />}
-        {activeDrawer === "plant" && <DiscoverPanel />}
-        {activeDrawer === "poster" && <PosterPanel />}
+        {activeDrawer === "globe" && <DiscoverPanel />}
+        {activeDrawer === "notebook" && <NotebookPanel />}
         {activeDrawer === "trash" && <TrashPanel />}
       </RoomDrawer>
     </>
