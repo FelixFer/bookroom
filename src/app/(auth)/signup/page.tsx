@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { getApiErrorMessage, postJson } from "@/lib/api";
+import { Button } from "@/app/_components/Button";
 
 export default function SignupPage() {
   const router = useRouter();
@@ -93,17 +94,11 @@ export default function SignupPage() {
             <p className="form-help">Password must be at least 8 characters.</p>
           )}
 
-          <button className="btn-primary" type="submit" disabled={loading}>
+          <Button type="submit" variant="primary" disabled={loading}>
             {loading ? "Creating..." : "Create account"}
-          </button>
+          </Button>
 
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => router.push("/login")}
-          >
-            Back to sign in
-          </button>
+          <Button href="/login" variant="secondary">Back to sign in</Button>
         </form>
       </div>
     </div>

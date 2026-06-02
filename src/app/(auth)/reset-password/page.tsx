@@ -3,6 +3,7 @@
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { getApiErrorMessage, postJson } from "@/lib/api";
+import { Button } from "@/app/_components/Button";
 
 export default function ResetPasswordPage() {
   const router = useRouter();
@@ -55,13 +56,9 @@ export default function ResetPasswordPage() {
             <p className="form-help">Password must be at least 8 characters.</p>
           )}
 
-          <button
-            className="btn-primary"
-            type="submit"
-            disabled={loading || !token}
-          >
+          <Button type="submit" variant="primary" disabled={loading || !token}>
             {loading ? "Saving..." : "Save new password"}
-          </button>
+          </Button>
         </form>
       </div>
     </div>

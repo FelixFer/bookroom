@@ -4,6 +4,7 @@ import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState } from "react";
 import Link from "next/link";
+import { Button } from "@/app/_components/Button";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -67,9 +68,9 @@ export default function LoginPage() {
 
           {error ? <p className="form-error">{error}</p> : null}
 
-          <button className="btn-primary" type="submit" disabled={loading}>
+          <Button type="submit" variant="primary" disabled={loading}>
             {loading ? "Signing in..." : "Sign in"}
-          </button>
+          </Button>
 
           <Link
             className="text-sm text-zinc-600 underline underline-offset-4 dark:text-zinc-400"
@@ -78,13 +79,7 @@ export default function LoginPage() {
             Forgot password?
           </Link>
 
-          <button
-            className="btn-secondary"
-            type="button"
-            onClick={() => router.push("/signup")}
-          >
-            Create account
-          </button>
+          <Button href="/signup" variant="secondary">Create account</Button>
         </form>
       </div>
     </div>

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { getApiErrorMessage, postJson } from "@/lib/api";
+import { Button } from "@/app/_components/Button";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -54,9 +55,9 @@ export default function ForgotPasswordPage() {
 
           {error ? <p className="form-error">{error}</p> : null}
 
-          <button className="btn-primary" type="submit" disabled={loading}>
+          <Button type="submit" variant="primary" disabled={loading}>
             {loading ? "Sending..." : "Send reset link"}
-          </button>
+          </Button>
         </form>
 
         {done ? (
