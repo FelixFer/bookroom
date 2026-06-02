@@ -1,0 +1,612 @@
+@reference "tailwindcss";
+
+// ─── Room container ───────────────────────────────────────────────────────────
+
+.room-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: radial-gradient(ellipse at center, #1a1a2e 0%, #0a0a14 100%);
+  overflow: hidden;
+}
+
+.room-inner {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  width: min(100vw, calc(100vh * 16 / 9));
+  flex-shrink: 0;
+  overflow: hidden;
+  box-shadow:
+    0 0 0 2px rgba(255, 233, 122, 0.06),
+    0 0 60px 20px rgba(0, 0, 0, 0.5);
+}
+
+.room-bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  user-select: none;
+  pointer-events: none;
+}
+
+// ─── Hotspots ─────────────────────────────────────────────────────────────────
+
+.room-hotspot {
+  position: absolute;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease;
+
+  &:hover,
+  &:focus-visible {
+    border-color: rgba(255, 230, 100, 0.85);
+    box-shadow:
+      0 0 0 1px rgba(255, 230, 100, 0.3),
+      0 0 14px 5px rgba(255, 230, 100, 0.25);
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px dashed rgba(255, 230, 100, 0.8);
+    outline-offset: 2px;
+  }
+}
+
+// Always-visible label beneath each hotspot
+.room-hotspot__label {
+  position: absolute;
+  bottom: -22px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: monospace;
+  font-size: 10px;
+  color: rgba(255, 233, 122, 0.7);
+  background: rgba(10, 8, 5, 0.65);
+  padding: 2px 6px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.room-hotspot:hover .room-hotspot__label,
+.room-hotspot:focus-visible .room-hotspot__label {
+  color: rgba(255, 233, 122, 1);
+  background: rgba(20, 14, 6, 0.9);
+}
+
+// ─── Idle animations per hotspot ─────────────────────────────────────────────
+
+@keyframes brightness-pulse {
+  0%,
+  100% {
+    filter: brightness(1);
+  }
+  50% {
+    filter: brightness(1.12);
+  }
+}
+
+@keyframes crt-flicker {
+  0%,
+  92%,
+  100% {
+    opacity: 1;
+  }
+  94% {
+    opacity: 0.88;
+  }
+  96% {
+    opacity: 1;
+  }
+  98% {
+    opacity: 0.92;
+  }
+}
+
+@keyframes cat-bob {
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+@keyframes plant-sway {
+  0%,
+  100% {
+    transform: rotate(0deg);
+    transform-origin: bottom center;
+  }
+  30% {
+    transform: rotate(2deg);
+    transform-origin: bottom center;
+  }
+  70% {
+    transform: rotate(-2deg);
+    transform-origin: bottom center;
+  }
+}
+
+@keyframes poster-flutter {
+  0%,
+  100% {
+    transform: skewX(0deg);
+  }
+  40% {
+    transform: skewX(0.4deg);
+  }
+  80% {
+    transform: skewX(-0.3deg);
+  }
+}
+
+@keyframes trash-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.025);
+  }
+}
+
+.room-hotspot[data-id="bookshelf-left"],
+.room-hotspot[data-id="bookshelf-right"] {
+  animation: brightness-pulse 4s ease-in-out infinite;
+  &:hover {
+    animation-duration: 1.2s;
+  }
+}
+
+.room-hotspot[data-id="monitor"] {
+  animation: crt-flicker 6s ease-in-out infinite;
+  &:hover {
+    animation-duration: 1.5s;
+  }
+}
+
+.room-hotspot[data-id="cat"] {
+  animation: cat-bob 2.4s ease-in-out infinite;
+  &:hover {
+    animation-duration: 0.8s;
+  }
+}
+
+.room-hotspot[data-id="couch"] {
+  animation: brightness-pulse 5s ease-in-out infinite;
+  &:hover {
+    animation-duration: 1.5s;
+  }
+}
+
+.room-hotspot[data-id="plant"] {
+  animation: plant-sway 3.5s ease-in-out infinite;
+  &:hover {
+    animation-duration: 1s;
+  }
+}
+
+.room-hotspot[data-id="poster"] {
+  animation: poster-flutter 5s ease-in-out infinite;
+  &:hover {
+    animation-duration: 1.5s;
+  }
+}
+
+.room-hotspot[data-id="trash"] {
+  animation: trash-pulse 3s ease-in-out infinite;
+  &:hover {
+    animation-duration: 0.9s;
+  }
+}
+
+.room-hotspot[data-id="window"] {
+  animation: brightness-pulse 8s ease-in-out infinite;
+  &:hover {
+    animation-duration: 2s;
+  }
+}
+
+// ─── Backdrop ─────────────────────────────────────────────────────────────────
+
+.room-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease-out;
+  z-index: 40;
+
+  &--open {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+
+// ─── Drawer ───────────────────────────────────────────────────────────────────
+
+.room-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  width: min(440px, 100vw);
+  height: 100vh;
+  background: #fdf8f0;
+  border-left: 2px solid #d4c4a0;
+  transform: translateX(100%);
+  transition: transform 0.25s ease-out;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  @media (prefers-color-scheme: dark) {
+    background: #1e1a14;
+    border-left-color: #3a3020;
+  }
+
+  &--open {
+    transform: translateX(0);
+  }
+}
+
+.room-drawer__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 2px solid #d4c4a0;
+  background: #f5ede0;
+  flex-shrink: 0;
+
+  @media (prefers-color-scheme: dark) {
+    background: #251f16;
+    border-bottom-color: #3a3020;
+  }
+}
+
+.room-drawer__title {
+  font-family: monospace;
+  font-size: 14px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: #3d2e1a;
+  text-transform: uppercase;
+
+  @media (prefers-color-scheme: dark) {
+    color: #e8d5b0;
+  }
+}
+
+.room-drawer__close {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid #c4a878;
+  border-radius: 4px;
+  background: transparent;
+  color: #6b5030;
+  font-size: 16px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    color 0.15s;
+  flex-shrink: 0;
+
+  &:hover {
+    background: #e8d5b0;
+    color: #3d2e1a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    border-color: #4a3a22;
+    color: #c4a878;
+    &:hover {
+      background: #2e2518;
+      color: #e8d5b0;
+    }
+  }
+}
+
+.room-drawer__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+// ─── Centered modal ───────────────────────────────────────────────────────────
+
+.room-modal {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scale(0.95);
+  width: min(480px, calc(100vw - 32px));
+  max-height: calc(100vh - 64px);
+  background: #fdf8f0;
+  border: 2px solid #d4c4a0;
+  border-radius: 6px;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 0.2s ease-out,
+    transform 0.2s ease-out;
+
+  @media (prefers-color-scheme: dark) {
+    background: #1e1a14;
+    border-color: #3a3020;
+  }
+
+  &--open {
+    opacity: 1;
+    pointer-events: auto;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.room-modal__content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 20px;
+}
+
+// ─── Floating sign-out button ─────────────────────────────────────────────────
+
+.room-signout {
+  position: fixed;
+  top: 12px;
+  right: 16px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(20, 16, 10, 0.8);
+  border: 2px solid rgba(255, 233, 122, 0.45);
+  border-radius: 4px;
+  padding: 6px 10px;
+  cursor: pointer;
+  font-family: monospace;
+  font-size: 12px;
+  color: #ffe97a;
+  letter-spacing: 0.06em;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(40, 32, 16, 0.92);
+    border-color: rgba(255, 233, 122, 0.8);
+  }
+}
+
+.room-signout__avatar {
+  width: 22px;
+  height: 22px;
+  background: #5a3e28;
+  border: 1px solid rgba(255, 233, 122, 0.5);
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.room-signout__name {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ─── Mobile home screen ───────────────────────────────────────────────────────
+
+.room-mobile {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.room-mobile__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  image-rendering: pixelated;
+  filter: blur(8px) brightness(0.55);
+  transform: scale(1.05); // hide blur edges
+  user-select: none;
+  pointer-events: none;
+}
+
+.room-mobile__overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+.room-mobile__signout {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba(20, 16, 10, 0.7);
+  border: 1px solid rgba(255, 233, 122, 0.4);
+  border-radius: 4px;
+  padding: 5px 10px;
+  font-family: monospace;
+  font-size: 11px;
+  color: #ffe97a;
+  cursor: pointer;
+  margin-bottom: 20px;
+  white-space: nowrap;
+
+  &:hover {
+    background: rgba(40, 32, 16, 0.88);
+  }
+}
+
+.room-mobile__title {
+  font-family: monospace;
+  font-size: 18px;
+  font-weight: 700;
+  color: rgba(255, 233, 122, 0.95);
+  letter-spacing: 0.1em;
+  text-align: center;
+  margin-bottom: 28px;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+}
+
+.room-mobile__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  width: 100%;
+  max-width: 360px;
+}
+
+.room-mobile__icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 8px 10px;
+  background: rgba(20, 16, 10, 0.65);
+  border: 1px solid rgba(255, 233, 122, 0.2);
+  border-radius: 12px;
+  cursor: pointer;
+  transition:
+    background 0.15s,
+    border-color 0.15s;
+  -webkit-tap-highlight-color: transparent;
+
+  &:hover,
+  &:active {
+    background: rgba(40, 32, 16, 0.85);
+    border-color: rgba(255, 233, 122, 0.5);
+  }
+}
+
+.room-mobile__icon-emoji {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.room-mobile__icon-label {
+  font-family: monospace;
+  font-size: 10px;
+  color: rgba(255, 233, 122, 0.85);
+  text-align: center;
+  letter-spacing: 0.04em;
+  line-height: 1.3;
+}
+
+// ─── Relax overlay ────────────────────────────────────────────────────────────
+
+@keyframes cloud-drift {
+  0% {
+    background-position: 0% 30%;
+  }
+  100% {
+    background-position: 100% 30%;
+  }
+}
+
+@keyframes relax-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.relax-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: relax-fade-in 0.6s ease-out forwards;
+  cursor: pointer;
+}
+
+.relax-overlay .room-bg {
+  object-fit: cover;
+}
+
+.relax-overlay__hint {
+  position: absolute;
+  bottom: 40px;
+  font-family: monospace;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.9);
+  letter-spacing: 0.06em;
+  animation: relax-fade-in 1.5s ease-out forwards;
+  background: rgba(0, 0, 0, 0.45);
+  padding: 6px 16px;
+  border-radius: 20px;
+}
+
+@keyframes breathe-in {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.9;
+  }
+}
+
+.relax-overlay__orb {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    rgba(255, 255, 255, 0.9) 30%,
+    rgba(173, 216, 230, 0.6) 100%
+  );
+  box-shadow: 0 0 40px 20px rgba(135, 206, 235, 0.5);
+  animation: breathe-in 4s ease-in-out infinite;
+  margin-bottom: 32px;
+}
