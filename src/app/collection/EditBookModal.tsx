@@ -127,7 +127,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
           onSubmit={handleSubmit}
         >
           <label className="form-label">
-            Title <span className="text-red-500">*</span>
+            <p>Title <span className="text-red-500">*</span></p>
             <input
               className="form-input"
               value={title}
