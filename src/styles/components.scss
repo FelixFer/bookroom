@@ -45,18 +45,6 @@
   @apply text-sm text-zinc-500 dark:text-zinc-400;
 }
 
-// ─── Buttons ─────────────────────────────────────────────────────────────────
-
-.btn-primary {
-  @apply mt-2 h-10 rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white
-    disabled:opacity-60 dark:bg-zinc-50 dark:text-zinc-900 flex items-center justify-center;
-}
-
-.btn-secondary {
-  @apply h-10 rounded-lg border border-zinc-200 px-4 text-sm font-medium
-    text-zinc-900 dark:border-zinc-800 dark:text-zinc-50 flex items-center justify-center;
-}
-
 // ─── Info box ────────────────────────────────────────────────────────────────
 
 .info-box {
