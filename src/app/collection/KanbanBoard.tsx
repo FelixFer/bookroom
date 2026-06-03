@@ -75,9 +75,9 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
     filtered.filter((b) => b.status === status);
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-zinc-950">
+    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-[#393E46]">
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-zinc-900">
+      <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-[#31363F]">
         <Button href="/" variant="secondary">← Room</Button>
 
         <h1 className="mr-auto text-base font-semibold text-zinc-900 dark:text-zinc-50">
@@ -111,7 +111,7 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       </DndContext>
 
       {/* Total count */}
-      <div className="px-4 pb-2 text-xs text-zinc-400 dark:text-zinc-600">
+      <div className="px-4 pb-2 text-xs text-zinc-400 dark:text-gray-100">
         {books.length} book{books.length !== 1 ? "s" : ""} in your collection
         {search && ` · ${filtered.length} matching "${search}"`}
       </div>

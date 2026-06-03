@@ -50,7 +50,7 @@ export const KanbanColumn = ({ status, books, onEdit, onDeleted }: Props) => {
         ))}
 
         {books.length === 0 && (
-          <p className="flex flex-1 items-center justify-center text-xs text-zinc-400 dark:text-zinc-600">
+          <p className="flex flex-1 items-center justify-center text-xs text-zinc-400 dark:text-gray-200">
             Drop here
           </p>
         )}
