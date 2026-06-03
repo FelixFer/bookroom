@@ -3,10 +3,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { signOut } from "next-auth/react";
+import { useTheme } from "../ThemeContext";
 import { RoomHotspot } from "./RoomHotspot";
 import { RoomDrawer } from "./RoomDrawer";
 import { RoomModal } from "./RoomModal";
 import { RoomSignOutButton } from "./RoomSignOutButton";
+import { DarkModeToggle } from "./DarkModeToggle";
 import { RelaxOverlay } from "./panels/RelaxOverlay";
 import { StatsPanel } from "./panels/StatsPanel";
 import { CatPanel } from "./panels/CatPanel";
@@ -86,10 +88,13 @@ type Props = { userName: string };
 
 export const RoomScene = ({ userName }: Props) => {
   const router = useRouter();
+  const { isDark } = useTheme();
   const [activeDrawer, setActiveDrawer] = useState<HotspotId | null>(null);
   const [activeModal, setActiveModal] = useState<HotspotId | null>(null);
   const [relaxOpen, setRelaxOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
+
+  const roomBg = isDark ? "/room-night.png" : "/room-day.png";
 
   // Detect mobile on mount + resize
   useEffect(() => {
@@ -126,19 +131,22 @@ export const RoomScene = ({ userName }: Props) => {
         <div className="room-mobile">
           <img
             className="room-mobile__bg"
-            src="/room-day.png"
+            src={roomBg}
             alt=""
             draggable={false}
           />
           <div className="room-mobile__overlay">
-            {/* Sign out */}
-            <button
-              className="room-mobile__signout"
-              onClick={() => signOut()}
-            >
-              <span>{userName || "Sign out"}</span>
-              <span aria-hidden>⏻</span>
-            </button>
+            {/* Sign out + dark mode toggle */}
+            <div className="room-mobile__topbar">
+              <DarkModeToggle />
+              <button
+                className="room-mobile__signout"
+                onClick={() => signOut()}
+              >
+                <span>{userName || "Sign out"}</span>
+                <span aria-hidden>⏻</span>
+              </button>
+            </div>
 
             <p className="room-mobile__title">Bookroom</p>
 
@@ -189,7 +197,7 @@ export const RoomScene = ({ userName }: Props) => {
         <div className="room-inner">
           <img
             className="room-bg"
-            src="/room-day.png"
+            src={roomBg}
             alt="Cozy pixel-art room"
             draggable={false}
           />

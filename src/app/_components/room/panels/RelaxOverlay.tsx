@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { useTheme } from "../../ThemeContext";
 
 type Props = {
   open: boolean;
@@ -8,6 +9,9 @@ type Props = {
 };
 
 export const RelaxOverlay = ({ open, onClose }: Props) => {
+  const { isDark } = useTheme();
+  const relaxBg = isDark ? "/room-relax-night.png" : "/room-relax-day.png";
+
   useEffect(() => {
     if (!open) return;
     const handler = (e: KeyboardEvent) => {
@@ -30,7 +34,7 @@ export const RelaxOverlay = ({ open, onClose }: Props) => {
       <div>
         <img
           className="room-bg"
-          src="/room-relax-day.png"
+          src={relaxBg}
           alt="Cozy pixel-art room"
           draggable={false}
         />
