@@ -540,6 +540,206 @@
   line-height: 1.3;
 }
 
+// ─── Mobile panorama map ──────────────────────────────────────────────────────
+
+.room-map {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: #0a0a14;
+  touch-action: pan-x;
+}
+
+.room-map__stage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  width: calc(100vh * 1.777); // 1672/941 ≈ 1.777
+  will-change: transform;
+
+  &--animating {
+    transition: transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  }
+}
+
+.room-map__image {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+  user-select: none;
+  pointer-events: none;
+}
+
+// ─── Map hotspots ─────────────────────────────────────────────────────────────
+
+.room-map__hotspot {
+  position: absolute;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease;
+
+  // Expanded tap target without shifting position
+  &::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 44px;
+    min-height: 44px;
+    width: 100%;
+    height: 100%;
+  }
+
+  &:active {
+    border-color: rgba(255, 230, 100, 0.85);
+    box-shadow:
+      0 0 0 1px rgba(255, 230, 100, 0.3),
+      0 0 14px 5px rgba(255, 230, 100, 0.25);
+  }
+}
+
+.room-map__hotspot-label {
+  position: absolute;
+  bottom: -20px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: monospace;
+  font-size: 9px;
+  color: rgba(255, 233, 122, 0.9);
+  background: rgba(10, 8, 5, 0.75);
+  padding: 2px 5px;
+  border-radius: 2px;
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: 0.04em;
+  opacity: 0;
+  transition: opacity 0.1s;
+}
+
+.room-map__hotspot:active .room-map__hotspot-label {
+  opacity: 1;
+}
+
+// ─── Map top bar ──────────────────────────────────────────────────────────────
+
+.room-map__topbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  padding: 10px 14px;
+  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  pointer-events: none;
+
+  > * {
+    pointer-events: auto;
+  }
+}
+
+// ─── Zone nav arrows ──────────────────────────────────────────────────────────
+
+.room-map__nav {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.room-map__nav-btn {
+  width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(20, 16, 10, 0.75);
+  border: 2px solid rgba(255, 233, 122, 0.4);
+  border-radius: 4px;
+  color: #ffe97a;
+  font-size: 18px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    background 0.15s,
+    border-color 0.15s,
+    opacity 0.15s;
+
+  &:active {
+    background: rgba(40, 32, 16, 0.92);
+    border-color: rgba(255, 233, 122, 0.8);
+  }
+
+  &:disabled {
+    opacity: 0.3;
+    cursor: default;
+  }
+
+  &--center {
+    width: 36px;
+    height: 36px;
+    font-size: 12px;
+  }
+}
+
+// ─── Minimap ──────────────────────────────────────────────────────────────────
+
+.room-map__minimap {
+  position: fixed;
+  bottom: 24px;
+  left: 14px;
+  z-index: 20;
+  width: 90px;
+  // height driven by MINIMAP_H constant as inline style
+  border: 2px solid rgba(255, 233, 122, 0.35);
+  border-radius: 3px;
+  overflow: hidden;
+  background: #0a0a14;
+}
+
+.room-map__minimap-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
+  image-rendering: pixelated;
+  pointer-events: none;
+  user-select: none;
+  opacity: 0.7;
+}
+
+.room-map__minimap-rect {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  background: transparent;
+  border: 2px solid rgba(255, 233, 122, 0.85);
+  border-radius: 2px;
+  box-shadow: 0 0 0 1px rgba(255, 233, 122, 0.2);
+  pointer-events: none;
+}
+
 // ─── Relax overlay ────────────────────────────────────────────────────────────
 
 .relax-overlay {

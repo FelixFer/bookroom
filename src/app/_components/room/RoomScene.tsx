@@ -2,13 +2,12 @@
 
 import { useState, useCallback, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
 import { useTheme } from "../ThemeContext";
 import { RoomHotspot } from "./RoomHotspot";
 import { RoomDrawer } from "./RoomDrawer";
 import { RoomModal } from "./RoomModal";
 import { RoomSignOutButton } from "./RoomSignOutButton";
-import { DarkModeToggle } from "./DarkModeToggle";
+import { MobileRoomMap } from "./MobileRoomMap";
 import { RelaxOverlay } from "./panels/RelaxOverlay";
 import { StatsPanel } from "./panels/StatsPanel";
 import { CatPanel } from "./panels/CatPanel";
@@ -66,24 +65,6 @@ const DRAWER_TITLES: Record<string, string> = {
   trash: "🗑️ Dropped Books",
 };
 
-type MobileIcon = {
-  emoji: string;
-  label: string;
-  action: HotspotId | "collection";
-};
-
-const MOBILE_ICONS: MobileIcon[] = [
-  { emoji: "📚", label: "Collection", action: "collection" },
-  { emoji: "➕", label: "Add Book", action: "bookshelf-left" },
-  { emoji: "📊", label: "Stats", action: "statspaper" },
-  { emoji: "🛋️", label: "Reading", action: "couch" },
-  { emoji: "🐱", label: "Surprise", action: "cat" },
-  { emoji: "🔍", label: "Discover", action: "globe" },
-  { emoji: "📋", label: "Notes", action: "notebook" },
-  { emoji: "🗑️", label: "Dropped", action: "trash" },
-  { emoji: "🪟", label: "Relax", action: "window" },
-];
-
 type Props = { userName: string };
 
 export const RoomScene = ({ userName }: Props) => {
@@ -96,7 +77,6 @@ export const RoomScene = ({ userName }: Props) => {
 
   const roomBg = isDark ? "/room-night.png" : "/room-day.png";
 
-  // Detect mobile on mount + resize
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 767px)");
     setIsMobile(mq.matches);
@@ -116,76 +96,42 @@ export const RoomScene = ({ userName }: Props) => {
     [router],
   );
 
-  const handleMobileIcon = useCallback(
-    (action: string) => {
-      if (action === "collection") { router.push("/collection"); return; }
-      handleHotspot(action);
-    },
-    [router, handleHotspot],
+  // Shared overlays (used by both mobile and desktop)
+  const sharedOverlays = (
+    <>
+      <RelaxOverlay open={relaxOpen} onClose={() => setRelaxOpen(false)} />
+      <RoomModal
+        open={activeModal !== null}
+        title={MODAL_TITLES[activeModal ?? ""] ?? ""}
+        onClose={() => setActiveModal(null)}
+      >
+        {activeModal === "statspaper" && <StatsPanel />}
+        {activeModal === "cat" && <CatPanel />}
+        {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
+      </RoomModal>
+      <RoomDrawer
+        open={activeDrawer !== null}
+        title={DRAWER_TITLES[activeDrawer ?? ""] ?? ""}
+        onClose={() => setActiveDrawer(null)}
+      >
+        {activeDrawer === "couch" && <CouchPanel />}
+        {activeDrawer === "globe" && <DiscoverPanel />}
+        {activeDrawer === "notebook" && <NotebookPanel />}
+        {activeDrawer === "trash" && <TrashPanel />}
+      </RoomDrawer>
+    </>
   );
 
   // ─── Mobile view ────────────────────────────────────────────────────────────
   if (isMobile) {
     return (
       <>
-        <div className="room-mobile">
-          <img
-            className="room-mobile__bg"
-            src={roomBg}
-            alt=""
-            draggable={false}
-          />
-          <div className="room-mobile__overlay">
-            {/* Sign out + dark mode toggle */}
-            <div className="room-mobile__topbar">
-              <DarkModeToggle />
-              <button
-                className="room-mobile__signout"
-                onClick={() => signOut()}
-              >
-                <span>{userName || "Sign out"}</span>
-                <span aria-hidden>⏻</span>
-              </button>
-            </div>
-
-            <p className="room-mobile__title">Bookroom</p>
-
-            <div className="room-mobile__grid">
-              {MOBILE_ICONS.map(({ emoji, label, action }) => (
-                <button
-                  key={action}
-                  className="room-mobile__icon"
-                  onClick={() => handleMobileIcon(action)}
-                >
-                  <span className="room-mobile__icon-emoji">{emoji}</span>
-                  <span className="room-mobile__icon-label">{label}</span>
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Shared overlays — same as desktop */}
-        <RelaxOverlay open={relaxOpen} onClose={() => setRelaxOpen(false)} />
-        <RoomModal
-          open={activeModal !== null}
-          title={MODAL_TITLES[activeModal ?? ""] ?? ""}
-          onClose={() => setActiveModal(null)}
-        >
-          {activeModal === "statspaper" && <StatsPanel />}
-          {activeModal === "cat" && <CatPanel />}
-          {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
-        </RoomModal>
-        <RoomDrawer
-          open={activeDrawer !== null}
-          title={DRAWER_TITLES[activeDrawer ?? ""] ?? ""}
-          onClose={() => setActiveDrawer(null)}
-        >
-          {activeDrawer === "couch" && <CouchPanel />}
-          {activeDrawer === "globe" && <DiscoverPanel />}
-          {activeDrawer === "notebook" && <NotebookPanel />}
-          {activeDrawer === "trash" && <TrashPanel />}
-        </RoomDrawer>
+        <MobileRoomMap
+          isDark={isDark}
+          onHotspot={handleHotspot}
+          userName={userName}
+        />
+        {sharedOverlays}
       </>
     );
   }
@@ -207,29 +153,7 @@ export const RoomScene = ({ userName }: Props) => {
         </div>
         <RoomSignOutButton userName={userName} />
       </div>
-
-      <RelaxOverlay open={relaxOpen} onClose={() => setRelaxOpen(false)} />
-
-      <RoomModal
-        open={activeModal !== null}
-        title={MODAL_TITLES[activeModal ?? ""] ?? ""}
-        onClose={() => setActiveModal(null)}
-      >
-        {activeModal === "statspaper" && <StatsPanel />}
-        {activeModal === "cat" && <CatPanel />}
-        {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
-      </RoomModal>
-
-      <RoomDrawer
-        open={activeDrawer !== null}
-        title={DRAWER_TITLES[activeDrawer ?? ""] ?? ""}
-        onClose={() => setActiveDrawer(null)}
-      >
-        {activeDrawer === "couch" && <CouchPanel />}
-        {activeDrawer === "globe" && <DiscoverPanel />}
-        {activeDrawer === "notebook" && <NotebookPanel />}
-        {activeDrawer === "trash" && <TrashPanel />}
-      </RoomDrawer>
+      {sharedOverlays}
     </>
   );
 };
