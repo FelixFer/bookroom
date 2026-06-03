@@ -17,7 +17,7 @@ import { TrashPanel } from "./panels/TrashPanel";
 import { AddBookPanel } from "./panels/AddBookPanel";
 
 type HotspotId =
-  | "bookshelf"
+  | "bookshelf-left"
   | "bookshelf-right"
   | "statspaper"
   | "cat"
@@ -37,7 +37,7 @@ type HotspotDef = {
 };
 
 const HOTSPOTS: HotspotDef[] = [
-  { id: "bookshelf", label: "Add Book", top: 15, left: 9, width: 13.7, height: 38.5 },
+  { id: "bookshelf-left", label: "Add Book", top: 15, left: 9, width: 13.7, height: 38.5 },
   { id: "bookshelf-right", label: "Collection", top: 14, left: 79.3, width: 13.2, height: 49 },
   { id: "window", label: "Relax", top: 9, left: 30, width: 39.5, height: 41 },
   { id: "statspaper", label: "Stats", top: 34.2, left: 23, width: 1.6, height: 7.5 },
@@ -48,13 +48,13 @@ const HOTSPOTS: HotspotDef[] = [
   { id: "trash", label: "Dropped", top: 71, left: 55, width: 4.8, height: 10 },
 ];
 
-const MODAL_HOTSPOTS = new Set<HotspotId>(["statspaper", "cat", "bookshelf"]);
+const MODAL_HOTSPOTS = new Set<HotspotId>(["statspaper", "cat", "bookshelf-left"]);
 const DRAWER_HOTSPOTS = new Set<HotspotId>(["couch", "globe", "notebook", "trash"]);
 
 const MODAL_TITLES: Record<string, string> = {
   statspaper: "📊 Reading Stats",
   cat: "🐱 Surprise Me",
-  "bookshelf": "📚 Add Book",
+  "bookshelf-left": "📚 Add Book",
 };
 
 const DRAWER_TITLES: Record<string, string> = {
@@ -72,7 +72,7 @@ type MobileIcon = {
 
 const MOBILE_ICONS: MobileIcon[] = [
   { emoji: "📚", label: "Collection", action: "collection" },
-  { emoji: "➕", label: "Add Book", action: "bookshelf" },
+  { emoji: "➕", label: "Add Book", action: "bookshelf-left" },
   { emoji: "📊", label: "Stats", action: "statspaper" },
   { emoji: "🛋️", label: "Reading", action: "couch" },
   { emoji: "🐱", label: "Surprise", action: "cat" },
@@ -166,7 +166,7 @@ export const RoomScene = ({ userName }: Props) => {
         >
           {activeModal === "statspaper" && <StatsPanel />}
           {activeModal === "cat" && <CatPanel />}
-          {activeModal === "bookshelf" && <AddBookPanel onClose={() => setActiveModal(null)} />}
+          {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
         </RoomModal>
         <RoomDrawer
           open={activeDrawer !== null}
@@ -209,7 +209,7 @@ export const RoomScene = ({ userName }: Props) => {
       >
         {activeModal === "statspaper" && <StatsPanel />}
         {activeModal === "cat" && <CatPanel />}
-        {activeModal === "bookshelf" && <AddBookPanel onClose={() => setActiveModal(null)} />}
+        {activeModal === "bookshelf-left" && <AddBookPanel onClose={() => setActiveModal(null)} />}
       </RoomModal>
 
       <RoomDrawer
