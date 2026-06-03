@@ -2,17 +2,34 @@
 
 import { useTheme } from "../ThemeContext";
 
+const StarIcon = () => (
+  <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'>
+    <path d='M324.42 103.15L384 128l24.84 59.58a8 8 0 0 0 14.32 0L448 128l59.58-24.85a8 8 0 0 0 0-14.31L448 64 423.16 4.42a8 8 0 0 0-14.32 0L384 64l-59.58 24.84a8 8 0 0 0 0 14.31zm183.16 305.69L448 384l-24.84-59.58a8 8 0 0 0-14.32 0L384 384l-59.58 24.84a8 8 0 0 0 0 14.32L384 448l24.84 59.58a8 8 0 0 0 14.32 0L448 448l59.58-24.84a8 8 0 0 0 0-14.32zM384 255.64a16.06 16.06 0 0 0-8.84-14.33l-112.57-56.39-56.28-112.77c-5.44-10.87-23.19-10.87-28.62 0l-56.28 112.77L8.84 241.31a16 16 0 0 0 0 28.67l112.57 56.39 56.28 112.77a16 16 0 0 0 28.62 0l56.28-112.77L375.16 270a16.07 16.07 0 0 0 8.84-14.36z' />
+  </svg>
+);
+
+const Stars = () => (
+  <div className='stars'>
+    {Array.from({ length: 4 }).map((_, i) => <StarIcon key={i} />)}
+  </div>
+);
+
 export const DarkModeToggle = () => {
   const { isDark, toggleTheme } = useTheme();
 
   return (
-    <button
-      className="room-darkmode-toggle"
-      onClick={toggleTheme}
-      aria-label={isDark ? "Switch to light mode" : "Switch to dark mode"}
-      title={isDark ? "Light mode" : "Dark mode"}
-    >
-      {isDark ? "☀️" : "🌙"}
-    </button>
+    <div className={`sky ${isDark ? 'dark' : ''}`}>
+      <div
+        className={`switch ${isDark ? 'night show-stars' : ''}`}
+        onClick={toggleTheme}
+      >
+        <div className='track day'>
+          <div className={`moon ${isDark ? 'moon-slide' : ''}`} />
+        </div>
+
+        <Stars />
+        <Stars />
+      </div>
+    </div>
   );
 };

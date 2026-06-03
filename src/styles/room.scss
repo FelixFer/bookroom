@@ -400,27 +400,191 @@
 }
 
 // ─── Dark mode toggle ─────────────────────────────────────────────────────────
-
-.room-darkmode-toggle {
+.sky {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
-  height: 34px;
-  background: rgba(20, 16, 10, 0.8);
-  border: 2px solid rgba(255, 233, 122, 0.45);
-  border-radius: 4px;
-  font-size: 16px;
-  cursor: pointer;
-  transition:
-    background 0.15s,
-    border-color 0.15s;
-  flex-shrink: 0;
-  line-height: 1;
+}
 
-  &:hover {
-    background: rgba(40, 32, 16, 0.92);
-    border-color: rgba(255, 233, 122, 0.8);
+.switch {
+  width: 20rem;
+  height: 10rem;
+  background: cornflowerblue;
+  border-radius: 5rem;
+  padding: 1rem;
+  cursor: pointer;
+  display: flex;
+  box-shadow:
+    inset 0 0 0.5rem rgba(0, 0, 0, 0.5),
+    0 0.225rem 1rem -0.25rem rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+  position: relative;
+  transition: all 0.5s ease-in-out;
+  zoom: 0.1875;
+
+  &::before,
+  &::after {
+    opacity: 1;
+    width: 7rem;
+    background: white;
+    border-radius: 10rem;
+    height: 7rem;
+    position: absolute;
+    content: "";
+    left: 0%;
+    bottom: -50%;
+    transition:
+      bottom 0.5s ease-in-out,
+      left 0.25s ease-in-out;
+    transform: translateX(4rem);
+    z-index: 2;
+  }
+  &::after {
+    left: 33%;
+    bottom: -100%;
+    width: 12rem;
+    height: 12rem;
+    border-radius: 8rem;
+    transform: translate(2rem, -3rem);
+  }
+
+  & .track {
+    overflow: hidden;
+  }
+
+  &.night::after,
+  &.night::before {
+    bottom: -200%;
+  }
+}
+
+.track {
+  transition: all 0.25s ease-in-out;
+  &::before,
+  &::after {
+    content: "";
+    transition: all 0.5s ease-in-out;
+  }
+}
+
+.moon {
+  transform: translate(8rem);
+  opacity: 0;
+  &-slide {
+    animation: moon-slide 0.5s ease-out forwards;
+    animation-delay: 0.5s;
+  }
+}
+
+@keyframes moon-slide {
+  from {
+    transform: translate(8rem);
+    opacity: 0;
+  }
+
+  to {
+    transform: translate(0rem);
+    opacity: 1;
+  }
+}
+
+.track,
+.moon {
+  width: 8rem;
+  height: 8rem;
+  background: radial-gradient(circle at center, #ffb938 0%, yellow 100%);
+  border-radius: 4rem;
+  box-shadow:
+    0 0 2rem yellow,
+    0 0 0 2rem rgba(255, 255, 255, 0.1),
+    0 0 0 4rem rgba(255, 255, 255, 0.1),
+    0 0 0 6rem rgba(255, 255, 255, 0.1),
+    inset 0.25rem 0.25rem 0.5rem rgba(0, 0, 0, 0.1),
+    inset -0.25rem -0.25rem 0.5rem rgba(255, 255, 255, 0.5);
+
+  display: flex;
+  position: relative;
+  z-index: 1;
+}
+
+.night {
+  background: #5b7488;
+  box-shadow:
+    inset 0 0 0.5rem rgba(255, 255, 255, 0.1),
+    0 0.225rem 1rem -0.5rem rgba(0, 0, 0, 0.4);
+
+  & .track {
+    transform: translateX(calc(100% + 2rem));
+    box-shadow:
+      0 0 2rem white,
+      0 0 0 2rem rgba(255, 255, 255, 0.1),
+      0 0 0 4rem rgba(255, 255, 255, 0.1),
+      0 0 0 6rem rgba(255, 255, 255, 0.1),
+      inset 0.25rem 0.25rem 0.25rem rgba(0, 0, 0, 0.01),
+      inset -0.25rem -0.25rem 0.25rem rgba(255, 255, 255, 0.5);
+  }
+  & .moon {
+    transform: translateX(calc(100% - 8rem));
+    background: radial-gradient(circle at top left, #b2b2b2 50%, white 80%);
+  }
+  & .stars:nth-child(2) {
+    transform: translate(0rem, 1rem) scale(0.7) rotate(-765deg);
+  }
+}
+
+.show-stars .stars {
+  opacity: 0.7;
+}
+
+.stars {
+  opacity: 0;
+  font-size: 0.75rem;
+  color: #fff;
+  width: 4rem;
+  height: 4rem;
+  position: absolute;
+  left: 5rem;
+  top: 2rem;
+  filter: drop-shadow(0 0 0.27rem white);
+  transform: rotate(-85deg) translate(2.5rem, 0);
+  & * {
+    transition: all 0.5s ease-in-out;
+  }
+  & svg {
+    width: 1rem;
+    height: auto;
+    animation: stars 1s ease infinite alternate;
+    & path {
+      fill: #fff;
+    }
+    &:nth-child(1) {
+      transform: scale(0.7);
+    }
+
+    &:nth-child(2) {
+      transform: translate(0rem, 2rem) scale(1.2) rotate(185deg);
+      animation-delay: 1s;
+    }
+
+    &:nth-child(3) {
+      transform: translate(-3rem, 1.5rem) scale(0.9) rotate(-5deg);
+      animation-delay: 0.75s;
+    }
+
+    &:nth-child(4) {
+      transform: translate(-0.25rem, 2.3rem) scale(0.7) rotate(275deg);
+      animation-delay: 0.25s;
+    }
+  }
+}
+
+@keyframes stars {
+  from {
+    opacity: 0.3;
+  }
+
+  to {
+    opacity: 1;
   }
 }
 
@@ -646,7 +810,11 @@
   justify-content: flex-end;
   gap: 6px;
   padding: 10px 14px;
-  background: linear-gradient(to bottom, rgba(0, 0, 0, 0.5) 0%, transparent 100%);
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.5) 0%,
+    transparent 100%
+  );
   pointer-events: none;
 
   > * {
