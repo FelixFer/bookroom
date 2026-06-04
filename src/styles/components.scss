@@ -9,18 +9,55 @@
 
 // ─── Cards ───────────────────────────────────────────────────────────────────
 
+.auth-card,
+.home-card {
+  @apply relative w-full px-6 pb-8 pt-6;
+  background-color: #fdf8f0;
+  border: 1px solid #d4c4a0;
+
+  // Top rod
+  &::before {
+    content: '';
+    @apply absolute -top-3 left-0 right-0 h-3 rounded-sm;
+    background-color: #3d2e1a;
+  }
+
+  // Bottom rod
+  &::after {
+    content: '';
+    @apply absolute -bottom-3 left-0 right-0 h-3 rounded-sm;
+    background-color: #3d2e1a;
+  }
+
+  // Dark mode
+  :where(.dark, .dark *) & {
+    background-color: #251f16;
+    border-color: #3a3020;
+
+    &::before,
+    &::after {
+      background-color: #0f0c08;
+    }
+  }
+}
+
 .auth-card {
-  @apply w-full max-w-sm rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-950;
+  @apply max-w-sm;
 }
 
 .home-card {
-  @apply w-full max-w-xl rounded-2xl bg-white p-6 shadow-sm dark:bg-zinc-950;
+  @apply max-w-xl;
 }
 
 // ─── Typography ───────────────────────────────────────────────────────────────
 
 .page-title {
-  @apply text-2xl font-semibold tracking-tight text-zinc-950 dark:text-zinc-50;
+  @apply text-2xl font-semibold tracking-tight;
+  color: #3d2e1a;
+
+  :where(.dark, .dark *) & {
+    color: #e8d5b0;
+  }
 }
 
 // ─── Forms ───────────────────────────────────────────────────────────────────
@@ -30,12 +67,33 @@
 }
 
 .form-label {
-  @apply flex flex-col gap-1 text-sm text-zinc-700 dark:text-zinc-300;
+  @apply flex flex-col gap-1 text-sm;
+  color: #6b5030;
+
+  :where(.dark, .dark *) & {
+    color: #c4a878;
+  }
 }
 
 .form-input {
-  @apply h-10 rounded-lg border border-zinc-200 bg-white px-3 text-zinc-950 outline-none
-    focus:border-zinc-400 dark:border-zinc-800 dark:bg-zinc-800 dark:text-zinc-50;
+  @apply h-10 rounded-lg border px-3 outline-none;
+  background-color: #fffdf8;
+  border-color: #d4c4a0;
+  color: #3d2e1a;
+
+  &:focus {
+    border-color: #c4a878;
+  }
+
+  :where(.dark, .dark *) & {
+    background-color: #2e2518;
+    border-color: #4a3a22;
+    color: #e8d5b0;
+
+    &:focus {
+      border-color: #c4a878;
+    }
+  }
 }
 
 .form-error {
@@ -43,7 +101,12 @@
 }
 
 .form-help {
-  @apply text-sm text-zinc-500 dark:text-zinc-400;
+  @apply text-sm;
+  color: #a07850;
+
+  :where(.dark, .dark *) & {
+    color: #8a6840;
+  }
 }
 
 // ─── Info box ────────────────────────────────────────────────────────────────
