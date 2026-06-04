@@ -73,7 +73,7 @@ function LoginForm() {
           </Button>
 
           <Link
-            className="text-sm text-zinc-600 underline underline-offset-4 dark:text-zinc-400"
+            className="text-sm text-zinc-600 underline underline-offset-4 dark:text-zinc-400 w-fit hover:text-zinc-800 dark:hover:text-zinc-300"
             href="/forgot-password"
           >
             Forgot password?
