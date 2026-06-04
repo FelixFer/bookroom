@@ -80,10 +80,13 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-[#31363F]">
         <Button href="/" variant="secondary">← Room</Button>
 
-        <h1 className="mr-auto text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
           My Collection
         </h1>
 
+      </div>
+
+      <div className="flex justify-end gap-3 p-4">
         {/* Search */}
         <input
           className="form-input h-9 w-40 text-sm"
