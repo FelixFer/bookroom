@@ -18,43 +18,66 @@ export const KanbanColumn = ({ status, books, onEdit, onDeleted }: Props) => {
   const colors = STATUS_COLORS[status];
 
   return (
-    <div className="flex w-64 shrink-0 flex-col rounded-xl border border-zinc-200 bg-zinc-50/50 dark:border-zinc-800 dark:bg-zinc-900/50">
-      {/* Column header */}
+    <div className="flex w-64 shrink-0 flex-col">
+      {/* Top wooden rod */}
+      <div className="h-3 shrink-0" style={{ backgroundColor: "var(--kanban-rod)" }} />
+
+      {/* Column body */}
       <div
-        className={`flex items-center justify-between rounded-t-xl border-b px-3 py-2.5 ${colors.bg} ${colors.border}`}
+        className="flex flex-1 flex-col border-x border-b"
+        style={{ backgroundColor: "var(--kanban-bg)", borderColor: "var(--kanban-border)" }}
       >
-        <span className={`text-xs font-semibold uppercase tracking-wide ${colors.text}`}>
-          {STATUS_LABELS[status]}
-        </span>
-        <span
-          className={`flex h-5 min-w-5 items-center justify-center rounded-full px-1.5 text-xs font-bold ${colors.bg} ${colors.text}`}
+        {/* Column header */}
+        <div
+          className="flex items-center justify-between border-b px-3 py-2.5"
+          style={{
+            backgroundColor: "var(--kanban-header-bg)",
+            borderColor: "var(--kanban-border)",
+            borderLeft: `3px solid ${colors.accent}`,
+          }}
         >
-          {books.length}
-        </span>
+          <span
+            className="text-xs font-semibold uppercase tracking-wide"
+            style={{ color: colors.label }}
+          >
+            {STATUS_LABELS[status]}
+          </span>
+          <span
+            className={`flex h-5 min-w-5 items-center justify-center px-1.5 text-xs font-bold text-white ${colors.badgeBg}`}
+          >
+            {books.length}
+          </span>
+        </div>
+
+        {/* Drop zone */}
+        <div
+          ref={setNodeRef}
+          className={`flex max-h-[65vh] flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors ${isOver ? "bg-[#e8d5b0]/30 dark:bg-[#4a3a22]/30" : ""
+            }`}
+          style={{ minHeight: 120 }}
+        >
+          {books.map((b) => (
+            <KanbanCard
+              key={b.id}
+              book={b}
+              onEdit={onEdit}
+              onDeleted={onDeleted}
+            />
+          ))}
+
+          {books.length === 0 && (
+            <p
+              className="flex flex-1 items-center justify-center text-xs"
+              style={{ color: "var(--kanban-muted)" }}
+            >
+              Drop here
+            </p>
+          )}
+        </div>
       </div>
 
-      {/* Drop zone */}
-      <div
-        ref={setNodeRef}
-        className={`flex max-h-[65vh] flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors ${isOver ? "bg-zinc-100 dark:bg-zinc-800/50" : ""
-          }`}
-        style={{ minHeight: 120 }}
-      >
-        {books.map((b) => (
-          <KanbanCard
-            key={b.id}
-            book={b}
-            onEdit={onEdit}
-            onDeleted={onDeleted}
-          />
-        ))}
-
-        {books.length === 0 && (
-          <p className="flex flex-1 items-center justify-center text-xs text-zinc-400 dark:text-gray-200">
-            Drop here
-          </p>
-        )}
-      </div>
+      {/* Bottom wooden rod */}
+      <div className="h-3 shrink-0" style={{ backgroundColor: "var(--kanban-rod)" }} />
     </div>
   );
 };

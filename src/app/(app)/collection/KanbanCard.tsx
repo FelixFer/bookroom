@@ -30,14 +30,20 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
   return (
     <div
       ref={setNodeRef}
-      style={style}
-      className="group relative flex gap-2 rounded-lg border border-zinc-200 bg-[#EEEEEE] p-2.5 shadow-sm dark:border-zinc-800 dark:bg-[#191919]"
+      style={{
+        ...style,
+        backgroundColor: "var(--kanban-card-bg)",
+        borderColor: "var(--kanban-border)",
+        boxShadow: "2px 2px 0 var(--kanban-shadow)",
+      }}
+      className="group relative flex gap-2 border p-2.5"
     >
       {/* Drag handle */}
       <div
         {...listeners}
         {...attributes}
-        className="flex cursor-grab items-start pt-0.5 text-[#787A91] active:cursor-grabbing dark:text-[#BBBBBB]"
+        className="flex cursor-grab items-start pt-0.5 active:cursor-grabbing"
+        style={{ color: "var(--kanban-muted)" }}
         aria-label="Drag"
       >
         ⠿
@@ -49,21 +55,30 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
         <img
           src={book.coverUrl}
           alt={book.title}
-          className="h-16 w-11 shrink-0 rounded object-cover shadow-sm"
+          className="h-16 w-11 shrink-0 object-cover"
         />
       ) : (
-        <div className="flex h-16 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 text-xl dark:bg-zinc-900">
+        <div
+          className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
+          style={{ backgroundColor: "var(--kanban-card-placeholder)" }}
+        >
           📖
         </div>
       )}
 
       {/* Info */}
       <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-medium leading-tight text-zinc-900 dark:text-zinc-50">
+        <p
+          className="line-clamp-2 text-sm font-medium leading-tight"
+          style={{ color: "var(--kanban-text)" }}
+        >
           {book.title}
         </p>
         {book.author && (
-          <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">
+          <p
+            className="mt-0.5 truncate text-xs"
+            style={{ color: "var(--kanban-muted)" }}
+          >
             {book.author}
           </p>
         )}
@@ -88,17 +103,36 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
 };
 
 export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => (
-  <div className="flex w-64 gap-2 rounded-lg border border-blue-400 bg-blue-50 p-2.5 shadow-xl ring-2 ring-blue-300 dark:border-blue-500 dark:bg-blue-950/60 dark:ring-blue-600">
-    <div className="flex cursor-grabbing items-start pt-0.5 text-zinc-300 dark:text-zinc-700">⠿</div>
+  <div
+    className="flex w-64 gap-2 border p-2.5"
+    style={{
+      backgroundColor: "var(--kanban-card-bg)",
+      borderColor: "var(--kanban-amber)",
+      outline: "2px solid var(--kanban-amber)",
+      boxShadow: "3px 3px 0 var(--kanban-rod)",
+    }}
+  >
+    <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: "var(--kanban-muted)" }}>⠿</div>
     {book.coverUrl ? (
       // eslint-disable-next-line @next/next/no-img-element
-      <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 rounded object-cover shadow-sm" />
+      <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 object-cover" />
     ) : (
-      <div className="flex h-16 w-11 shrink-0 items-center justify-center rounded bg-zinc-100 text-xl dark:bg-zinc-900">📖</div>
+      <div
+        className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
+        style={{ backgroundColor: "var(--kanban-card-placeholder)" }}
+      >
+        📖
+      </div>
     )}
     <div className="min-w-0 flex-1">
-      <p className="line-clamp-2 text-sm font-medium leading-tight text-zinc-900 dark:text-zinc-50">{book.title}</p>
-      {book.author && <p className="mt-0.5 truncate text-xs text-zinc-500 dark:text-zinc-400">{book.author}</p>}
+      <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: "var(--kanban-text)" }}>
+        {book.title}
+      </p>
+      {book.author && (
+        <p className="mt-0.5 truncate text-xs" style={{ color: "var(--kanban-muted)" }}>
+          {book.author}
+        </p>
+      )}
       {book.rating && (
         <p className="mt-1 text-xs text-amber-500">
           {"★".repeat(book.rating)}{"☆".repeat(5 - book.rating)}

@@ -24,37 +24,49 @@ export const STATUS_LABELS: Record<ReadingStatus, string> = {
 
 export const STATUS_COLORS: Record<
   ReadingStatus,
-  { bg: string; text: string; border: string }
+  { accent: string; accentDark: string; label: string; labelDark: string; badgeBg: string }
 > = {
   PLAN_TO_READ: {
-    bg: "bg-indigo-50 dark:bg-indigo-950/30",
-    text: "text-indigo-700 dark:text-indigo-300",
-    border: "border-indigo-200 dark:border-indigo-800",
+    accent: "#6366f1",
+    accentDark: "#818cf8",
+    label: "#4338ca",
+    labelDark: "#a5b4fc",
+    badgeBg: "bg-indigo-500 dark:bg-indigo-400",
   },
   READING: {
-    bg: "bg-emerald-50 dark:bg-emerald-950/30",
-    text: "text-emerald-700 dark:text-emerald-300",
-    border: "border-emerald-200 dark:border-emerald-800",
+    accent: "#10b981",
+    accentDark: "#34d399",
+    label: "#047857",
+    labelDark: "#6ee7b7",
+    badgeBg: "bg-emerald-500 dark:bg-emerald-400",
   },
   RE_READING: {
-    bg: "bg-teal-50 dark:bg-teal-950/30",
-    text: "text-teal-700 dark:text-teal-300",
-    border: "border-teal-200 dark:border-teal-800",
+    accent: "#14b8a6",
+    accentDark: "#2dd4bf",
+    label: "#0f766e",
+    labelDark: "#99f6e4",
+    badgeBg: "bg-teal-500 dark:bg-teal-400",
   },
   ON_HOLD: {
-    bg: "bg-amber-50 dark:bg-amber-950/30",
-    text: "text-amber-700 dark:text-amber-300",
-    border: "border-amber-200 dark:border-amber-800",
+    accent: "#f59e0b",
+    accentDark: "#fbbf24",
+    label: "#b45309",
+    labelDark: "#fde68a",
+    badgeBg: "bg-amber-500 dark:bg-amber-400",
   },
   COMPLETED: {
-    bg: "bg-blue-50 dark:bg-blue-950/30",
-    text: "text-blue-700 dark:text-blue-300",
-    border: "border-blue-200 dark:border-blue-800",
+    accent: "#3b82f6",
+    accentDark: "#60a5fa",
+    label: "#1d4ed8",
+    labelDark: "#93c5fd",
+    badgeBg: "bg-blue-500 dark:bg-blue-400",
   },
   DROPPED: {
-    bg: "bg-rose-50 dark:bg-rose-950/30",
-    text: "text-rose-700 dark:text-rose-300",
-    border: "border-rose-200 dark:border-rose-800",
+    accent: "#f43f5e",
+    accentDark: "#fb7185",
+    label: "#be123c",
+    labelDark: "#fda4af",
+    badgeBg: "bg-rose-500 dark:bg-rose-400",
   },
 };
 

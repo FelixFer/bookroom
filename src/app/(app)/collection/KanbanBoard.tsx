@@ -99,13 +99,15 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       {/* <div className="pointer-events-none fixed inset-0 -z-10 bg-zinc-50/70 dark:bg-[#393E46]/80" /> */}
       <div className="pointer-events-none fixed inset-0 -z-10" />
       {/* Header */}
-      <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-[#31363F]">
+      <div
+        className="flex flex-wrap items-center gap-3 border-b px-4 py-3"
+        style={{ backgroundColor: "var(--kanban-header-bg)", borderColor: "var(--kanban-border)" }}
+      >
         <Button href="/" variant="secondary">← Room</Button>
 
-        <h1 className="text-base font-semibold text-zinc-900 dark:text-zinc-50">
+        <h1 className="text-base font-semibold" style={{ color: "var(--kanban-text)" }}>
           My Collection
         </h1>
-
       </div>
 
       <div className="flex justify-end gap-3 p-4">
@@ -139,7 +141,7 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       </DndContext>
 
       {/* Total count */}
-      <div className="px-4 py-2 text-xs text-zinc-400 dark:text-gray-100">
+      <div className="px-4 py-2 text-xs" style={{ color: "var(--kanban-muted)" }}>
         {books.length} book{books.length !== 1 ? "s" : ""} in your collection
         {search && ` · ${filtered.length} matching "${search}"`}
       </div>

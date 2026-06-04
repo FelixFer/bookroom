@@ -15,6 +15,18 @@
   --room-drawer-close-color: #6b5030;
   --room-drawer-close-hover-bg: #e8d5b0;
   --room-drawer-close-hover-color: #3d2e1a;
+
+  /* Kanban board */
+  --kanban-bg: rgba(253, 248, 240, 0.80);
+  --kanban-header-bg: rgba(245, 237, 224, 0.9);
+  --kanban-border: #d4c4a0;
+  --kanban-rod: #3d2e1a;
+  --kanban-card-bg: rgba(255, 253, 248, 1);
+  --kanban-card-placeholder: #f0e8d8;
+  --kanban-shadow: #c4a878;
+  --kanban-text: #3d2e1a;
+  --kanban-muted: #a07850;
+  --kanban-amber: #c4a878;
 }
 
 @theme inline {
@@ -37,6 +49,16 @@
     --room-drawer-close-color: #c4a878;
     --room-drawer-close-hover-bg: #2e2518;
     --room-drawer-close-hover-color: #e8d5b0;
+    --kanban-bg: rgba(37, 31, 22, 0.80);
+    --kanban-header-bg: rgba(30, 26, 20, 0.9);
+    --kanban-border: #3a3020;
+    --kanban-rod: #0f0c08;
+    --kanban-card-bg: rgba(46, 37, 24, 1);
+    --kanban-card-placeholder: #1e1a14;
+    --kanban-shadow: #0f0c08;
+    --kanban-text: #e8d5b0;
+    --kanban-muted: #8a6840;
+    --kanban-amber: #c4a878;
   }
 }
 
@@ -52,6 +74,16 @@ html.dark {
   --room-drawer-close-color: #c4a878;
   --room-drawer-close-hover-bg: #2e2518;
   --room-drawer-close-hover-color: #e8d5b0;
+  --kanban-bg: rgba(37, 31, 22, 0.80);
+  --kanban-header-bg: rgba(30, 26, 20, 0.9);
+  --kanban-border: #3a3020;
+  --kanban-rod: #0f0c08;
+  --kanban-card-bg: rgba(46, 37, 24, 0.75);
+  --kanban-card-placeholder: #1e1a14;
+  --kanban-shadow: #0f0c08;
+  --kanban-text: #e8d5b0;
+  --kanban-muted: #8a6840;
+  --kanban-amber: #c4a878;
 }
 
 body {
