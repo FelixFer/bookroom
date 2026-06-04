@@ -14,12 +14,12 @@ export type UserBookItem = {
 };
 
 export const STATUS_LABELS: Record<ReadingStatus, string> = {
-  PLAN_TO_READ: "Plan to Read",
-  READING: "Reading",
-  ON_HOLD: "On Hold",
-  DROPPED: "Dropped",
-  COMPLETED: "Completed",
-  RE_READING: "Re-reading",
+  PLAN_TO_READ: "Wishlist Shelf",
+  READING: "Reading Desk",
+  ON_HOLD: "Waiting Shelf",
+  DROPPED: "Abandoned Corner",
+  COMPLETED: "Finished Shelf",
+  RE_READING: "Favorite Re-reads",
 };
 
 export const STATUS_COLORS: Record<
