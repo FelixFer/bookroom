@@ -103,8 +103,20 @@ const MobileHotspot = ({ id, label, top, left, width, height, onTap, dragRef }: 
 
 // ─── MobileMapMinimap ─────────────────────────────────────────────────────────
 
-const MobileMapMinimap = ({ offset, isDark }: { offset: number; isDark: boolean }) => {
-  const imgW = typeof window !== "undefined" ? getImageWidth() : IMG_W;
+const MobileMapMinimap = ({
+  offset,
+  isDark,
+  stageWidth,
+}: {
+  offset: number;
+  isDark: boolean;
+  stageWidth: number;
+}) => {
+  // Use the actual rendered stage offsetWidth as the source of truth.
+  // Falls back to window-based estimate only before the first DOM measurement.
+  const imgW = stageWidth > 0
+    ? stageWidth
+    : (typeof window !== "undefined" ? getImageWidth() : IMG_W);
   const vpW = typeof window !== "undefined" ? window.innerWidth : 375;
   const rectW = Math.max(4, Math.round((vpW / imgW) * MINIMAP_W));
   const rectLeft = Math.round((-offset / imgW) * MINIMAP_W);
@@ -134,11 +146,15 @@ type Props = {
 
 export const MobileRoomMap = ({ isDark, onHotspot }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState | null>(null);
 
   const [offset, setOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
   const [activeZone, setActiveZone] = useState<Zone>("center");
+  // Actual rendered stage width — ground truth for all pan/minimap calculations.
+  // Avoids 100vh vs window.innerHeight discrepancy on mobile browsers.
+  const [stageWidth, setStageWidth] = useState(0);
 
   // ── Snap to zone ────────────────────────────────────────────────────────────
   const snapToZone = useCallback((zone: Zone) => {
@@ -150,11 +166,13 @@ export const MobileRoomMap = ({ isDark, onHotspot }: Props) => {
 
   // ── Init + resize ────────────────────────────────────────────────────────────
   useEffect(() => {
+    if (stageRef.current) setStageWidth(stageRef.current.offsetWidth);
     setOffset(zoneToOffset("center"));
   }, []);
 
   useEffect(() => {
     const handleResize = () => {
+      if (stageRef.current) setStageWidth(stageRef.current.offsetWidth);
       setOffset(zoneToOffset(activeZone));
     };
     window.addEventListener("resize", handleResize);
@@ -263,6 +281,7 @@ export const MobileRoomMap = ({ isDark, onHotspot }: Props) => {
     >
       {/* Pannable stage */}
       <div
+        ref={stageRef}
         className={`room-map__stage${isAnimating ? " room-map__stage--animating" : ""}`}
         style={{ transform: `translateX(${offset}px)` }}
       >
@@ -305,7 +324,7 @@ export const MobileRoomMap = ({ isDark, onHotspot }: Props) => {
       </div>
 
       {/* Minimap — fixed, outside stage */}
-      <MobileMapMinimap offset={offset} isDark={isDark} />
+      <MobileMapMinimap offset={offset} isDark={isDark} stageWidth={stageWidth} />
     </div>
   );
 };
