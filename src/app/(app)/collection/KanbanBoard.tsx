@@ -1,8 +1,9 @@
 "use client";
 
 import { useState, useCallback } from "react";
-import { DndContext, DragEndEvent, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { KanbanColumn } from "./KanbanColumn";
+import { KanbanCardOverlay } from "./KanbanCard";
 import { EditBookModal } from "./EditBookModal";
 import { patchJson } from "@/lib/api";
 import type { UserBookItem } from "@/types/book";
@@ -18,10 +19,19 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
   const [books, setBooks] = useState<UserBookItem[]>(initialBooks);
   const [editTarget, setEditTarget] = useState<UserBookItem | "new" | null>(null);
   const [search, setSearch] = useState("");
+  const [activeBook, setActiveBook] = useState<UserBookItem | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
+  );
+
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      const book = books.find((b) => b.id === event.active.id);
+      setActiveBook(book ?? null);
+    },
+    [books],
   );
 
   const handleDragEnd = useCallback(
@@ -37,6 +47,8 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       setBooks((prev) =>
         prev.map((b) => (b.id === bookId ? { ...b, status: newStatus } : b)),
       );
+
+      setActiveBook(null);
 
       try {
         await patchJson(`/api/books/${bookId}`, { status: newStatus });
@@ -75,7 +87,17 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
     filtered.filter((b) => b.status === status);
 
   return (
-    <div className="flex min-h-screen flex-col bg-zinc-50 dark:bg-[#393E46]">
+    <div className="relative flex min-h-screen flex-col">
+      <div
+        className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden"
+        style={{ backgroundImage: "url('/library-day.png')" }}
+      />
+      <div
+        className="pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block"
+        style={{ backgroundImage: "url('/library-night.png')" }}
+      />
+      {/* <div className="pointer-events-none fixed inset-0 -z-10 bg-zinc-50/70 dark:bg-[#393E46]/80" /> */}
+      <div className="pointer-events-none fixed inset-0 -z-10" />
       {/* Header */}
       <div className="flex flex-wrap items-center gap-3 border-b border-zinc-200 bg-white px-4 py-3 dark:border-zinc-800 dark:bg-[#31363F]">
         <Button href="/" variant="secondary">← Room</Button>
@@ -99,8 +121,8 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       </div>
 
       {/* Board */}
-      <DndContext sensors={sensors} onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto p-4 pb-8">
+      <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
+        <div className="flex gap-4 overflow-x-auto p-4 pt-0">
           {STATUS_ORDER.map((status) => (
             <KanbanColumn
               key={status}
@@ -111,10 +133,13 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
             />
           ))}
         </div>
+        <DragOverlay>
+          {activeBook ? <KanbanCardOverlay book={activeBook} /> : null}
+        </DragOverlay>
       </DndContext>
 
       {/* Total count */}
-      <div className="px-4 pb-2 text-xs text-zinc-400 dark:text-gray-100">
+      <div className="px-4 py-2 text-xs text-zinc-400 dark:text-gray-100">
         {books.length} book{books.length !== 1 ? "s" : ""} in your collection
         {search && ` · ${filtered.length} matching "${search}"`}
       </div>
@@ -127,4 +152,5 @@ export const KanbanBoard = ({ initialBooks }: Props) => {
       />
     </div>
   );
+
 };
