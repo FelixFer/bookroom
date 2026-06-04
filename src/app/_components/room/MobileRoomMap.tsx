@@ -1,8 +1,6 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { signOut } from "next-auth/react";
-import { DarkModeToggle } from "./DarkModeToggle";
 
 // ─── Constants ────────────────────────────────────────────────────────────────
 
@@ -132,10 +130,9 @@ const MobileMapMinimap = ({ offset, isDark }: { offset: number; isDark: boolean 
 type Props = {
   isDark: boolean;
   onHotspot: (id: string) => void;
-  userName: string;
 };
 
-export const MobileRoomMap = ({ isDark, onHotspot, userName }: Props) => {
+export const MobileRoomMap = ({ isDark, onHotspot }: Props) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const drag = useRef<DragState | null>(null);
 
@@ -278,18 +275,6 @@ export const MobileRoomMap = ({ isDark, onHotspot, userName }: Props) => {
         {HOTSPOTS.map((h) => (
           <MobileHotspot key={h.id} {...h} onTap={onHotspot} dragRef={drag} />
         ))}
-      </div>
-
-      {/* Top bar — fixed, outside stage */}
-      <div className="room-map__topbar">
-        <DarkModeToggle />
-        <button
-          className="room-mobile__signout"
-          onClick={() => signOut()}
-        >
-          <span>{userName || "Sign out"}</span>
-          <span aria-hidden>⏻</span>
-        </button>
       </div>
 
       {/* Zone nav arrows — fixed, outside stage */}

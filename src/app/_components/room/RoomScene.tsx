@@ -6,7 +6,6 @@ import { useTheme } from "../ThemeContext";
 import { RoomHotspot } from "./RoomHotspot";
 import { RoomDrawer } from "./RoomDrawer";
 import { RoomModal } from "./RoomModal";
-import { RoomSignOutButton } from "./RoomSignOutButton";
 import { MobileRoomMap } from "./MobileRoomMap";
 import { RelaxOverlay } from "./panels/RelaxOverlay";
 import { StatsPanel } from "./panels/StatsPanel";
@@ -129,7 +128,6 @@ export const RoomScene = ({ userName }: Props) => {
         <MobileRoomMap
           isDark={isDark}
           onHotspot={handleHotspot}
-          userName={userName}
         />
         {sharedOverlays}
       </>
@@ -151,7 +149,6 @@ export const RoomScene = ({ userName }: Props) => {
             <RoomHotspot key={h.id} {...h} onClick={handleHotspot} />
           ))}
         </div>
-        <RoomSignOutButton userName={userName} />
       </div>
       {sharedOverlays}
     </>
