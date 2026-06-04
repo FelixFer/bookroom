@@ -31,13 +31,13 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
     <div
       ref={setNodeRef}
       style={style}
-      className="group relative flex gap-2 rounded-lg border border-zinc-200 bg-white p-2.5 shadow-sm dark:border-zinc-800 dark:bg-zinc-950"
+      className="group relative flex gap-2 rounded-lg border border-zinc-200 bg-[#EEEEEE] p-2.5 shadow-sm dark:border-zinc-800 dark:bg-[#191919]"
     >
       {/* Drag handle */}
       <div
         {...listeners}
         {...attributes}
-        className="flex cursor-grab items-start pt-0.5 text-zinc-300 active:cursor-grabbing dark:text-zinc-700"
+        className="flex cursor-grab items-start pt-0.5 text-[#787A91] active:cursor-grabbing dark:text-[#BBBBBB]"
         aria-label="Drag"
       >
         ⠿
