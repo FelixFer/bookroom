@@ -9,7 +9,7 @@ export const metadata = { title: "My Collection — Bookroom" };
 
 export default async function CollectionPage() {
   const session = await getServerSession(authOptions);
-  if (!session?.user?.id) redirect("/login");
+  if (!session?.user?.id) redirect("/");
 
   const userBooks = await prisma.userBook.findMany({
     where: { userId: session.user.id },

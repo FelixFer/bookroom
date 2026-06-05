@@ -11,14 +11,19 @@ export type ButtonVariant =
   | "icon-danger";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
+  // Dark brown background, parchment text — gold bg + dark text in dark mode
   primary:
-    "inline-flex h-10 items-center justify-center rounded-lg bg-zinc-900 px-4 text-sm font-medium text-white disabled:opacity-60 dark:bg-[#c4a878] dark:text-[#1e1a14] dark:hover:bg-[#e8d5b0]",
+    "inline-flex h-10 items-center justify-center rounded-lg bg-[#3d2e1a] px-4 text-sm font-medium text-[#fdf8f0] hover:bg-[#2a1f10] disabled:opacity-60 dark:bg-[#c4a878] dark:text-[#1e1a14] dark:hover:bg-[#e8d5b0]",
+  // Parchment border + brown text — warm border + light text in dark mode
   secondary:
-    "inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium border-zinc-200 text-zinc-900 hover:bg-zinc-100 dark:border-[#4a3a22] dark:text-[#e8d5b0] dark:hover:bg-[#2e2518]",
+    "inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium border-[#d4c4a0] text-[#3d2e1a] hover:bg-[#f5ede0] dark:border-[#4a3a22] dark:text-[#e8d5b0] dark:hover:bg-[#2e2518]",
+  // Muted brown text, warm hover — gold text + warm hover in dark mode
   ghost:
-    "inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-zinc-600 hover:bg-zinc-100 dark:text-[#c4a878] dark:hover:bg-[#2e2518]",
+    "inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-[#6b5030] hover:bg-[#f5ede0] dark:text-[#c4a878] dark:hover:bg-[#2e2518]",
+  // Danger stays red — not part of the parchment theme
   danger:
     "inline-flex h-10 items-center justify-center rounded-lg bg-rose-600 px-4 text-sm font-medium text-white disabled:opacity-60 hover:bg-rose-700",
+  // Icon already themed
   icon: "inline-flex items-center justify-center rounded border text-sm border-[#d4c4a0] text-[#6b5030] hover:bg-[#f5ede0] dark:border-[#4a3a22] dark:text-[#c4a878] dark:hover:bg-[#3a2e1c]",
   "icon-danger":
     "inline-flex items-center justify-center rounded border text-xs border-rose-200 text-rose-500 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/40",

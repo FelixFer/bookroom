@@ -12,7 +12,7 @@ export const RoomSignOutButton = ({ userName }: Props) => {
       <DarkModeToggle />
       <button
         className="room-signout"
-        onClick={() => signOut()}
+        onClick={() => signOut({ callbackUrl: "/" })}
         aria-label="Sign out"
       >
         <span className="room-signout__avatar">{initial}</span>
