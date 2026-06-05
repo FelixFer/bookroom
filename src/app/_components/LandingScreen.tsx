@@ -1,13 +1,12 @@
 "use client";
 import { useState, Suspense } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getApiErrorMessage, postJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
 
 function LandingScreenInner() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
 
@@ -42,7 +41,7 @@ function LandingScreenInner() {
       setLoginError("Invalid email or password");
       return;
     }
-    router.push(result.url ?? callbackUrl);
+    window.location.href = result.url ?? callbackUrl;
   }
 
   async function handleSignup(e: React.FormEvent) {
@@ -76,10 +75,10 @@ function LandingScreenInner() {
 
     setSignupLoading(false);
     if (!result?.ok) {
-      router.push("/");
+      window.location.href = "/";
       return;
     }
-    router.push(result.url ?? "/");
+    window.location.href = result.url ?? "/";
   }
 
   return (
