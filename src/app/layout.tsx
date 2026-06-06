@@ -4,6 +4,7 @@ import "./globals.css";
 import "@/styles/components.scss";
 import "@/styles/room.scss";
 import { ThemeProvider } from "./_components/ThemeContext";
+import AboutBookModal from "./_components/AboutBookModal";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,6 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <ThemeProvider>{children}</ThemeProvider>
+        <AboutBookModal />
       </body>
     </html>
   );
