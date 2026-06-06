@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getApiErrorMessage, postJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState("");
@@ -55,10 +56,11 @@ export default function ForgotPasswordPage() {
 
           {error ? <p className="form-error">{error}</p> : null}
 
-          <Button type="submit" variant="primary" disabled={loading}>
-            {loading ? "Sending..." : "Send reset link"}
+          <Button type="submit" variant="primary" loading={loading}>
+            Send reset link
           </Button>
         </form>
+        {loading && <LoaderOverlay />}
 
         {done ? (
           <div className="info-box">

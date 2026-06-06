@@ -5,6 +5,7 @@ import { postJson, patchJson } from "@/lib/api";
 import type { UserBookItem } from "@/types/book";
 import { STATUS_LABELS, STATUS_ORDER } from "@/types/book";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 type Props = {
   book: UserBookItem | "new" | null; // null = closed, "new" = create mode
@@ -235,11 +236,12 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
           {error && <p className="form-error">{error}</p>}
 
           <div className="flex gap-3 pt-1">
-            <Button type="submit" variant="primary" disabled={loading} className="flex-1">
-              {loading ? "Saving…" : isNew ? "Add book" : "Save changes"}
+            <Button type="submit" variant="primary" loading={loading} className="flex-1">
+              {isNew ? "Add book" : "Save changes"}
             </Button>
             <Button variant="secondary" onClick={onClose}>Cancel</Button>
           </div>
+          {loading && <LoaderOverlay />}
         </form>
       </div>
     </>

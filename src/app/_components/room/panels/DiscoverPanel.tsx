@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { postJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 type OpenLibBook = {
   key: string;
@@ -78,10 +79,11 @@ export const DiscoverPanel = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Button type="submit" variant="primary" disabled={loading}>
-          {loading ? "…" : "Search"}
+        <Button type="submit" variant="primary" loading={loading}>
+          Search
         </Button>
       </form>
+      {loading && <LoaderOverlay />}
 
       {error && <p className="form-error text-xs">{error}</p>}
 

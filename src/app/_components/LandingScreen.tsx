@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { getApiErrorMessage, postJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 function LandingScreenInner() {
   const searchParams = useSearchParams();
@@ -82,6 +83,7 @@ function LandingScreenInner() {
   }
 
   return (
+    <>
     <div className="page-center">
       {/* Background — light mode */}
       <div
@@ -166,9 +168,9 @@ function LandingScreenInner() {
                 type="submit"
                 variant="primary"
                 className="btn-login"
-                disabled={loginLoading}
+                loading={loginLoading}
               >
-                {loginLoading ? "Signing in…" : "Login"}
+                Login
               </Button>
             </form>
           </div>
@@ -247,15 +249,17 @@ function LandingScreenInner() {
                 type="submit"
                 variant="secondary"
                 className="btn-signup"
-                disabled={signupLoading}
+                loading={signupLoading}
               >
-                {signupLoading ? "Creating…" : "Create account"}
+                Create account
               </Button>
             </form>
           </div>
         </div>
       </div>
     </div>
+    {(loginLoading || signupLoading) && <LoaderOverlay />}
+    </>
   );
 }
 

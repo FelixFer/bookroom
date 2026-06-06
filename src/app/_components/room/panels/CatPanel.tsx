@@ -3,6 +3,7 @@
 import { useState, useCallback } from "react";
 import { getJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 type Book = {
   id: string;
@@ -25,14 +26,15 @@ export const CatPanel = () => {
   }, []);
 
   return (
+    <>
     <div className="flex flex-col items-center gap-6 pt-4 text-center">
       <p className="text-sm text-zinc-500 dark:text-zinc-400">
         🐱 The cat has a recommendation for you…
       </p>
 
       {book === null && (
-        <Button variant="primary" onClick={roll} disabled={loading}>
-          {loading ? "Thinking…" : "Surprise me!"}
+        <Button variant="primary" onClick={roll} loading={loading}>
+          Surprise me!
         </Button>
       )}
 
@@ -63,11 +65,13 @@ export const CatPanel = () => {
               {book.status.replace("_", " ")}
             </p>
           </div>
-          <Button variant="secondary" onClick={roll} disabled={loading}>
-            {loading ? "Rolling…" : "🎲 Roll again"}
+          <Button variant="secondary" onClick={roll} loading={loading}>
+            🎲 Roll again
           </Button>
         </div>
       )}
     </div>
+    {loading && <LoaderOverlay />}
+    </>
   );
 };

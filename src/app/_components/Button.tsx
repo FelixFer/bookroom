@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { LoaderDots } from "@/app/_components/Loader";
 
 export type ButtonVariant =
   | "primary"
@@ -11,19 +12,14 @@ export type ButtonVariant =
   | "icon-danger";
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
-  // Dark brown background, parchment text — gold bg + dark text in dark mode
   primary:
     "inline-flex h-10 items-center justify-center rounded-lg bg-[#3d2e1a] px-4 text-sm font-medium text-[#fdf8f0] hover:bg-[#2a1f10] disabled:opacity-60 dark:bg-[#c4a878] dark:text-[#1e1a14] dark:hover:bg-[#e8d5b0]",
-  // Parchment border + brown text — warm border + light text in dark mode
   secondary:
     "inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium border-[#d4c4a0] text-[#3d2e1a] hover:bg-[#f5ede0] dark:border-[#4a3a22] dark:text-[#e8d5b0] dark:hover:bg-[#2e2518]",
-  // Muted brown text, warm hover — gold text + warm hover in dark mode
   ghost:
     "inline-flex h-10 items-center justify-center rounded-lg px-4 text-sm font-medium text-[#6b5030] hover:bg-[#f5ede0] dark:text-[#c4a878] dark:hover:bg-[#2e2518]",
-  // Danger stays red — not part of the parchment theme
   danger:
     "inline-flex h-10 items-center justify-center rounded-lg bg-rose-600 px-4 text-sm font-medium text-white disabled:opacity-60 hover:bg-rose-700",
-  // Icon already themed
   icon: "inline-flex items-center justify-center rounded border text-sm border-[#d4c4a0] text-[#6b5030] hover:bg-[#f5ede0] dark:border-[#4a3a22] dark:text-[#c4a878] dark:hover:bg-[#3a2e1c]",
   "icon-danger":
     "inline-flex items-center justify-center rounded border text-xs border-rose-200 text-rose-500 hover:bg-rose-50 dark:border-rose-800 dark:text-rose-400 dark:hover:bg-rose-950/40",
@@ -39,6 +35,7 @@ type CommonProps = {
   children?: React.ReactNode;
   className?: string;
   disabled?: boolean;
+  loading?: boolean;
   "aria-label"?: string;
   /** Only used with icon/icon-danger variants. sm=24px, md=28px. Defaults to md. */
   size?: "sm" | "md";
@@ -63,6 +60,7 @@ export const Button = ({
   children,
   className,
   disabled,
+  loading,
   "aria-label": ariaLabel,
   size = "md",
   href,
@@ -83,8 +81,15 @@ export const Button = ({
   }
 
   return (
-    <button type={type} className={cls} onClick={onClick} disabled={disabled} aria-label={ariaLabel}>
-      {children}
+    <button
+      type={type}
+      className={cls}
+      onClick={onClick}
+      disabled={disabled || loading}
+      aria-label={ariaLabel}
+      aria-busy={loading}
+    >
+      {loading ? <LoaderDots /> : children}
     </button>
   );
 };

@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 import { getApiErrorMessage, postJson } from "@/lib/api";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -56,10 +57,11 @@ function ResetPasswordForm() {
             <p className="form-help">Password must be at least 8 characters.</p>
           )}
 
-          <Button type="submit" variant="primary" disabled={loading || !token}>
-            {loading ? "Saving..." : "Save new password"}
+          <Button type="submit" variant="primary" loading={loading} disabled={!token}>
+            Save new password
           </Button>
         </form>
+        {loading && <LoaderOverlay />}
       </div>
     </div>
   );

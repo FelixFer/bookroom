@@ -422,6 +422,43 @@
     dark:border-zinc-800 dark:bg-zinc-900/30 dark:text-zinc-300;
 }
 
+// ─── Loader ───────────────────────────────────────────────────────────────────
+
+.loader-dots {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-family: var(--font-accent), 'Press Start 2P', monospace;
+  font-size: 8px;
+  color: currentColor;
+
+  span:nth-child(1) { animation: dot-bounce 0.6s ease-in-out infinite 0s; }
+  span:nth-child(2) { animation: dot-bounce 0.6s ease-in-out infinite 0.2s; }
+  span:nth-child(3) { animation: dot-bounce 0.6s ease-in-out infinite 0.4s; }
+}
+
+@keyframes dot-bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(-4px); }
+}
+
+.loader-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.loader-overlay__box {
+  background: var(--room-drawer-bg);
+  border: 1px solid var(--room-drawer-border);
+  border-radius: 8px;
+  padding: 1.25rem 2rem;
+}
+
 // ─── About Book Modal ─────────────────────────────────────────────────────────
 
 .about-book-trigger {

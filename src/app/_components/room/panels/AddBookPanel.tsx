@@ -4,6 +4,7 @@ import { useState } from "react";
 import { postJson } from "@/lib/api";
 import { STATUS_LABELS, STATUS_ORDER } from "@/types/book";
 import { Button } from "@/app/_components/Button";
+import { LoaderOverlay } from "@/app/_components/Loader";
 
 type Props = {
   onClose: () => void;
@@ -112,11 +113,12 @@ export const AddBookPanel = ({ onClose }: Props) => {
       {error && <p className="form-error">{error}</p>}
 
       <div className="flex gap-3">
-        <Button type="submit" variant="primary" disabled={loading} className="flex-1">
-          {loading ? "Adding…" : "Add book"}
+        <Button type="submit" variant="primary" loading={loading} className="flex-1">
+          Add book
         </Button>
         <Button variant="secondary" onClick={onClose}>Cancel</Button>
       </div>
+      {loading && <LoaderOverlay />}
     </form>
   );
 };
