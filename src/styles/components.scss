@@ -358,6 +358,7 @@
 
 .page-title {
   @apply text-2xl font-semibold tracking-tight;
+  font-family: var(--font-heading), 'Merriweather', serif;
   color: #3d2e1a;
 
   :where(.dark, .dark *) & {
@@ -561,6 +562,7 @@
   }
 
   h2 {
+    font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 14px;
     font-weight: 700;
     text-align: center;
@@ -638,6 +640,7 @@
   }
 
   h1 {
+    font-family: 'Georgia', 'Times New Roman', serif;
     color: #c4a878;
     text-align: center;
     font-size: 22px;
@@ -804,7 +807,7 @@
   .mobile-page-indicator {
     font-size: 12px;
     color: var(--room-drawer-close-color);
-    font-family: var(--font-geist-mono), monospace;
+    font-family: var(--font-body), 'Nunito', sans-serif;
   }
 
   .mobile-close-btn {
@@ -831,7 +834,7 @@
   .mobile-card-body {
     flex: 1;
     padding: 1.5rem 1.25rem;
-    font-family: Georgia, 'Times New Roman', serif;
+    font-family: 'Georgia', 'Times New Roman', serif;
     font-size: 14px;
     line-height: 1.7;
     color: var(--room-drawer-title);
