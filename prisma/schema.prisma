@@ -31,6 +31,7 @@ model User {
 
   userBooks UserBook[]
   passwordResetTokens PasswordResetToken[]
+  Bookmark  Bookmark[]
 }
 
 model Book {
@@ -76,4 +77,15 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slot      Int
+  label     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, slot])
 }
