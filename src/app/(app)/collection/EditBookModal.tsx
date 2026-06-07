@@ -41,6 +41,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
       setRating(book.rating);
       setNotes(book.notes ?? "");
       setFavorite(book.favorite);
+      setBookmark(book.bookmarkSlot ?? null);
     } else {
       setTitle("");
       setAuthor("");
@@ -49,6 +50,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
       setRating(null);
       setNotes("");
       setFavorite(false);
+      setBookmark(null);
     }
     setError(null);
   }, [book, isEdit]);
@@ -93,10 +95,10 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
       } else {
         result = await patchJson<UserBookItem>(`/api/books/${book.id}`, {
           status,
+          bookmarkSlot: bookmark,
           rating,
           notes: notes.trim() || null,
           favorite,
-          bookmark,
         });
       }
       onSaved(result);

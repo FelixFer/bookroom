@@ -27,6 +27,7 @@ export const PATCH = async (request: Request, { params }: Params) => {
 
   const data: Record<string, unknown> = {};
   if ("status" in body) data.status = body.status as ReadingStatus;
+  if ("bookmarkSlot" in body) data.bookmarkSlot = body.bookmarkSlot as number | null;
   if ("rating" in body) data.rating = body.rating as number | null;
   if ("notes" in body) data.notes = body.notes as string | null;
   if ("favorite" in body) data.favorite = body.favorite as boolean;

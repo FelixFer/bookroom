@@ -20,6 +20,7 @@ export const GET = async (request: Request) => {
     select: {
       id: true,
       status: true,
+      bookmarkSlot: true,
       rating: true,
       notes: true,
       favorite: true,
@@ -38,6 +39,7 @@ export const GET = async (request: Request) => {
     author: ub.book.author,
     coverUrl: ub.book.coverUrl,
     status: ub.status,
+    bookmarkSlot: ub.bookmarkSlot,
     rating: ub.rating,
     notes: ub.notes,
     favorite: ub.favorite,

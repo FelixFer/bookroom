@@ -36,7 +36,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
         author: author.trim() || undefined,
         coverUrl: coverUrl.trim() || undefined,
         status,
-        bookmark,
+        bookmarkSlot: bookmark,
       });
       setSuccess(true);
       setTitle("");
