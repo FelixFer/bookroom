@@ -34,6 +34,11 @@ export const POST = async (request: Request) => {
       ? (body.status as ReadingStatus)
       : "PLAN_TO_READ";
 
+  const bookmarkSlot =
+    "bookmarkSlot" in body && typeof body.bookmarkSlot === "number"
+      ? body.bookmarkSlot
+      : null;
+
   // Find existing book or create a new one
   let book = await prisma.book.findFirst({
     where: {
@@ -57,10 +62,11 @@ export const POST = async (request: Request) => {
     );
 
   const userBook = await prisma.userBook.create({
-    data: { userId: session.user.id, bookId: book.id, status },
+    data: { userId: session.user.id, bookId: book.id, status, bookmarkSlot },
     select: {
       id: true,
       status: true,
+      bookmarkSlot: true,
       rating: true,
       notes: true,
       favorite: true,
@@ -76,6 +82,7 @@ export const POST = async (request: Request) => {
     author: userBook.book.author,
     coverUrl: userBook.book.coverUrl,
     status: userBook.status,
+    bookmarkSlot: userBook.bookmarkSlot,
     rating: userBook.rating,
     notes: userBook.notes,
     favorite: userBook.favorite,

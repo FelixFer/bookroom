@@ -16,7 +16,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
   const [author, setAuthor] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [status, setStatus] = useState("PLAN_TO_READ");
-  const [bookmark, setBookmark] = useState("");
+  const [bookmark, setBookmark] = useState<number | null>(null);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -126,10 +126,10 @@ export const AddBookPanel = ({ onClose }: Props) => {
         Bookmark
         <select
           className="form-input"
-          value={status}
-          onChange={(e) => setBookmark(e.target.value)}
-          disabled={bookmarks.length === 0}
+          value={bookmark ?? ""}
+          onChange={(e) => setBookmark(e.target.value ? Number(e.target.value) : null)}
         >
+          <option value="">— No tag —</option>
           {bookmarks.map((b, i) => (
             <option key={i} value={b.slot}>
               {b.label}

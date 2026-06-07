@@ -50,6 +50,7 @@ model UserBook {
   userId    String
   bookId    String
   status    ReadingStatus @default(PLAN_TO_READ)
+  bookmarkSlot  Int?
   rating    Int?          // 1-5
   notes     String?
   favorite  Boolean       @default(false)

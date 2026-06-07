@@ -26,7 +26,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
   const [rating, setRating] = useState<number | null>(null);
   const [notes, setNotes] = useState("");
   const [favorite, setFavorite] = useState(false);
-  const [bookmark, setBookmark] = useState("");
+  const [bookmark, setBookmark] = useState<number | null>(null);
   const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +62,14 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
+
+  useEffect(() => {
+    getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
+      .then(res => {
+        setBookmarks(res.data)
+      })
+      .catch(console.error)
+  }, [])
 
   if (!open) return null;
 
@@ -102,14 +110,6 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
-      .then(res => {
-        setBookmarks(res.data)
-      })
-      .catch(console.error)
-  }, [])
 
   return (
     <>
@@ -195,10 +195,10 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
             Bookmark
             <select
               className="form-input"
-              value={status}
-              onChange={(e) => setBookmark(e.target.value)}
-              disabled={bookmarks.length === 0}
+              value={bookmark ?? ""}
+              onChange={(e) => setBookmark(e.target.value ? Number(e.target.value) : null)}
             >
+              <option value="">— No tag —</option>
               {bookmarks.map((b, i) => (
                 <option key={i} value={b.slot}>
                   {b.label}

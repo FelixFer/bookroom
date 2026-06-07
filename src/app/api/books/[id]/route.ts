@@ -37,6 +37,7 @@ export const PATCH = async (request: Request, { params }: Params) => {
     select: {
       id: true,
       status: true,
+      bookmarkSlot: true,
       rating: true,
       notes: true,
       favorite: true,
@@ -52,6 +53,7 @@ export const PATCH = async (request: Request, { params }: Params) => {
     author: updated.book.author,
     coverUrl: updated.book.coverUrl,
     status: updated.status,
+    bookmarkSlot: updated.bookmarkSlot,
     rating: updated.rating,
     notes: updated.notes,
     favorite: updated.favorite,

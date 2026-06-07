@@ -7,6 +7,7 @@ export type UserBookItem = {
   author: string | null;
   coverUrl: string | null;
   status: ReadingStatus;
+  bookmarkSlot: number | null;
   rating: number | null;
   notes: string | null;
   favorite: boolean;
