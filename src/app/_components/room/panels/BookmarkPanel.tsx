@@ -24,6 +24,7 @@ type BookmarkKey = (typeof BOOKMARK_KEYS)[number];
 
 export const BookmarkPanel = () => {
   const [loading, setLoading] = useState(false);
+  const [erasing, setErasing] = useState(false);
   const [focusIndex, setFocusIndex] = useState<BookmarkKey | null>(null);
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [bookmarks, setBookmarks] = useState<Record<BookmarkKey, string>>({
@@ -54,18 +55,9 @@ export const BookmarkPanel = () => {
   return (
     <div className="bookmark-panel">
       <div className="mb-4">
-        <p className="pr-4 text-right text-xs text-[#6b5030] dark:text-[#cdb892]">
+        <p className="pr-4 text-xs text-[#6b5030] dark:text-[#cdb892]">
           These bookmarks appear as small ribbons on your books.
         </p>
-      </div>
-      <div className="flex justify-end mb-2 pr-4">
-        <Button
-          variant="link"
-          className="text-[#6b5030] dark:text-[#e8d5b0]"
-          onClick={clearBookmarks}
-        >
-          Clear All
-        </Button>
       </div>
       <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
         {BOOKMARK_KEYS.map((i) => (
@@ -101,14 +93,27 @@ export const BookmarkPanel = () => {
             />
           </div>
         ))}
-        <Button
-          type="submit"
-          variant="primary"
-          loading={loading}
-          className="mr-4"
-        >
-          Save Changes
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            type="submit"
+            variant="primary"
+            loading={loading}
+            className="flex-1"
+          >
+            Save Changes
+          </Button>
+          <button
+            type="button"
+            className={`eraser-btn${erasing ? " eraser-btn--wiping" : ""}`}
+            onClick={() => {
+              if (erasing) return;
+              setErasing(true);
+              clearBookmarks();
+            }}
+            onAnimationEnd={() => setErasing(false)}
+            aria-label="Clear all bookmarks"
+          >🗑️</button>
+        </div>
         {loading && <LoaderOverlay />}
       </form>
     </div>

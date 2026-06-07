@@ -423,6 +423,45 @@
   animation: bookmark-click 0.3s ease-in-out forwards;
 }
 
+// ─── Eraser clear button ──────────────────────────────────────────────────────
+
+.eraser-btn {
+  flex-shrink: 0;
+  width: 36px;
+  height: 40px;
+  background: #e8a598;
+  border-right: 10px solid #ededed;
+  border-top-left-radius: 12px;
+  border-bottom-left-radius: 12px;
+  cursor: pointer;
+  filter: brightness(1);
+  transition: filter 0.15s;
+
+  &:hover {
+    filter: brightness(1.2);
+  }
+}
+
+@keyframes eraser-wipe {
+  0% {
+    width: 36px;
+  }
+  40% {
+    width: 44px;
+  }
+  100% {
+    width: 36px;
+  }
+}
+
+.eraser-btn--wiping {
+  animation: eraser-wipe 0.4s ease-in-out forwards;
+}
+
+:where(.dark, .dark *) .eraser-btn {
+  background: #c47a6e;
+}
+
 // ─── Floating sign-out button ─────────────────────────────────────────────────
 
 .room-signout-group {
