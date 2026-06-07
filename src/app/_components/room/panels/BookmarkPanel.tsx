@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { LoaderOverlay } from "@/app/_components/Loader";
 import { Button } from "@/app/_components/Button";
+import { getJson, putJson } from "@/lib/api";
 
 const BOOKMARK_KEYS = ["first", "second", "third", "fourth", "fifth"] as const;
 const PLACEHOLDERS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
@@ -22,7 +23,11 @@ const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
 
 type BookmarkKey = (typeof BOOKMARK_KEYS)[number];
 
-export const BookmarkPanel = () => {
+type Props = {
+  isOpen: boolean;
+};
+
+export const BookmarkPanel = ({ isOpen }: Props) => {
   const [loading, setLoading] = useState(false);
   const [erasing, setErasing] = useState(false);
   const [focusIndex, setFocusIndex] = useState<BookmarkKey | null>(null);
@@ -49,8 +54,36 @@ export const BookmarkPanel = () => {
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(bookmarks);
+    const data = BOOKMARK_KEYS.map((key, i) => ({
+      slot: i + 1,
+      label: bookmarks[key],
+    }));
+    setLoading(true);
+    try {
+      await putJson("/api/room/bookmarks", data);
+    } catch (err: unknown) {
+      err instanceof Error ? console.error(err.message) : "Something went wrong";
+    } finally {
+      setLoading(false);
+    };
   };
+
+  useEffect(() => {
+    const map = { first: "", second: "", third: "", fourth: "", fifth: "" };
+    if (!isOpen) {
+      setBookmarks(map)
+      return
+    }
+    getJson<{ data: { slot: number; label: string | null }[] }>("/api/room/bookmarks")
+      .then(res => {
+        for (const b of res.data) {
+          const key = BOOKMARK_KEYS[b.slot - 1];
+          if (key) map[key] = b.label ?? "";
+        }
+        setBookmarks(map);
+      })
+      .catch(console.error)
+  }, [isOpen])
 
   return (
     <div className="bookmark-panel">

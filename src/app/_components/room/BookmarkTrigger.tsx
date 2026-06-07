@@ -6,10 +6,9 @@ import { BookmarkPanel } from "./panels/BookmarkPanel";
 
 type Props = {
   classname?: string;
-  onClick?: () => void;
 };
 
-export const BookMarkTrigger = ({ classname, onClick }: Props) => {
+export const BookMarkTrigger = ({ classname }: Props) => {
   const [animating, setAnimating] = useState(false);
   const [showPanel, setShowPanel] = useState(false);
 
@@ -32,7 +31,7 @@ export const BookMarkTrigger = ({ classname, onClick }: Props) => {
         title="Bookmarks"
         onClose={() => setShowPanel(false)}
       >
-        <BookmarkPanel />
+        <BookmarkPanel isOpen={showPanel} />
       </RoomDrawer>
     </>
   );
