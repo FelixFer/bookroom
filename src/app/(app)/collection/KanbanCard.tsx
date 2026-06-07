@@ -42,6 +42,7 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
       <div
         {...listeners}
         {...attributes}
+        suppressHydrationWarning
         className="flex cursor-grab items-start pt-0.5 active:cursor-grabbing"
         style={{ color: "var(--kanban-muted)" }}
         aria-label="Drag"
