@@ -3,10 +3,11 @@
 import { useState } from "react";
 
 type Props = {
+  classname?: string;
   onClick?: () => void;
 };
 
-export const BookMarkTrigger = ({ onClick }: Props) => {
+export const BookMarkTrigger = ({ classname, onClick }: Props) => {
   const [animating, setAnimating] = useState(false);
 
   function handleClick() {
@@ -17,7 +18,7 @@ export const BookMarkTrigger = ({ onClick }: Props) => {
 
   return (
     <button
-      className={`bookmark${animating ? " bookmark--clicked" : ""}`}
+      className={`bookmark${animating ? " bookmark--clicked" : ""} ${classname}`}
       onClick={handleClick}
       onAnimationEnd={() => setAnimating(false)}
       aria-label="Open bookmarks"

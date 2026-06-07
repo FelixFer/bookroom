@@ -1,7 +1,6 @@
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "@/auth";
-import { RoomSignOutButton } from "@/app/_components/room/RoomSignOutButton";
-import { BookMarkTrigger } from "@/app/_components/room/BookmarkTrigger";
+import { RoomNav } from "@/app/_components/room/RoomNav";
 
 export default async function AppLayout({
   children,
@@ -13,12 +12,7 @@ export default async function AppLayout({
 
   return (
     <>
-      {session && (
-        <div>
-          <BookMarkTrigger />
-          <RoomSignOutButton userName={userName} />
-        </div>
-      )}
+      {session && <RoomNav userName={userName} />}
       {children}
     </>
   );

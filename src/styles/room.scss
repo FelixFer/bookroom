@@ -352,12 +352,12 @@
 // ─── Bookmark ─────────────────────────────────────────────────────────────────
 
 .bookmark {
-  width: 48px;
+  width: 40px;
   height: 68px;
   background: #3d2e1a;
   position: fixed;
   top: -18px;
-  left: 24px;
+  right: 240px;
   z-index: 30;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
   cursor: pointer;
@@ -366,12 +366,12 @@
   transition: filter 0.15s;
 
   &::before {
-    content: "Label";
-    font-size: 12px;
+    content: "栞";
+    font-size: 16px;
     padding-top: 16px;
     position: absolute;
     inset: 5px 5px 9px 5px;
-    background: #fdf8f0;
+    background: #c4a878;
     clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
   }
 
