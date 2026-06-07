@@ -88,7 +88,7 @@ export default function AboutBookModal() {
         aria-label="About Bookroom"
         title="About Bookroom"
       >
-        <Image src="/icon/blue-book.svg" alt="About" width={52} height={52} />
+        <Image src="/icon/blue-book.svg" alt="About" loading="eager" width={52} height={52} />
       </button>
 
       {isOpen && (

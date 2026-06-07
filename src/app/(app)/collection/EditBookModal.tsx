@@ -64,12 +64,11 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
   }, [open, onClose]);
 
   useEffect(() => {
+    if (!open) return;
     getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
-      .then(res => {
-        setBookmarks(res.data)
-      })
-      .catch(console.error)
-  }, [])
+      .then(res => setBookmarks(res.data))
+      .catch(console.error);
+  }, [open]);
 
   if (!open) return null;
 
