@@ -3,13 +3,19 @@ import { prisma } from "@/lib/prisma";
 import { getServerSession } from "next-auth"
 import { NextResponse } from "next/server"
 
-export const GET = async () => {
+export const GET = async (request: Request) => {
   const session = await getServerSession(authOptions);
   if (!session?.user?.id)
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
+  const { searchParams } = new URL(request.url)
+  const labeledOnly = searchParams.get("labeled") === "true";
+
   const bookmarks = await prisma.bookmark.findMany({
-    where: { userId: session.user.id },
+    where: {
+      userId: session.user.id,
+      ...(labeledOnly && { label: { not: null } })
+    },
     select: { slot: true, label: true },
     orderBy: { slot: "asc" },
   });

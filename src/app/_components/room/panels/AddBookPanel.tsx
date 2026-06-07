@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
-import { postJson } from "@/lib/api";
+import { useEffect, useState } from "react";
+import { getJson, postJson } from "@/lib/api";
 import { STATUS_LABELS, STATUS_ORDER } from "@/types/book";
 import { Button } from "@/app/_components/Button";
 import { LoaderOverlay } from "@/app/_components/Loader";
+import { TBookMark } from "./BookmarkPanel";
 
 type Props = {
   onClose: () => void;
@@ -15,6 +16,8 @@ export const AddBookPanel = ({ onClose }: Props) => {
   const [author, setAuthor] = useState("");
   const [coverUrl, setCoverUrl] = useState("");
   const [status, setStatus] = useState("PLAN_TO_READ");
+  const [bookmark, setBookmark] = useState("");
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
@@ -33,6 +36,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
         author: author.trim() || undefined,
         coverUrl: coverUrl.trim() || undefined,
         status,
+        bookmark,
       });
       setSuccess(true);
       setTitle("");
@@ -45,6 +49,14 @@ export const AddBookPanel = ({ onClose }: Props) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
+      .then(res => {
+        setBookmarks(res.data)
+      })
+      .catch(console.error)
+  }, [])
 
   if (success) {
     return (
@@ -105,6 +117,22 @@ export const AddBookPanel = ({ onClose }: Props) => {
           {STATUS_ORDER.map((s) => (
             <option key={s} value={s}>
               {STATUS_LABELS[s]}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label className="form-label">
+        Bookmark
+        <select
+          className="form-input"
+          value={status}
+          onChange={(e) => setBookmark(e.target.value)}
+          disabled={bookmarks.length === 0}
+        >
+          {bookmarks.map((b, i) => (
+            <option key={i} value={b.slot}>
+              {b.label}
             </option>
           ))}
         </select>

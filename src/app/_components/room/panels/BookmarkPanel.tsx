@@ -23,6 +23,11 @@ const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
 
 type BookmarkKey = (typeof BOOKMARK_KEYS)[number];
 
+export type TBookMark = {
+  slot: number;
+  label: string | null;
+}
+
 type Props = {
   isOpen: boolean;
 };
@@ -74,7 +79,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
       setBookmarks(map)
       return
     }
-    getJson<{ data: { slot: number; label: string | null }[] }>("/api/room/bookmarks")
+    getJson<{ data: TBookMark[] }>("/api/room/bookmarks")
       .then(res => {
         for (const b of res.data) {
           const key = BOOKMARK_KEYS[b.slot - 1];

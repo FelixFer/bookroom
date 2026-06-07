@@ -1,11 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { postJson, patchJson } from "@/lib/api";
+import { postJson, patchJson, getJson } from "@/lib/api";
 import type { UserBookItem } from "@/types/book";
 import { STATUS_LABELS, STATUS_ORDER } from "@/types/book";
 import { Button } from "@/app/_components/Button";
 import { LoaderOverlay } from "@/app/_components/Loader";
+import { TBookMark } from "@/app/_components/room/panels/BookmarkPanel";
 
 type Props = {
   book: UserBookItem | "new" | null; // null = closed, "new" = create mode
@@ -25,6 +26,8 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
   const [rating, setRating] = useState<number | null>(null);
   const [notes, setNotes] = useState("");
   const [favorite, setFavorite] = useState(false);
+  const [bookmark, setBookmark] = useState("");
+  const [bookmarks, setBookmarks] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -78,6 +81,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
           author: author.trim() || undefined,
           coverUrl: coverUrl.trim() || undefined,
           status,
+          bookmark,
         });
       } else {
         result = await patchJson<UserBookItem>(`/api/books/${book.id}`, {
@@ -85,6 +89,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
           rating,
           notes: notes.trim() || null,
           favorite,
+          bookmark,
         });
       }
       onSaved(result);
@@ -97,6 +102,14 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
+      .then(res => {
+        setBookmarks(res.data)
+      })
+      .catch(console.error)
+  }, [])
 
   return (
     <>
@@ -117,7 +130,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
         {/* Header */}
         <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
           <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {isNew ? "Add book" : "Edit book"}
+            {isNew ? "ADD BOOK" : "EDIT BOOK"}
           </h2>
           <Button variant="icon" onClick={onClose} aria-label="Close">✕</Button>
         </div>
@@ -173,6 +186,22 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
               {STATUS_ORDER.map((s) => (
                 <option key={s} value={s}>
                   {STATUS_LABELS[s]}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="form-label">
+            Bookmark
+            <select
+              className="form-input"
+              value={status}
+              onChange={(e) => setBookmark(e.target.value)}
+              disabled={bookmarks.length === 0}
+            >
+              {bookmarks.map((b, i) => (
+                <option key={i} value={b.slot}>
+                  {b.label}
                 </option>
               ))}
             </select>
