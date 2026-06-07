@@ -21,7 +21,7 @@ export const DiscoverPanel = () => {
   // Track per-book state: "idle" | "adding" | "added" | "owned"
   const [bookState, setBookState] = useState<Record<string, "adding" | "added" | "owned">>({});
 
-  const search = async (e: React.FormEvent) => {
+  const search = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!query.trim()) return;
     setError(null);

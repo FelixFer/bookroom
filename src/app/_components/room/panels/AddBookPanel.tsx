@@ -19,7 +19,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!title.trim()) {
       setError("Title is required");
