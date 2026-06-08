@@ -1,44 +1,44 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { getApiErrorMessage, postJson } from "@/lib/api";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
+import { useState } from 'react'
+import { getApiErrorMessage, postJson } from '@/lib/api'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 export default function ForgotPasswordPage() {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [resetUrl, setResetUrl] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [email, setEmail] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [resetUrl, setResetUrl] = useState<string | null>(null)
+  const [done, setDone] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   return (
     <div className="page-center">
       <div className="auth-card">
         <h1 className="page-title">Reset password</h1>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Enter your email and we'll generate a reset link.
+          Enter your email and we&apos;ll generate a reset link.
         </p>
 
         <form
           className="auth-form"
           onSubmit={async (e) => {
-            e.preventDefault();
-            setLoading(true);
-            setError(null);
-            setResetUrl(null);
+            e.preventDefault()
+            setLoading(true)
+            setError(null)
+            setResetUrl(null)
 
             try {
               const data = await postJson<{ ok: true; resetUrl?: string }>(
-                "/api/auth/password/forgot",
+                '/api/auth/password/forgot',
                 { email },
-              );
-              setDone(true);
-              if (data?.resetUrl) setResetUrl(data.resetUrl);
+              )
+              setDone(true)
+              if (data?.resetUrl) setResetUrl(data.resetUrl)
             } catch (err) {
-              setError(getApiErrorMessage(err, "Failed to request reset link"));
+              setError(getApiErrorMessage(err, 'Failed to request reset link'))
             } finally {
-              setLoading(false);
+              setLoading(false)
             }
           }}
         >
@@ -76,5 +76,5 @@ export default function ForgotPasswordPage() {
         ) : null}
       </div>
     </div>
-  );
+  )
 }

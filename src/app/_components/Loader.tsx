@@ -1,6 +1,6 @@
-"use client";
+'use client'
 
-import { createPortal } from "react-dom";
+import { createPortal } from 'react-dom'
 
 export function LoaderDots() {
   return (
@@ -9,11 +9,11 @@ export function LoaderDots() {
       <span>■</span>
       <span>■</span>
     </span>
-  );
+  )
 }
 
 export function LoaderOverlay() {
-  if (typeof document === "undefined") return null;
+  if (typeof document === 'undefined') return null
   return createPortal(
     <div className="loader-overlay" aria-hidden="true">
       <div className="loader-overlay__box">
@@ -21,5 +21,5 @@ export function LoaderOverlay() {
       </div>
     </div>,
     document.body,
-  );
+  )
 }

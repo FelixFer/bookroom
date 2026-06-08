@@ -1,10 +1,10 @@
-"use client";
+'use client'
 
-import { useDraggable } from "@dnd-kit/core";
-import { CSS } from "@dnd-kit/utilities";
-import { deleteJson } from "@/lib/api";
-import type { UserBookItem } from "@/types/book";
-import { Button } from "@/app/_components/Button";
+import { useDraggable } from '@dnd-kit/core'
+import { CSS } from '@dnd-kit/utilities'
+import { deleteJson } from '@/lib/api'
+import type { UserBookItem } from '@/types/book'
+import { Button } from '@/app/_components/Button'
 
 type Props = {
   book: UserBookItem;
@@ -14,27 +14,27 @@ type Props = {
 
 export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
-    useDraggable({ id: book.id });
+    useDraggable({ id: book.id })
 
   const style = {
     transform: CSS.Translate.toString(transform),
     opacity: isDragging ? 0 : 1,
-  };
+  }
 
   const handleDelete = async () => {
-    if (!window.confirm(`Remove "${book.title}" from your collection?`)) return;
-    await deleteJson(`/api/books/${book.id}`);
-    onDeleted(book.id);
-  };
+    if (!window.confirm(`Remove "${book.title}" from your collection?`)) return
+    await deleteJson(`/api/books/${book.id}`)
+    onDeleted(book.id)
+  }
 
   return (
     <div
       ref={setNodeRef}
       style={{
         ...style,
-        backgroundColor: "var(--kanban-card-bg)",
-        borderColor: "var(--kanban-border)",
-        boxShadow: "2px 2px 0 var(--kanban-shadow)",
+        backgroundColor: 'var(--kanban-card-bg)',
+        borderColor: 'var(--kanban-border)',
+        boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
       className="group relative flex gap-2 border p-2.5"
     >
@@ -44,7 +44,7 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
         {...attributes}
         suppressHydrationWarning
         className="flex cursor-grab items-start pt-0.5 active:cursor-grabbing"
-        style={{ color: "var(--kanban-muted)" }}
+        style={{ color: 'var(--kanban-muted)' }}
         aria-label="Drag"
       >
         ⠿
@@ -61,7 +61,7 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
       ) : (
         <div
           className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
-          style={{ backgroundColor: "var(--kanban-card-placeholder)" }}
+          style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
         >
           📖
         </div>
@@ -71,22 +71,22 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
       <div className="min-w-0 flex-1">
         <p
           className="line-clamp-2 text-sm font-medium leading-tight"
-          style={{ color: "var(--kanban-text)" }}
+          style={{ color: 'var(--kanban-text)' }}
         >
           {book.title}
         </p>
         {book.author && (
           <p
             className="mt-0.5 truncate text-xs"
-            style={{ color: "var(--kanban-muted)" }}
+            style={{ color: 'var(--kanban-muted)' }}
           >
             {book.author}
           </p>
         )}
         {book.rating && (
           <p className="mt-1 text-xs text-amber-500">
-            {"★".repeat(book.rating)}
-            {"☆".repeat(5 - book.rating)}
+            {'★'.repeat(book.rating)}
+            {'☆'.repeat(5 - book.rating)}
           </p>
         )}
         {book.favorite && (
@@ -100,45 +100,45 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
         <Button variant="icon-danger" size="sm" onClick={handleDelete} aria-label="Delete">✕</Button>
       </div>
     </div>
-  );
-};
+  )
+}
 
 export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => (
   <div
     className="flex w-64 gap-2 border p-2.5"
     style={{
-      backgroundColor: "var(--kanban-card-bg)",
-      borderColor: "var(--kanban-amber)",
-      outline: "2px solid var(--kanban-amber)",
-      boxShadow: "3px 3px 0 var(--kanban-rod)",
+      backgroundColor: 'var(--kanban-card-bg)',
+      borderColor: 'var(--kanban-amber)',
+      outline: '2px solid var(--kanban-amber)',
+      boxShadow: '3px 3px 0 var(--kanban-rod)',
     }}
   >
-    <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: "var(--kanban-muted)" }}>⠿</div>
+    <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: 'var(--kanban-muted)' }}>⠿</div>
     {book.coverUrl ? (
       // eslint-disable-next-line @next/next/no-img-element
       <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 object-cover" />
     ) : (
       <div
         className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
-        style={{ backgroundColor: "var(--kanban-card-placeholder)" }}
+        style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
       >
         📖
       </div>
     )}
     <div className="min-w-0 flex-1">
-      <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: "var(--kanban-text)" }}>
+      <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: 'var(--kanban-text)' }}>
         {book.title}
       </p>
       {book.author && (
-        <p className="mt-0.5 truncate text-xs" style={{ color: "var(--kanban-muted)" }}>
+        <p className="mt-0.5 truncate text-xs" style={{ color: 'var(--kanban-muted)' }}>
           {book.author}
         </p>
       )}
       {book.rating && (
         <p className="mt-1 text-xs text-amber-500">
-          {"★".repeat(book.rating)}{"☆".repeat(5 - book.rating)}
+          {'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}
         </p>
       )}
     </div>
   </div>
-);
+)

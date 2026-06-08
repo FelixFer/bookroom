@@ -1,27 +1,27 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { RoomDrawer } from "./RoomDrawer";
-import { BookmarkPanel } from "./panels/BookmarkPanel";
+import { useState } from 'react'
+import { RoomDrawer } from './RoomDrawer'
+import { BookmarkPanel } from './panels/BookmarkPanel'
 
 type Props = {
   classname?: string;
 };
 
 export const BookMarkTrigger = ({ classname }: Props) => {
-  const [animating, setAnimating] = useState(false);
-  const [showPanel, setShowPanel] = useState(false);
+  const [animating, setAnimating] = useState(false)
+  const [showPanel, setShowPanel] = useState(false)
 
   function handleClick() {
-    if (animating) return;
-    setAnimating(true);
-    setShowPanel(true);
+    if (animating) return
+    setAnimating(true)
+    setShowPanel(true)
   }
 
   return (
     <>
       <button
-        className={`bookmark${animating ? " bookmark--clicked" : ""} ${classname}`}
+        className={`bookmark${animating ? ' bookmark--clicked' : ''} ${classname}`}
         onClick={handleClick}
         onAnimationEnd={() => setAnimating(false)}
         aria-label="Open bookmarks"
@@ -34,5 +34,5 @@ export const BookMarkTrigger = ({ classname }: Props) => {
         <BookmarkPanel isOpen={showPanel} />
       </RoomDrawer>
     </>
-  );
-};
+  )
+}

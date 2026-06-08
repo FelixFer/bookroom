@@ -1,19 +1,19 @@
-"use client";
+'use client'
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { Suspense, useState } from "react";
-import { getApiErrorMessage, postJson } from "@/lib/api";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
+import { useRouter, useSearchParams } from 'next/navigation'
+import { Suspense, useState } from 'react'
+import { getApiErrorMessage, postJson } from '@/lib/api'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 function ResetPasswordForm() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
-  const token = searchParams.get("token") ?? "";
+  const router = useRouter()
+  const searchParams = useSearchParams()
+  const token = searchParams.get('token') ?? ''
 
-  const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [password, setPassword] = useState('')
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
 
   return (
     <div className="page-center">
@@ -23,19 +23,19 @@ function ResetPasswordForm() {
         <form
           className="auth-form"
           onSubmit={async (e) => {
-            e.preventDefault();
-            setError(null);
-            setLoading(true);
+            e.preventDefault()
+            setError(null)
+            setLoading(true)
             try {
-              await postJson<{ ok: true }>("/api/auth/password/reset", {
+              await postJson<{ ok: true }>('/api/auth/password/reset', {
                 token,
                 password,
-              });
-              router.push("/");
+              })
+              router.push('/')
             } catch (err) {
-              setError(getApiErrorMessage(err, "Failed to reset password"));
+              setError(getApiErrorMessage(err, 'Failed to reset password'))
             } finally {
-              setLoading(false);
+              setLoading(false)
             }
           }}
         >
@@ -64,7 +64,7 @@ function ResetPasswordForm() {
         {loading && <LoaderOverlay />}
       </div>
     </div>
-  );
+  )
 }
 
 export default function ResetPasswordPage() {
@@ -72,5 +72,5 @@ export default function ResetPasswordPage() {
     <Suspense>
       <ResetPasswordForm />
     </Suspense>
-  );
+  )
 }

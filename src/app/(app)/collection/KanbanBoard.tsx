@@ -1,92 +1,92 @@
-"use client";
+'use client'
 
-import { useState, useCallback, useEffect } from "react";
-import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
-import { KanbanColumn } from "./KanbanColumn";
-import { KanbanCardOverlay } from "./KanbanCard";
-import { EditBookModal } from "./EditBookModal";
-import { patchJson, getJson } from "@/lib/api";
-import type { UserBookItem } from "@/types/book";
-import { STATUS_ORDER } from "@/types/book";
-import type { ReadingStatus } from "@/generated/prisma/enums";
-import { Button } from "@/app/_components/Button";
+import { useState, useCallback, useEffect } from 'react'
+import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
+import { KanbanColumn } from './KanbanColumn'
+import { KanbanCardOverlay } from './KanbanCard'
+import { EditBookModal } from './EditBookModal'
+import { patchJson, getJson } from '@/lib/api'
+import type { UserBookItem } from '@/types/book'
+import { STATUS_ORDER } from '@/types/book'
+import type { ReadingStatus } from '@/generated/prisma/enums'
+import { Button } from '@/app/_components/Button'
 
 export const KanbanBoard = () => {
-  const [books, setBooks] = useState<UserBookItem[]>([]);
-  const [editTarget, setEditTarget] = useState<UserBookItem | "new" | null>(null);
-  const [search, setSearch] = useState("");
-  const [activeBook, setActiveBook] = useState<UserBookItem | null>(null);
+  const [books, setBooks] = useState<UserBookItem[]>([])
+  const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)
+  const [search, setSearch] = useState('')
+  const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
 
   useEffect(() => {
-    getJson<{ books: UserBookItem[] }>("/api/room/books")
+    getJson<{ books: UserBookItem[] }>('/api/room/books')
       .then((res) => setBooks(res.books))
-      .catch(console.error);
-  }, []);
+      .catch(console.error)
+  }, [])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
     useSensor(TouchSensor, { activationConstraint: { delay: 200, tolerance: 8 } }),
-  );
+  )
 
   const handleDragStart = useCallback(
     (event: DragStartEvent) => {
-      const book = books.find((b) => b.id === event.active.id);
-      setActiveBook(book ?? null);
+      const book = books.find((b) => b.id === event.active.id)
+      setActiveBook(book ?? null)
     },
     [books],
-  );
+  )
 
   const handleDragEnd = useCallback(
     async (event: DragEndEvent) => {
-      const { active, over } = event;
-      if (!over) return;
+      const { active, over } = event
+      if (!over) return
 
-      const bookId = active.id as string;
-      const newStatus = over.id as ReadingStatus;
-      const book = books.find((b) => b.id === bookId);
-      if (!book || book.status === newStatus) return;
+      const bookId = active.id as string
+      const newStatus = over.id as ReadingStatus
+      const book = books.find((b) => b.id === bookId)
+      if (!book || book.status === newStatus) return
 
       setBooks((prev) =>
         prev.map((b) => (b.id === bookId ? { ...b, status: newStatus } : b)),
-      );
+      )
 
-      setActiveBook(null);
+      setActiveBook(null)
 
       try {
-        await patchJson(`/api/books/${bookId}`, { status: newStatus });
+        await patchJson(`/api/books/${bookId}`, { status: newStatus })
       } catch {
         // Revert on failure
         setBooks((prev) =>
           prev.map((b) => (b.id === bookId ? { ...b, status: book.status } : b)),
-        );
+        )
       }
     },
     [books],
-  );
+  )
 
   const handleSaved = useCallback((saved: UserBookItem) => {
     setBooks((prev) => {
-      const exists = prev.some((b) => b.id === saved.id);
+      const exists = prev.some((b) => b.id === saved.id)
       return exists
         ? prev.map((b) => (b.id === saved.id ? saved : b))
-        : [saved, ...prev];
-    });
-  }, []);
+        : [saved, ...prev]
+    })
+  }, [])
 
   const handleDeleted = useCallback((id: string) => {
-    setBooks((prev) => prev.filter((b) => b.id !== id));
-  }, []);
+    setBooks((prev) => prev.filter((b) => b.id !== id))
+  }, [])
 
   const filtered = search
     ? books.filter(
       (b) =>
         b.title.toLowerCase().includes(search.toLowerCase()) ||
-        (b.author ?? "").toLowerCase().includes(search.toLowerCase()),
+        (b.author ?? '').toLowerCase().includes(search.toLowerCase()),
     )
-    : books;
+    : books
 
   const byStatus = (status: ReadingStatus) =>
-    filtered.filter((b) => b.status === status);
+    filtered.filter((b) => b.status === status)
 
   return (
     <div className="relative flex min-h-screen flex-col">
@@ -103,11 +103,11 @@ export const KanbanBoard = () => {
       {/* Header */}
       <div
         className="flex flex-wrap items-center gap-3 border-b px-4 py-3"
-        style={{ backgroundColor: "var(--kanban-header-bg)", borderColor: "var(--kanban-border)" }}
+        style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
       >
         <Button href="/" variant="secondary">← Room</Button>
 
-        <h1 className="text-base font-semibold" style={{ color: "var(--kanban-text)" }}>
+        <h1 className="text-base font-semibold" style={{ color: 'var(--kanban-text)' }}>
           My Collection
         </h1>
       </div>
@@ -121,7 +121,7 @@ export const KanbanBoard = () => {
           onChange={(e) => setSearch(e.target.value)}
         />
 
-        <Button variant="primary" onClick={() => setEditTarget("new")}>+ Add Book</Button>
+        <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
       </div>
 
       {/* Board */}
@@ -143,18 +143,19 @@ export const KanbanBoard = () => {
       </DndContext>
 
       {/* Total count */}
-      <div className="px-4 py-2 text-xs" style={{ color: "var(--kanban-muted)" }}>
-        {books.length} book{books.length !== 1 ? "s" : ""} in your collection
+      <div className="px-4 py-2 text-xs" style={{ color: 'var(--kanban-muted)' }}>
+        {books.length} book{books.length !== 1 ? 's' : ''} in your collection
         {search && ` · ${filtered.length} matching "${search}"`}
       </div>
 
       {/* Add/Edit modal */}
       <EditBookModal
+        key={editTarget === null ? 'closed' : (editTarget === 'new' ? 'new' : `edit-${editTarget.id}`)}
         book={editTarget}
         onClose={() => setEditTarget(null)}
         onSaved={handleSaved}
       />
     </div>
-  );
+  )
 
-};
+}

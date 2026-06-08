@@ -1,28 +1,28 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/auth";
-import { NextResponse } from "next/server";
+import { getServerSession } from 'next-auth/next'
+import { authOptions } from '@/auth'
+import { NextResponse } from 'next/server'
 
 export function ok<T>(data: T, status = 200) {
-  return NextResponse.json(data, { status });
+  return NextResponse.json(data, { status })
 }
 
 export function err(error: string, status = 400) {
-  return NextResponse.json({ error }, { status });
+  return NextResponse.json({ error }, { status })
 }
 
 export async function requireAuth(): Promise<string | null> {
-  const session = await getServerSession(authOptions);
-  return session?.user?.id ?? null;
+  const session = await getServerSession(authOptions)
+  return session?.user?.id ?? null
 }
 
 export async function parseBody<T extends Record<string, unknown>>(
   request: Request,
 ): Promise<{ body: T | null; response: Response | null }> {
-  const raw = (await request.json().catch(() => null)) as unknown;
-  if (!raw || typeof raw !== "object") {
-    return { body: null, response: err("Invalid payload", 400) };
+  const raw = (await request.json().catch(() => null)) as unknown
+  if (!raw || typeof raw !== 'object') {
+    return { body: null, response: err('Invalid payload', 400) }
   }
-  return { body: raw as T, response: null };
+  return { body: raw as T, response: null }
 }
 
 type UserBookWithBook = {
@@ -37,5 +37,5 @@ export function toUserBookItem(ub: UserBookWithBook) {
     coverUrl: ub.book.coverUrl, status: ub.status, bookmarkSlot: ub.bookmarkSlot,
     rating: ub.rating, notes: ub.notes, favorite: ub.favorite,
     updatedAt: ub.updatedAt instanceof Date ? ub.updatedAt.toISOString() : ub.updatedAt,
-  };
+  }
 }

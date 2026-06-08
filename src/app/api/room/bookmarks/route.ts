@@ -1,27 +1,27 @@
-import { prisma } from "@/lib/prisma";
-import { requireAuth, ok, err } from "@/lib/server-utils";
+import { prisma } from '@/lib/prisma'
+import { requireAuth, ok, err } from '@/lib/server-utils'
 
 export const GET = async (request: Request) => {
-  const userId = await requireAuth();
-  if (!userId) return err("Unauthorized", 401);
+  const userId = await requireAuth()
+  if (!userId) return err('Unauthorized', 401)
 
-  const labeledOnly = new URL(request.url).searchParams.get("labeled") === "true";
+  const labeledOnly = new URL(request.url).searchParams.get('labeled') === 'true'
 
   const bookmarks = await prisma.bookmark.findMany({
     where: { userId, ...(labeledOnly && { label: { not: null } }) },
     select: { slot: true, label: true },
-    orderBy: { slot: "asc" },
-  });
+    orderBy: { slot: 'asc' },
+  })
 
-  return ok({ data: bookmarks });
-};
+  return ok({ data: bookmarks })
+}
 
 export const PUT = async (request: Request) => {
-  const userId = await requireAuth();
-  if (!userId) return err("Unauthorized", 401);
+  const userId = await requireAuth()
+  if (!userId) return err('Unauthorized', 401)
 
-  const body = (await request.json().catch(() => null)) as unknown;
-  if (!Array.isArray(body)) return err("Invalid payload", 422);
+  const body = (await request.json().catch(() => null)) as unknown
+  if (!Array.isArray(body)) return err('Invalid payload', 422)
 
   try {
     await Promise.all(
@@ -32,10 +32,10 @@ export const PUT = async (request: Request) => {
           update: { label: label || null },
         }),
       ),
-    );
-    return ok({ message: "Changes Saved" }, 201);
+    )
+    return ok({ message: 'Changes Saved' }, 201)
   } catch (e) {
-    console.error(e);
-    return err("Failed to save bookmarks", 500);
+    console.error(e)
+    return err('Failed to save bookmarks', 500)
   }
-};
+}

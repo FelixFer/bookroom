@@ -1,25 +1,25 @@
-"use client";
+'use client'
 
-import { useState, useRef, useEffect } from "react";
-import { LoaderOverlay } from "@/app/_components/Loader";
-import { Button } from "@/app/_components/Button";
-import { getJson, putJson } from "@/lib/api";
+import { useState, useRef, useEffect } from 'react'
+import { LoaderOverlay } from '@/app/_components/Loader'
+import { Button } from '@/app/_components/Button'
+import { getJson, putJson } from '@/lib/api'
 
-const BOOKMARK_KEYS = ["first", "second", "third", "fourth", "fifth"] as const;
+const BOOKMARK_KEYS = ['first', 'second', 'third', 'fourth', 'fifth'] as const
 const PLACEHOLDERS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
-  first: "Favorites",
-  second: "Classics",
-  third: "Cozy Reads",
-  fourth: "Masterpiece",
-  fifth: "Buy Later",
-};
+  first: 'Favorites',
+  second: 'Classics',
+  third: 'Cozy Reads',
+  fourth: 'Masterpiece',
+  fifth: 'Buy Later',
+}
 const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
-  first: "#4C7DFF",
-  second: "#3FAF7A",
-  third: "#D94A4A",
-  fourth: "#9C72D9",
-  fifth: "#D9A441",
-};
+  first: '#4C7DFF',
+  second: '#3FAF7A',
+  third: '#D94A4A',
+  fourth: '#9C72D9',
+  fifth: '#D9A441',
+}
 
 type BookmarkKey = (typeof BOOKMARK_KEYS)[number];
 
@@ -33,59 +33,56 @@ type Props = {
 };
 
 export const BookmarkPanel = ({ isOpen }: Props) => {
-  const [loading, setLoading] = useState(false);
-  const [erasing, setErasing] = useState(false);
-  const [focusIndex, setFocusIndex] = useState<BookmarkKey | null>(null);
-  const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
+  const [loading, setLoading] = useState(false)
+  const [erasing, setErasing] = useState(false)
+  const [focusIndex, setFocusIndex] = useState<BookmarkKey | null>(null)
+  const inputRefs = useRef<(HTMLInputElement | null)[]>([])
   const [bookmarks, setBookmarks] = useState<Record<BookmarkKey, string>>({
-    first: "",
-    second: "",
-    third: "",
-    fourth: "",
-    fifth: "",
-  });
+    first: '',
+    second: '',
+    third: '',
+    fourth: '',
+    fifth: '',
+  })
 
   const clearBookmarks = () => {
     setBookmarks((prev) =>
       Object.fromEntries(
-        Object.keys(prev).map((key) => [key, ""])
+        Object.keys(prev).map((key) => [key, ''])
       ) as typeof prev
-    );
-  };
+    )
+  }
 
   const handleBookmarkChange = (key: BookmarkKey, value: string) => {
-    setBookmarks((prev) => ({ ...prev, [key]: value }));
-  };
+    setBookmarks((prev) => ({ ...prev, [key]: value }))
+  }
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     const data = BOOKMARK_KEYS.map((key, i) => ({
       slot: i + 1,
       label: bookmarks[key],
-    }));
-    setLoading(true);
+    }))
+    setLoading(true)
     try {
-      await putJson("/api/room/bookmarks", data);
+      await putJson('/api/room/bookmarks', data)
     } catch (err: unknown) {
-      err instanceof Error ? console.error(err.message) : "Something went wrong";
+      if (err instanceof Error) console.error(err.message)
     } finally {
-      setLoading(false);
-    };
-  };
+      setLoading(false)
+    }
+  }
 
   useEffect(() => {
-    const map = { first: "", second: "", third: "", fourth: "", fifth: "" };
-    if (!isOpen) {
-      setBookmarks(map)
-      return
-    }
-    getJson<{ data: TBookMark[] }>("/api/room/bookmarks")
+    if (!isOpen) return
+    const map = { first: '', second: '', third: '', fourth: '', fifth: '' }
+    getJson<{ data: TBookMark[] }>('/api/room/bookmarks')
       .then(res => {
         for (const b of res.data) {
-          const key = BOOKMARK_KEYS[b.slot - 1];
-          if (key) map[key] = b.label ?? "";
+          const key = BOOKMARK_KEYS[b.slot - 1]
+          if (key) map[key] = b.label ?? ''
         }
-        setBookmarks(map);
+        setBookmarks(map)
       })
       .catch(console.error)
   }, [isOpen])
@@ -102,7 +99,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
           <div key={i} className="flex items-center gap-2">
             <label className="form-label relative flex-1">
               <input
-                ref={(el) => { inputRefs.current[BOOKMARK_KEYS.indexOf(i)] = el; }}
+                ref={(el) => { inputRefs.current[BOOKMARK_KEYS.indexOf(i)] = el }}
                 className="form-input pr-8 w-full"
                 value={bookmarks[i]}
                 onChange={(e) => handleBookmarkChange(i, e.target.value)}
@@ -114,7 +111,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
                 <button
                   type="button"
                   className="absolute right-2 top-1/2 -translate-y-1/2 border-none bg-transparent p-0 leading-none text-rose-400 hover:text-rose-600 dark:text-rose-500 dark:hover:text-rose-300"
-                  onClick={() => handleBookmarkChange(i, "")}
+                  onClick={() => handleBookmarkChange(i, '')}
                   aria-label={`Clear ${PLACEHOLDERS[i]}`}
                 >
                   ✕
@@ -122,11 +119,11 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
               )}
             </label>
             <div
-              className={`bookmark-sideway ${focusIndex === i ? "bookmark-sideway-active" : ""}`}
+              className={`bookmark-sideway ${focusIndex === i ? 'bookmark-sideway-active' : ''}`}
               style={{ background: COLORS[i] }}
               onClick={() => {
-                setFocusIndex(i);
-                inputRefs.current[BOOKMARK_KEYS.indexOf(i)]?.focus();
+                setFocusIndex(i)
+                inputRefs.current[BOOKMARK_KEYS.indexOf(i)]?.focus()
               }}
             />
           </div>
@@ -142,11 +139,11 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
           </Button>
           <button
             type="button"
-            className={`eraser-btn${erasing ? " eraser-btn--wiping" : ""}`}
+            className={`eraser-btn${erasing ? ' eraser-btn--wiping' : ''}`}
             onClick={() => {
-              if (erasing) return;
-              setErasing(true);
-              clearBookmarks();
+              if (erasing) return
+              setErasing(true)
+              clearBookmarks()
             }}
             onAnimationEnd={() => setErasing(false)}
             aria-label="Clear all bookmarks"
@@ -155,5 +152,5 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
         {loading && <LoaderOverlay />}
       </form>
     </div>
-  );
-};
+  )
+}

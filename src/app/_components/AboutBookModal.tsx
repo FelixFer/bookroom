@@ -1,83 +1,79 @@
-"use client";
+'use client'
 
-import { useState, useEffect } from "react";
-import Image from "next/image";
+import { useState } from 'react'
+import Image from 'next/image'
 
 const ROOM_RULES = [
-  "Your collection belongs only to you.",
-  "Reading speed is not a competition.",
-  "Books can be abandoned without guilt.",
-  "Re-reading is always welcome.",
+  'Your collection belongs only to you.',
+  'Reading speed is not a competition.',
+  'Books can be abandoned without guilt.',
+  'Re-reading is always welcome.',
   "Every reader's journey is different.",
-];
+]
 
 const QUOTES = [
-  { text: "A reader lives a thousand lives before he dies.", author: "George R.R. Martin" },
-  { text: "Not all those who wander are lost.", author: "J.R.R. Tolkien" },
-  { text: "So many books, so little time.", author: "Frank Zappa" },
-  { text: "A book is a dream you hold in your hands.", author: "Neil Gaiman" },
-  { text: "One must always be careful of books, and what is inside them.", author: "Cassandra Clare" },
-  { text: "We read to know we are not alone.", author: "C.S. Lewis" },
-  { text: "I am not afraid of storms, for I am learning how to sail my ship.", author: "Louisa May Alcott" },
-  { text: "The more that you read, the more things you will know.", author: "Dr. Seuss" },
-  { text: "A book must be the axe for the frozen sea within us.", author: "Franz Kafka" },
-  { text: "Reading is dreaming with open eyes.", author: "Anissa Trisdianty" },
-  { text: "There is no friend as loyal as a book.", author: "Ernest Hemingway" },
-  { text: "Books are a uniquely portable magic.", author: "Stephen King" },
-  { text: "Never trust anyone who has not brought a book with them.", author: "Lemony Snicket" },
-  { text: "Until I feared I would lose it, I never loved to read. One does not love breathing.", author: "Harper Lee" },
-  { text: "No two persons ever read the same book.", author: "Edmund Wilson" },
-  { text: "Books may well be the only true magic.", author: "Alice Hoffman" },
-  { text: "A room without books is like a body without a soul.", author: "Marcus Tullius Cicero" },
-  { text: "Reading gives us someplace to go when we have to stay where we are.", author: "Mason Cooley" },
-  { text: "I have always imagined that Paradise will be a kind of library.", author: "Jorge Luis Borges" },
-  { text: "Today a reader, tomorrow a leader.", author: "Margaret Fuller" },
-  { text: "Books are mirrors: you only see in them what you already have inside you.", author: "Carlos Ruiz Zafón" },
-  { text: "That's the thing about books. They let you travel without moving your feet.", author: "Jhumpa Lahiri" },
-  { text: "Some books leave us free and some books make us free.", author: "Ralph Waldo Emerson" },
-  { text: "Reading is an exercise in empathy; an exercise in walking in someone else's shoes for a while.", author: "Malorie Blackman" },
-  { text: "One glance at a book and you hear the voice of another person.", author: "Carl Sagan" },
-  { text: "The world belongs to those who read.", author: "Rick Holland" },
+  { text: 'A reader lives a thousand lives before he dies.', author: 'George R.R. Martin' },
+  { text: 'Not all those who wander are lost.', author: 'J.R.R. Tolkien' },
+  { text: 'So many books, so little time.', author: 'Frank Zappa' },
+  { text: 'A book is a dream you hold in your hands.', author: 'Neil Gaiman' },
+  { text: 'One must always be careful of books, and what is inside them.', author: 'Cassandra Clare' },
+  { text: 'We read to know we are not alone.', author: 'C.S. Lewis' },
+  { text: 'I am not afraid of storms, for I am learning how to sail my ship.', author: 'Louisa May Alcott' },
+  { text: 'The more that you read, the more things you will know.', author: 'Dr. Seuss' },
+  { text: 'A book must be the axe for the frozen sea within us.', author: 'Franz Kafka' },
+  { text: 'Reading is dreaming with open eyes.', author: 'Anissa Trisdianty' },
+  { text: 'There is no friend as loyal as a book.', author: 'Ernest Hemingway' },
+  { text: 'Books are a uniquely portable magic.', author: 'Stephen King' },
+  { text: 'Never trust anyone who has not brought a book with them.', author: 'Lemony Snicket' },
+  { text: 'Until I feared I would lose it, I never loved to read. One does not love breathing.', author: 'Harper Lee' },
+  { text: 'No two persons ever read the same book.', author: 'Edmund Wilson' },
+  { text: 'Books may well be the only true magic.', author: 'Alice Hoffman' },
+  { text: 'A room without books is like a body without a soul.', author: 'Marcus Tullius Cicero' },
+  { text: 'Reading gives us someplace to go when we have to stay where we are.', author: 'Mason Cooley' },
+  { text: 'I have always imagined that Paradise will be a kind of library.', author: 'Jorge Luis Borges' },
+  { text: 'Today a reader, tomorrow a leader.', author: 'Margaret Fuller' },
+  { text: 'Books are mirrors: you only see in them what you already have inside you.', author: 'Carlos Ruiz Zafón' },
+  { text: "That's the thing about books. They let you travel without moving your feet.", author: 'Jhumpa Lahiri' },
+  { text: 'Some books leave us free and some books make us free.', author: 'Ralph Waldo Emerson' },
+  { text: "Reading is an exercise in empathy; an exercise in walking in someone else's shoes for a while.", author: 'Malorie Blackman' },
+  { text: 'One glance at a book and you hear the voice of another person.', author: 'Carl Sagan' },
+  { text: 'The world belongs to those who read.', author: 'Rick Holland' },
   // From Bookroom itself
-  { text: "Books wait patiently for the right moment to be opened.", author: "Bookroom" },
-  { text: "Even a short reading session is time well spent.", author: "Bookroom" },
-  { text: "The room is quiet, but the stories are alive.", author: "Bookroom" },
-];
+  { text: 'Books wait patiently for the right moment to be opened.', author: 'Bookroom' },
+  { text: 'Even a short reading session is time well spent.', author: 'Bookroom' },
+  { text: 'The room is quiet, but the stories are alive.', author: 'Bookroom' },
+]
 
 const SOCIAL_LINKS = [
-  { label: "Website", href: "https://felixferdinand.vercel.app" },
-  { label: "GitHub", href: "https://github.com/FelixFer" },
-  { label: "LinkedIn", href: "https://www.linkedin.com/in/felix-frdnnd" },
-  { label: "Instagram", href: "https://www.instagram.com/felferdinand" },
-  { label: "Email", href: "mailto:felixfdnd@gmail.com" },
-];
+  { label: 'Website', href: 'https://felixferdinand.vercel.app' },
+  { label: 'GitHub', href: 'https://github.com/FelixFer' },
+  { label: 'LinkedIn', href: 'https://www.linkedin.com/in/felix-frdnnd' },
+  { label: 'Instagram', href: 'https://www.instagram.com/felferdinand' },
+  { label: 'Email', href: 'mailto:felixfdnd@gmail.com' },
+]
 
 const MOBILE_PAGES = [
-  "cover",
-  "about",
-  "credits",
-  "quote",
-] as const;
+  'cover',
+  'about',
+  'credits',
+  'quote',
+] as const
 
 export default function AboutBookModal() {
-  const [isOpen, setIsOpen] = useState(false);
-  const [openCount, setOpenCount] = useState(0);
-  const [quote, setQuote] = useState(QUOTES[0]);
-  const [mobilePage, setMobilePage] = useState(0);
-
-  useEffect(() => {
-    if (openCount === 0) return;
-    setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
-    setMobilePage(0);
-  }, [openCount]);
+  const [isOpen, setIsOpen] = useState(false)
+  const [openCount, setOpenCount] = useState(0)
+  const [quote, setQuote] = useState(QUOTES[0])
+  const [mobilePage, setMobilePage] = useState(0)
 
   function open() {
-    setIsOpen(true);
-    setOpenCount((c) => c + 1);
+    setIsOpen(true)
+    setOpenCount((c) => c + 1)
+    setQuote(QUOTES[Math.floor(Math.random() * QUOTES.length)])
+    setMobilePage(0)
   }
 
   function close() {
-    setIsOpen(false);
+    setIsOpen(false)
   }
 
   return (
@@ -151,7 +147,7 @@ export default function AboutBookModal() {
                   <p className="social-links">
                     {SOCIAL_LINKS.map((s, i) => (
                       <span key={s.label}>
-                        {i > 0 && " · "}
+                        {i > 0 && ' · '}
                         <a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a>
                       </span>
                     ))}
@@ -163,7 +159,7 @@ export default function AboutBookModal() {
               {/* Left page of spread 2: Quote */}
               <label className="page" htmlFor={`p5-${openCount}`}>
                 <div className="page-content quote-page">
-                  <p className="quote-mark">"</p>
+                  <p className="quote-mark">&ldquo;</p>
                   <p className="quote-text">{quote.text}</p>
                   <p className="quote-author">— {quote.author}</p>
                 </div>
@@ -172,9 +168,7 @@ export default function AboutBookModal() {
 
               <input type="radio" name={`book-${openCount}`} id={`p7-${openCount}`} />
 
-              {/* Back cover right */}
               <label className="page cover" htmlFor={`p9-${openCount}`} />
-              {/* Back cover left */}
               <label className="page cover" htmlFor={`p7-${openCount}`} />
 
               <input type="radio" name={`book-${openCount}`} id={`p9-${openCount}`} />
@@ -208,7 +202,7 @@ export default function AboutBookModal() {
                     Track what you read, organize your shelves,
                     write notes, and build your own reading space.
                   </p>
-                  <h2 style={{ marginTop: "1.5rem" }}>Room Rules</h2>
+                  <h2 style={{ marginTop: '1.5rem' }}>Room Rules</h2>
                   <ul>
                     {ROOM_RULES.map((r, i) => <li key={i}>{r}</li>)}
                   </ul>
@@ -226,7 +220,7 @@ export default function AboutBookModal() {
                   <p className="social-links">
                     {SOCIAL_LINKS.map((s, i) => (
                       <span key={s.label}>
-                        {i > 0 && " · "}
+                        {i > 0 && ' · '}
                         <a href={s.href} target="_blank" rel="noopener noreferrer">{s.label}</a>
                       </span>
                     ))}
@@ -236,7 +230,7 @@ export default function AboutBookModal() {
               )}
               {mobilePage === 3 && (
                 <div className="quote-page">
-                  <p className="quote-mark">"</p>
+                  <p className="quote-mark">&ldquo;</p>
                   <p className="quote-text">{quote.text}</p>
                   <p className="quote-author">— {quote.author}</p>
                 </div>
@@ -263,5 +257,5 @@ export default function AboutBookModal() {
         </>
       )}
     </>
-  );
+  )
 }

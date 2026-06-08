@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 type Props = {
   id: string;
@@ -33,4 +33,4 @@ export const RoomHotspot = ({
   >
     <span className="room-hotspot__label">{label}</span>
   </button>
-);
+)

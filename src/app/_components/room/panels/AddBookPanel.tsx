@@ -1,57 +1,57 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { getJson, postJson } from "@/lib/api";
-import { STATUS_LABELS, STATUS_ORDER } from "@/types/book";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
-import { TBookMark } from "./BookmarkPanel";
+import { useEffect, useState } from 'react'
+import { getJson, postJson } from '@/lib/api'
+import { STATUS_LABELS, STATUS_ORDER } from '@/types/book'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
+import { TBookMark } from './BookmarkPanel'
 
 type Props = {
   onClose: () => void;
 };
 
 export const AddBookPanel = ({ onClose }: Props) => {
-  const [title, setTitle] = useState("");
-  const [author, setAuthor] = useState("");
-  const [coverUrl, setCoverUrl] = useState("");
-  const [status, setStatus] = useState("PLAN_TO_READ");
-  const [bookmark, setBookmark] = useState<number | null>(null);
-  const [bookmarks, setBookmarks] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
+  const [title, setTitle] = useState('')
+  const [author, setAuthor] = useState('')
+  const [coverUrl, setCoverUrl] = useState('')
+  const [status, setStatus] = useState('PLAN_TO_READ')
+  const [bookmark, setBookmark] = useState<number | null>(null)
+  const [bookmarks, setBookmarks] = useState<TBookMark[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [success, setSuccess] = useState(false)
 
   const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    e.preventDefault()
     if (!title.trim()) {
-      setError("Title is required");
-      return;
+      setError('Title is required')
+      return
     }
-    setError(null);
-    setLoading(true);
+    setError(null)
+    setLoading(true)
     try {
-      await postJson("/api/books", {
+      await postJson('/api/books', {
         title: title.trim(),
         author: author.trim() || undefined,
         coverUrl: coverUrl.trim() || undefined,
         status,
         bookmarkSlot: bookmark,
-      });
-      setSuccess(true);
-      setTitle("");
-      setAuthor("");
-      setCoverUrl("");
-      setStatus("PLAN_TO_READ");
+      })
+      setSuccess(true)
+      setTitle('')
+      setAuthor('')
+      setCoverUrl('')
+      setStatus('PLAN_TO_READ')
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Something went wrong");
+      setError(err instanceof Error ? err.message : 'Something went wrong')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   useEffect(() => {
-    getJson<{ data: TBookMark[] }>("/api/room/bookmarks?labeled=true")
+    getJson<{ data: TBookMark[] }>('/api/room/bookmarks?labeled=true')
       .then(res => {
         setBookmarks(res.data)
       })
@@ -70,7 +70,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
           <Button variant="secondary" onClick={onClose}>Done</Button>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -126,7 +126,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
         Bookmark
         <select
           className="form-input"
-          value={bookmark ?? ""}
+          value={bookmark ?? ''}
           onChange={(e) => setBookmark(e.target.value ? Number(e.target.value) : null)}
         >
           <option value="">— No tag —</option>
@@ -148,5 +148,5 @@ export const AddBookPanel = ({ onClose }: Props) => {
       </div>
       {loading && <LoaderOverlay />}
     </form>
-  );
-};
+  )
+}

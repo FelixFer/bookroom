@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useState } from "react";
-import { postJson } from "@/lib/api";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
+import { useState } from 'react'
+import { postJson } from '@/lib/api'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 type OpenLibBook = {
   key: string;
@@ -14,60 +14,60 @@ type OpenLibBook = {
 };
 
 export const DiscoverPanel = () => {
-  const [query, setQuery] = useState("");
-  const [results, setResults] = useState<OpenLibBook[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [query, setQuery] = useState('')
+  const [results, setResults] = useState<OpenLibBook[]>([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   // Track per-book state: "idle" | "adding" | "added" | "owned"
-  const [bookState, setBookState] = useState<Record<string, "adding" | "added" | "owned">>({});
+  const [bookState, setBookState] = useState<Record<string, 'adding' | 'added' | 'owned'>>({})
 
   const search = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!query.trim()) return;
-    setError(null);
-    setLoading(true);
-    setResults([]);
-    setBookState({});
+    e.preventDefault()
+    if (!query.trim()) return
+    setError(null)
+    setLoading(true)
+    setResults([])
+    setBookState({})
     try {
       const res = await fetch(
         `https://openlibrary.org/search.json?q=${encodeURIComponent(query.trim())}&limit=12&fields=key,title,author_name,cover_i,first_publish_year`,
-      );
-      if (!res.ok) throw new Error("Search failed");
-      const data = (await res.json()) as { docs: OpenLibBook[] };
-      setResults(data.docs ?? []);
+      )
+      if (!res.ok) throw new Error('Search failed')
+      const data = (await res.json()) as { docs: OpenLibBook[] }
+      setResults(data.docs ?? [])
     } catch {
-      setError("Could not reach Open Csollection. Check your connection.");
+      setError('Could not reach Open Csollection. Check your connection.')
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const addBook = async (book: OpenLibBook) => {
-    setBookState((prev) => ({ ...prev, [book.key]: "adding" }));
+    setBookState((prev) => ({ ...prev, [book.key]: 'adding' }))
     try {
-      await postJson("/api/books", {
+      await postJson('/api/books', {
         title: book.title,
         author: book.author_name?.[0] ?? null,
         coverUrl: book.cover_i
           ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
           : null,
-        status: "PLAN_TO_READ",
-      });
-      setBookState((prev) => ({ ...prev, [book.key]: "added" }));
+        status: 'PLAN_TO_READ',
+      })
+      setBookState((prev) => ({ ...prev, [book.key]: 'added' }))
     } catch (err: unknown) {
       // 409 = already in collection
-      const msg = err instanceof Error ? err.message : "";
-      if (msg.includes("409") || msg.toLowerCase().includes("already")) {
-        setBookState((prev) => ({ ...prev, [book.key]: "owned" }));
+      const msg = err instanceof Error ? err.message : ''
+      if (msg.includes('409') || msg.toLowerCase().includes('already')) {
+        setBookState((prev) => ({ ...prev, [book.key]: 'owned' }))
       } else {
         setBookState((prev) => {
-          const next = { ...prev };
-          delete next[book.key];
-          return next;
-        });
+          const next = { ...prev }
+          delete next[book.key]
+          return next
+        })
       }
     }
-  };
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -108,10 +108,10 @@ export const DiscoverPanel = () => {
       {results.length > 0 && (
         <div className="grid grid-cols-2 gap-3">
           {results.map((book) => {
-            const state = bookState[book.key];
+            const state = bookState[book.key]
             const coverUrl = book.cover_i
               ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-              : null;
+              : null
 
             return (
               <div
@@ -150,29 +150,29 @@ export const DiscoverPanel = () => {
 
                   {/* Add button */}
                   <button
-                    className={`mt-auto w-full rounded px-2 py-1 text-xs font-medium transition-colors ${state === "added"
-                      ? "cursor-default bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400"
-                      : state === "owned"
-                        ? "cursor-default bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500"
-                        : "bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
+                    className={`mt-auto w-full rounded px-2 py-1 text-xs font-medium transition-colors ${state === 'added'
+                      ? 'cursor-default bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
+                      : state === 'owned'
+                        ? 'cursor-default bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500'
+                        : 'bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200'
                       }`}
                     onClick={() => !state && addBook(book)}
                     disabled={!!state}
                   >
-                    {state === "adding"
-                      ? "Adding…"
-                      : state === "added"
-                        ? "✓ Added"
-                        : state === "owned"
-                          ? "Already in collection"
-                          : "＋ Add"}
+                    {state === 'adding'
+                      ? 'Adding…'
+                      : state === 'added'
+                        ? '✓ Added'
+                        : state === 'owned'
+                          ? 'Already in collection'
+                          : '＋ Add'}
                   </button>
                 </div>
               </div>
-            );
+            )
           })}
         </div>
       )}
     </div>
-  );
-};
+  )
+}

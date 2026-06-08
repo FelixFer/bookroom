@@ -1,85 +1,85 @@
-"use client";
-import { useState, Suspense } from "react";
-import { signIn } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
-import Link from "next/link";
-import { getApiErrorMessage, postJson } from "@/lib/api";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
+'use client'
+import { useState, Suspense } from 'react'
+import { signIn } from 'next-auth/react'
+import { useSearchParams } from 'next/navigation'
+import Link from 'next/link'
+import { getApiErrorMessage, postJson } from '@/lib/api'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 function LandingScreenInner() {
-  const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/";
+  const searchParams = useSearchParams()
+  const callbackUrl = searchParams.get('callbackUrl') ?? '/'
 
-  const [activeForm, setActiveForm] = useState<"login" | "signup">("login");
+  const [activeForm, setActiveForm] = useState<'login' | 'signup'>('login')
 
   // Login state
-  const [loginEmail, setLoginEmail] = useState("");
-  const [loginPassword, setLoginPassword] = useState("");
-  const [loginError, setLoginError] = useState<string | null>(null);
-  const [loginLoading, setLoginLoading] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('')
+  const [loginPassword, setLoginPassword] = useState('')
+  const [loginError, setLoginError] = useState<string | null>(null)
+  const [loginLoading, setLoginLoading] = useState(false)
 
   // Signup state
-  const [signupName, setSignupName] = useState("");
-  const [signupEmail, setSignupEmail] = useState("");
-  const [signupPassword, setSignupPassword] = useState("");
-  const [signupConfirm, setSignupConfirm] = useState("");
-  const [signupError, setSignupError] = useState<string | null>(null);
-  const [signupLoading, setSignupLoading] = useState(false);
+  const [signupName, setSignupName] = useState('')
+  const [signupEmail, setSignupEmail] = useState('')
+  const [signupPassword, setSignupPassword] = useState('')
+  const [signupConfirm, setSignupConfirm] = useState('')
+  const [signupError, setSignupError] = useState<string | null>(null)
+  const [signupLoading, setSignupLoading] = useState(false)
 
   async function handleLogin(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setLoginError(null);
-    setLoginLoading(true);
-    const result = await signIn("credentials", {
+    e.preventDefault()
+    setLoginError(null)
+    setLoginLoading(true)
+    const result = await signIn('credentials', {
       email: loginEmail.toLowerCase(),
       password: loginPassword,
       redirect: false,
       callbackUrl,
-    });
-    setLoginLoading(false);
+    })
+    setLoginLoading(false)
     if (!result?.ok) {
-      setLoginError(result?.error ?? "Login failed. Please try again.");
-      return;
+      setLoginError(result?.error ?? 'Login failed. Please try again.')
+      return
     }
-    window.location.href = result.url ?? callbackUrl;
+    window.location.href = result.url ?? callbackUrl
   }
 
   async function handleSignup(e: React.SubmitEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setSignupError(null);
+    e.preventDefault()
+    setSignupError(null)
 
     if (signupPassword !== signupConfirm) {
-      setSignupError("Passwords do not match");
-      return;
+      setSignupError('Passwords do not match')
+      return
     }
 
-    setSignupLoading(true);
+    setSignupLoading(true)
     try {
-      await postJson<{ ok: true }>("/api/auth/register", {
+      await postJson<{ ok: true }>('/api/auth/register', {
         name: signupName,
         email: signupEmail,
         password: signupPassword,
-      });
+      })
     } catch (err) {
-      setSignupLoading(false);
-      setSignupError(getApiErrorMessage(err, "Failed to create account"));
-      return;
+      setSignupLoading(false)
+      setSignupError(getApiErrorMessage(err, 'Failed to create account'))
+      return
     }
 
-    const result = await signIn("credentials", {
+    const result = await signIn('credentials', {
       email: signupEmail,
       password: signupPassword,
       redirect: false,
-      callbackUrl: "/",
-    });
+      callbackUrl: '/',
+    })
 
-    setSignupLoading(false);
+    setSignupLoading(false)
     if (!result?.ok) {
-      window.location.href = "/";
-      return;
+      window.location.href = '/'
+      return
     }
-    window.location.href = result.url ?? "/";
+    window.location.href = result.url ?? '/'
   }
 
   return (
@@ -111,14 +111,14 @@ function LandingScreenInner() {
           {/* Animated forms */}
           <div className="forms">
             {/* Login form */}
-            <div className={`form-wrapper ${activeForm === "login" ? "is-active" : ""}`}>
+            <div className={`form-wrapper ${activeForm === 'login' ? 'is-active' : ''}`}>
               <form className="form form-login" onSubmit={handleLogin}>
                 <div className="form-header">
                   <p className="form-inner-title">Login</p>
                   <button
                     type="button"
                     className="switcher switcher-to-signup"
-                    onClick={() => setActiveForm("signup")}
+                    onClick={() => setActiveForm('signup')}
                   >
                     Sign Up →
                     <span className="switcher-line"></span>
@@ -176,14 +176,14 @@ function LandingScreenInner() {
             </div>
 
             {/* Signup form */}
-            <div className={`form-wrapper ${activeForm === "signup" ? "is-active" : ""}`}>
+            <div className={`form-wrapper ${activeForm === 'signup' ? 'is-active' : ''}`}>
               <form className="form form-signup" onSubmit={handleSignup}>
                 <div className="form-header">
                   <p className="form-inner-title">Sign Up</p>
                   <button
                     type="button"
                     className="switcher switcher-to-login"
-                    onClick={() => setActiveForm("login")}
+                    onClick={() => setActiveForm('login')}
                   >
                     ← Login
                     <span className="switcher-line"></span>
@@ -261,11 +261,11 @@ function LandingScreenInner() {
       </div>
       {(loginLoading || signupLoading) && <LoaderOverlay />}
     </>
-  );
+  )
 }
 
 export const LandingScreen = () => (
   <Suspense>
     <LandingScreenInner />
   </Suspense>
-);
+)
