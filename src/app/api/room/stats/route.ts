@@ -1,99 +1,52 @@
-import { getServerSession } from "next-auth/next";
-import { authOptions } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { NextResponse } from "next/server";
+import { requireAuth, ok, err } from "@/lib/server-utils";
 
-export const GET = async () => {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+function computeStreaks(doneBooks: { updatedAt: Date }[]) {
+  const days = [...new Set(doneBooks.map((b) => b.updatedAt.toISOString().slice(0, 10)))].sort();
+  if (days.length === 0) return { currentStreak: 0, longestStreak: 0, recentDates: [] as string[] };
 
-  const userId = session.user.id;
-  const yearStart = new Date(new Date().getFullYear(), 0, 1);
-
-  const [
-    totalBooks,
-    completedCount,
-    completedThisYear,
-    currentlyReading,
-    favoriteCount,
-    droppedCount,
-    doneBooks,
-  ] = await Promise.all([
-    prisma.userBook.count({ where: { userId } }),
-    prisma.userBook.count({ where: { userId, status: "COMPLETED" } }),
-    prisma.userBook.count({
-      where: { userId, status: "COMPLETED", updatedAt: { gte: yearStart } },
-    }),
-    prisma.userBook.count({ where: { userId, status: "READING" } }),
-    prisma.userBook.count({ where: { userId, favorite: true } }),
-    prisma.userBook.count({ where: { userId, status: "DROPPED" } }),
-    prisma.userBook.findMany({
-      where: { userId, status: "COMPLETED" },
-      select: { updatedAt: true },
-      orderBy: { updatedAt: "desc" },
-    }),
-  ]);
-
-  // Compute reading streak from completed-book dates
-  const doneDays = new Set(
-    doneBooks.map((b) => b.updatedAt.toISOString().slice(0, 10)),
-  );
-  const sortedDays = [...doneDays].sort().reverse();
-
+  const today = new Date().toISOString().slice(0, 10);
   let currentStreak = 0;
-  let streak = 0;
-
-  for (let i = 0; i < sortedDays.length; i++) {
-    const day = sortedDays[i];
-    const prev = sortedDays[i - 1];
-
-    if (i === 0) {
-      const today = new Date().toISOString().slice(0, 10);
-      const diffMs =
-        new Date(today).getTime() - new Date(day).getTime();
-      const diffDays = Math.round(diffMs / 86_400_000);
-      if (diffDays > 1) break;
-      streak = 1;
-    } else {
-      const diff = Math.round(
-        (new Date(prev).getTime() - new Date(day).getTime()) / 86_400_000,
-      );
-      if (diff === 1) streak++;
+  if (Math.round((new Date(today).getTime() - new Date(days[days.length - 1]).getTime()) / 86400000) <= 1) {
+    currentStreak = 1;
+    for (let i = days.length - 2; i >= 0; i--) {
+      if (Math.round((new Date(days[i + 1]).getTime() - new Date(days[i]).getTime()) / 86400000) === 1) currentStreak++;
       else break;
     }
-    currentStreak = streak;
   }
 
-  // Longest streak across full history
-  let maxStreak = 0;
-  let run = 0;
-  const allSorted = [...doneDays].sort();
-  for (let i = 0; i < allSorted.length; i++) {
-    if (i === 0) {
-      run = 1;
-    } else {
-      const diff = Math.round(
-        (new Date(allSorted[i]).getTime() - new Date(allSorted[i - 1]).getTime()) /
-          86_400_000,
-      );
-      run = diff === 1 ? run + 1 : 1;
-    }
-    maxStreak = Math.max(maxStreak, run);
+  let longestStreak = 0, run = 0;
+  for (let i = 0; i < days.length; i++) {
+    if (i === 0 || Math.round((new Date(days[i]).getTime() - new Date(days[i - 1]).getTime()) / 86400000) === 1) run++;
+    else run = 1;
+    longestStreak = Math.max(longestStreak, run);
   }
 
-  const recentDates = sortedDays.slice(0, 7).reverse();
+  return { currentStreak, longestStreak, recentDates: days.slice(-7).reverse() };
+}
 
-  return NextResponse.json({
-    totalBooks,
-    doneCount: completedCount,
-    doneThisYear: completedThisYear,
-    currentlyReading,
-    favoriteCount,
-    dnfCount: droppedCount,
-    currentStreak,
-    longestStreak: maxStreak,
-    totalDone: completedCount,
-    recentDates,
+export const GET = async () => {
+  const userId = await requireAuth();
+  if (!userId) return err("Unauthorized", 401);
+
+  const yearStart = new Date(new Date().getFullYear(), 0, 1);
+
+  const [totalBooks, completedCount, completedThisYear, currentlyReading, favoriteCount, droppedCount, doneBooks] =
+    await Promise.all([
+      prisma.userBook.count({ where: { userId } }),
+      prisma.userBook.count({ where: { userId, status: "COMPLETED" } }),
+      prisma.userBook.count({ where: { userId, status: "COMPLETED", updatedAt: { gte: yearStart } } }),
+      prisma.userBook.count({ where: { userId, status: "READING" } }),
+      prisma.userBook.count({ where: { userId, favorite: true } }),
+      prisma.userBook.count({ where: { userId, status: "DROPPED" } }),
+      prisma.userBook.findMany({ where: { userId, status: "COMPLETED" }, select: { updatedAt: true }, orderBy: { updatedAt: "desc" } }),
+    ]);
+
+  const { currentStreak, longestStreak, recentDates } = computeStreaks(doneBooks);
+
+  return ok({
+    totalBooks, doneCount: completedCount, doneThisYear: completedThisYear,
+    currentlyReading, favoriteCount, dnfCount: droppedCount,
+    currentStreak, longestStreak, totalDone: completedCount, recentDates,
   });
 };

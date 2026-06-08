@@ -1,49 +1,41 @@
-import { authOptions } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { getServerSession } from "next-auth"
-import { NextResponse } from "next/server"
+import { requireAuth, ok, err } from "@/lib/server-utils";
 
 export const GET = async (request: Request) => {
-  const session = await getServerSession(authOptions);
-  if (!session?.user?.id)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await requireAuth();
+  if (!userId) return err("Unauthorized", 401);
 
-  const { searchParams } = new URL(request.url)
-  const labeledOnly = searchParams.get("labeled") === "true";
+  const labeledOnly = new URL(request.url).searchParams.get("labeled") === "true";
 
   const bookmarks = await prisma.bookmark.findMany({
-    where: {
-      userId: session.user.id,
-      ...(labeledOnly && { label: { not: null } })
-    },
+    where: { userId, ...(labeledOnly && { label: { not: null } }) },
     select: { slot: true, label: true },
     orderBy: { slot: "asc" },
   });
 
-  return NextResponse.json({ data: bookmarks }, { status: 200 });
+  return ok({ data: bookmarks });
 };
 
 export const PUT = async (request: Request) => {
-  const session = await getServerSession(authOptions)
-  if (!session?.user?.id)
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  const userId = await requireAuth();
+  if (!userId) return err("Unauthorized", 401);
 
-  const user = session.user.id;
   const body = (await request.json().catch(() => null)) as unknown;
+  if (!Array.isArray(body)) return err("Invalid payload", 422);
 
-  if (!Array.isArray(body))
-    return NextResponse.json({ error: "Invalid payload" }, { status: 422 })
-
-  await Promise.all(
-    body.map(({ slot, label }: { slot: number; label: string | null }) =>
-      // upsert is used to update existing entry or create a new one if not exist yet
-      prisma.bookmark.upsert({
-        where: { userId_slot: { userId: user, slot } },
-        create: { userId: user, slot, label: label || null },
-        update: { label: label || null },
-      })
-    )
-  );
-
-  return NextResponse.json({ message: "Changes Saved" }, { status: 201 })
+  try {
+    await Promise.all(
+      body.map(({ slot, label }: { slot: number; label: string | null }) =>
+        prisma.bookmark.upsert({
+          where: { userId_slot: { userId, slot } },
+          create: { userId, slot, label: label || null },
+          update: { label: label || null },
+        }),
+      ),
+    );
+    return ok({ message: "Changes Saved" }, 201);
+  } catch (e) {
+    console.error(e);
+    return err("Failed to save bookmarks", 500);
+  }
 };
