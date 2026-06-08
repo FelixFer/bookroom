@@ -1,25 +1,27 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from "@dnd-kit/core";
 import { KanbanColumn } from "./KanbanColumn";
 import { KanbanCardOverlay } from "./KanbanCard";
 import { EditBookModal } from "./EditBookModal";
-import { patchJson } from "@/lib/api";
+import { patchJson, getJson } from "@/lib/api";
 import type { UserBookItem } from "@/types/book";
 import { STATUS_ORDER } from "@/types/book";
 import type { ReadingStatus } from "@/generated/prisma/enums";
 import { Button } from "@/app/_components/Button";
 
-type Props = {
-  initialBooks: UserBookItem[];
-};
-
-export const KanbanBoard = ({ initialBooks }: Props) => {
-  const [books, setBooks] = useState<UserBookItem[]>(initialBooks);
+export const KanbanBoard = () => {
+  const [books, setBooks] = useState<UserBookItem[]>([]);
   const [editTarget, setEditTarget] = useState<UserBookItem | "new" | null>(null);
   const [search, setSearch] = useState("");
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null);
+
+  useEffect(() => {
+    getJson<{ books: UserBookItem[] }>("/api/room/books")
+      .then((res) => setBooks(res.books))
+      .catch(console.error);
+  }, []);
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
