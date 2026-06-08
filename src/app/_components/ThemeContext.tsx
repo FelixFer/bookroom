@@ -24,15 +24,8 @@ const ThemeContext = createContext<ThemeContextValue>({
 
 export const useTheme = () => useContext(ThemeContext)
 
-const getInitialTheme = (): Theme => {
-  if (typeof window === 'undefined') return 'light'
-  const stored = localStorage.getItem('theme') as Theme | null
-  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-  return stored ?? (prefersDark ? 'dark' : 'light')
-}
-
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>(getInitialTheme)
+  const [theme, setTheme] = useState<Theme>('light')
 
   const applyTheme = useCallback((t: Theme) => {
     const html = document.documentElement
@@ -45,7 +38,14 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     }
   }, [])
 
-  useEffect(() => { applyTheme(theme) }, [theme, applyTheme])
+  useEffect(() => {
+    const stored = localStorage.getItem('theme') as Theme | null
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const resolved = stored ?? (prefersDark ? 'dark' : 'light')
+    applyTheme(resolved)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTheme(resolved)
+  }, [applyTheme])
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
