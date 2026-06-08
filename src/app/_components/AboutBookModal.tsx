@@ -176,7 +176,7 @@ export default function AboutBookModal() {
           </div>
 
           {/* Mobile single-page card */}
-          <div className="about-mobile-card sm:hidden">
+          <div className="about-mobile-card flex flex-col sm:hidden">
             <div className="mobile-card-header">
               <span className="mobile-page-indicator">
                 {mobilePage + 1} / {MOBILE_PAGES.length}

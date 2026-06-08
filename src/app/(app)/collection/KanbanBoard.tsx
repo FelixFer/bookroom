@@ -98,7 +98,6 @@ export const KanbanBoard = () => {
         className="pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block"
         style={{ backgroundImage: "url('/library-night.png')" }}
       />
-      {/* <div className="pointer-events-none fixed inset-0 -z-10 bg-zinc-50/70 dark:bg-[#393E46]/80" /> */}
       <div className="pointer-events-none fixed inset-0 -z-10" />
       {/* Header */}
       <div

@@ -47,8 +47,23 @@ export default function RootLayout({
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${merriweather.variable} ${nunito.variable} ${pressStart2P.variable} h-full antialiased`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              try {
+                var t = localStorage.getItem('theme')
+                var d = window.matchMedia('(prefers-color-scheme: dark)').matches
+                var r = t || (d ? 'dark' : 'light')
+                document.documentElement.classList.add(r)
+              } catch(e) {}
+            `,
+          }}
+        />
+      </head>
       <body className="min-h-full flex flex-col">
         <ThemeProvider>{children}</ThemeProvider>
         <AboutBookModal />

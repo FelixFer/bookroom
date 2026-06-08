@@ -1,5 +1,4 @@
 @reference "tailwindcss";
-@custom-variant dark (&:where(.dark, .dark *));
 
 // ─── Page layout ─────────────────────────────────────────────────────────────
 
@@ -79,7 +78,6 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-top: 0;
   padding: 24px 24px 20px;
   border-radius: 4px;
   border: 1px solid #d4c4a0;
@@ -864,7 +862,6 @@
   position: fixed;
   inset: 0;
   z-index: 52;
-  flex-direction: column;
   background-color: var(--room-drawer-bg);
   border-top: 2px solid var(--room-drawer-border);
   overflow-y: auto;
