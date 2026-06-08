@@ -31,7 +31,7 @@ function ResetPasswordForm() {
                 token,
                 password,
               });
-              router.push("/login");
+              router.push("/");
             } catch (err) {
               setError(getApiErrorMessage(err, "Failed to reset password"));
             } finally {

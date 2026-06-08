@@ -39,7 +39,7 @@ function LandingScreenInner() {
     });
     setLoginLoading(false);
     if (!result?.ok) {
-      setLoginError("Invalid email or password");
+      setLoginError(result?.error ?? "Login failed. Please try again.");
       return;
     }
     window.location.href = result.url ?? callbackUrl;
@@ -201,6 +201,7 @@ function LandingScreenInner() {
                       autoComplete="name"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
+                      required
                     />
                   </label>
 
