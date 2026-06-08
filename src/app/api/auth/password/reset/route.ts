@@ -7,20 +7,20 @@ import { NextResponse } from "next/server";
 export const POST = async (request: Request) => {
   const body = (await request.json().catch(() => null)) as unknown;
   if (!body || typeof body !== "object") {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid payload" }, { status: 422 });
   }
 
   const token = "token" in body ? body.token : undefined;
   const password = "password" in body ? body.password : undefined;
 
   if (typeof token !== "string" || typeof password !== "string") {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid payload" }, { status: 422 });
   }
 
   if (password.length < 8) {
     return NextResponse.json(
       { error: "Password must be at least 8 characters" },
-      { status: 400 },
+      { status: 422 },
     );
   }
 
@@ -74,6 +74,6 @@ export const POST = async (request: Request) => {
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ message: "Password resetted" }, { status: 200 });
 };
 

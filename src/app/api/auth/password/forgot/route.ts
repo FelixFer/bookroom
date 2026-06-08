@@ -1,22 +1,22 @@
 import { Prisma } from "@/generated/prisma/client";
 import { prisma } from "@/lib/prisma";
 import { generateResetToken, hashResetToken } from "@/lib/password-reset";
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 
-export const POST = async (request: Request) => {
+export const POST = async (request: NextRequest) => {
   const body = (await request.json().catch(() => null)) as unknown;
   if (!body || typeof body !== "object") {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ error: "Invalid payload" }, { status: 422 });
   }
 
   const email = "email" in body ? body.email : undefined;
   if (typeof email !== "string") {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ error: "Invalid email" }, { status: 422 });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
   if (!normalizedEmail) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ error: "Email is required" }, { status: 422 });
   }
 
   const user = await prisma.user.findUnique({
@@ -24,7 +24,7 @@ export const POST = async (request: Request) => {
     select: { id: true },
   });
   if (!user) {
-    return NextResponse.json({ ok: true });
+    return NextResponse.json({ error: "Email not found" }, { status: 404 });
   }
 
   const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
@@ -45,11 +45,11 @@ export const POST = async (request: Request) => {
       ) {
         continue;
       }
-      return NextResponse.json({ ok: true });
+      return NextResponse.json({ error: "Somehing went wrong" }, { status: 400 });
     }
   }
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
+  const baseUrl = request.nextUrl.origin;
   const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
 
   const response: { ok: true; resetUrl?: string } = { ok: true };

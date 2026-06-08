@@ -14,22 +14,22 @@ export const POST = async (request: Request) => {
   const name = "name" in body ? body.name : undefined;
 
   if (typeof email !== "string" || typeof password !== "string") {
-    return NextResponse.json({ error: "Invalid payload" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid payload" }, { status: 422 });
   }
 
   const normalizedEmail = email.trim().toLowerCase();
   if (!normalizedEmail) {
-    return NextResponse.json({ error: "Email is required" }, { status: 400 });
+    return NextResponse.json({ error: "Email is required" }, { status: 422 });
   }
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)) {
-    return NextResponse.json({ error: "Invalid email format" }, { status: 400 });
+    return NextResponse.json({ error: "Invalid email format" }, { status: 422 });
   }
 
   if (password.length < 8) {
     return NextResponse.json(
       { error: "Password must be at least 8 characters" },
-      { status: 400 },
+      { status: 422 },
     );
   }
 
@@ -108,5 +108,5 @@ export const POST = async (request: Request) => {
     );
   }
 
-  return NextResponse.json({ ok: true });
+  return NextResponse.json({ message: "Account created" }, { status: 201 });
 };
