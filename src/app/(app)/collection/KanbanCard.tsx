@@ -23,7 +23,7 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
   }
 
   const bookmarkColor = book.bookmarkSlot != null
-    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot]]
+    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]]
     : undefined;
 
   const handleDelete = async () => {
@@ -38,8 +38,11 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
       style={{
         ...style,
         backgroundColor: 'var(--kanban-card-bg)',
-        borderColor: 'var(--kanban-border)',
-        borderLeft: bookmarkColor ? `3px solid ${bookmarkColor}` : undefined,
+        borderTopColor: 'var(--kanban-border)',
+        borderRightColor: 'var(--kanban-border)',
+        borderBottomColor: 'var(--kanban-border)',
+        borderLeftColor: bookmarkColor ?? 'var(--kanban-border)',
+        borderLeftWidth: bookmarkColor ? '3px' : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
       className="group relative flex gap-2 border p-2.5"
@@ -48,7 +51,7 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
       {book.bookmarkSlot &&
         <div
           className='bookmark-card-book'
-          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot]] }}
+          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]] }}
         />
       }
 
@@ -119,52 +122,55 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
 
 export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => {
   const bookmarkColor = book.bookmarkSlot != null
-    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot]]
+    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]]
     : undefined;
   return (
-  <div
-    className="flex w-64 gap-2 border p-2.5"
-    style={{
-      backgroundColor: 'var(--kanban-card-bg)',
-      borderColor: 'var(--kanban-amber)',
-      borderLeft: bookmarkColor ? `3px solid ${bookmarkColor}` : undefined,
-      outline: '2px solid var(--kanban-amber)',
-      boxShadow: '3px 3px 0 var(--kanban-rod)',
-    }}
-  >
-    {book.bookmarkSlot &&
-      <div
-        className='bookmark-card-book'
-        style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot]] }}
-      />
-    }
-    <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: 'var(--kanban-muted)' }}>⠿</div>
-    {book.coverUrl ? (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 object-cover" />
-    ) : (
-      <div
-        className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
-        style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
-      >
-        📖
+    <div
+      className="flex w-64 gap-2 border p-2.5"
+      style={{
+        backgroundColor: 'var(--kanban-card-bg)',
+        borderTopColor: 'var(--kanban-amber)',
+        borderRightColor: 'var(--kanban-amber)',
+        borderBottomColor: 'var(--kanban-amber)',
+        borderLeftColor: bookmarkColor ?? 'var(--kanban-amber)',
+        borderLeftWidth: bookmarkColor ? '3px' : undefined,
+        outline: '2px solid var(--kanban-amber)',
+        boxShadow: '3px 3px 0 var(--kanban-rod)',
+      }}
+    >
+      {book.bookmarkSlot &&
+        <div
+          className='bookmark-card-book'
+          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]] }}
+        />
+      }
+      <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: 'var(--kanban-muted)' }}>⠿</div>
+      {book.coverUrl ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 object-cover" />
+      ) : (
+        <div
+          className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
+          style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
+        >
+          📖
+        </div>
+      )}
+      <div className="min-w-0 flex-1">
+        <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: 'var(--kanban-text)' }}>
+          {book.title}
+        </p>
+        {book.author && (
+          <p className="mt-0.5 truncate text-xs" style={{ color: 'var(--kanban-muted)' }}>
+            {book.author}
+          </p>
+        )}
+        {book.rating && (
+          <p className="mt-1 text-xs text-amber-500">
+            {'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}
+          </p>
+        )}
       </div>
-    )}
-    <div className="min-w-0 flex-1">
-      <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: 'var(--kanban-text)' }}>
-        {book.title}
-      </p>
-      {book.author && (
-        <p className="mt-0.5 truncate text-xs" style={{ color: 'var(--kanban-muted)' }}>
-          {book.author}
-        </p>
-      )}
-      {book.rating && (
-        <p className="mt-1 text-xs text-amber-500">
-          {'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}
-        </p>
-      )}
     </div>
-  </div>
   );
 }
