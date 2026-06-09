@@ -5,6 +5,7 @@ import { LoaderDots } from '@/app/_components/Loader'
 
 export type ButtonVariant =
   | 'primary'
+  | 'soft'
   | 'secondary'
   | 'ghost'
   | 'danger'
@@ -15,6 +16,8 @@ export type ButtonVariant =
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
     'inline-flex h-10 items-center justify-center rounded-lg bg-[#3d2e1a] px-4 text-sm font-medium text-[#fdf8f0] hover:bg-[#2a1f10] disabled:opacity-60 dark:bg-[#c4a878] dark:text-[#1e1a14] dark:hover:bg-[#e8d5b0] cursor-pointer',
+  soft:
+    'inline-flex h-10 items-center justify-center rounded-lg bg-[#e8d5b0] px-4 text-sm font-medium text-[#3d2e1a] hover:bg-[#d4c4a0] disabled:opacity-60 dark:bg-[#4a3a22] dark:text-[#e8d5b0] dark:hover:bg-[#5a4a2e] cursor-pointer',
   secondary:
     'inline-flex h-10 items-center justify-center rounded-lg border px-4 text-sm font-medium border-[#d4c4a0] text-[#3d2e1a] hover:bg-[#f5ede0] dark:border-[#4a3a22] dark:text-[#e8d5b0] dark:hover:bg-[#2e2518] cursor-pointer',
   ghost:

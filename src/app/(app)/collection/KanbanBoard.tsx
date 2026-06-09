@@ -5,7 +5,9 @@ import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, T
 import { KanbanColumn } from './KanbanColumn'
 import { KanbanCardOverlay } from './KanbanCard'
 import { EditBookModal } from './EditBookModal'
-import { patchJson, getJson } from '@/lib/api'
+import { DeleteBookModal } from './DeleteBookModal'
+import { RoomModal } from '@/app/_components/room/RoomModal'
+import { patchJson, getJson, deleteJson } from '@/lib/api'
 import type { UserBookItem } from '@/types/book'
 import { STATUS_ORDER } from '@/types/book'
 import type { ReadingStatus } from '@/generated/prisma/enums'
@@ -14,6 +16,11 @@ import { Button } from '@/app/_components/Button'
 export const KanbanBoard = () => {
   const [books, setBooks] = useState<UserBookItem[]>([])
   const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<UserBookItem | null>(null)
+  const [selectionMode, setSelectionMode] = useState(false)
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
+  const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false)
+  const [bulkDeleting, setBulkDeleting] = useState(false)
   const [search, setSearch] = useState('')
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
 
@@ -83,6 +90,33 @@ export const KanbanBoard = () => {
     setBooks((prev) => prev.filter((b) => b.id !== id))
   }, [])
 
+  const toggleSelect = useCallback((id: string) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev)
+      next.has(id) ? next.delete(id) : next.add(id)
+      return next
+    })
+  }, [])
+
+  const clearSelection = useCallback(() => {
+    setSelectionMode(false)
+    setSelectedIds(new Set())
+  }, [])
+
+  const handleBulkDelete = useCallback(async () => {
+    setBulkDeleting(true)
+    try {
+      await Promise.all([...selectedIds].map((id) => deleteJson(`/api/books/${id}`)))
+      setBooks((prev) => prev.filter((b) => !selectedIds.has(b.id)))
+      clearSelection()
+      setBulkConfirmOpen(false)
+    } catch (e) {
+      console.error(e)
+    } finally {
+      setBulkDeleting(false)
+    }
+  }, [selectedIds, clearSelection])
+
   const filtered = search
     ? books.filter(
       (b) =>
@@ -117,17 +151,47 @@ export const KanbanBoard = () => {
         </h1>
       </div>
 
-      <div className="flex justify-end gap-3 p-4">
-        {/* Search */}
-        <input
-          className="form-input h-9 w-40 text-sm"
-          placeholder="Search…"
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+      <div className="flex flex-wrap items-center gap-3 p-4">
+        <Button
+          variant="soft"
+          onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
+        >
+          {selectionMode ? 'Cancel' : 'Select'}
+        </Button>
 
-        <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+        <div className="flex flex-1 justify-end gap-3">
+          {/* Search */}
+          <input
+            className="form-input h-9 w-40 text-sm"
+            placeholder="Search…"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+
+          {!selectionMode && (
+            <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+          )}
+        </div>
       </div>
+
+      {/* Bulk action bar */}
+      {selectionMode && (
+        <div
+          className="flex flex-wrap items-center gap-3 border-b px-4 py-2"
+          style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
+        >
+          <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
+            {selectedIds.size} selected
+          </span>
+          <Button variant="soft" onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
+          <Button variant="soft" onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
+          {selectedIds.size > 0 && (
+            <Button variant="danger" onClick={() => setBulkConfirmOpen(true)}>
+              Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
+            </Button>
+          )}
+        </div>
+      )}
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -138,7 +202,10 @@ export const KanbanBoard = () => {
               status={status}
               books={byStatus(status)}
               onEdit={setEditTarget}
-              onDeleted={handleDeleted}
+              onDelete={setDeleteTarget}
+              selectionMode={selectionMode}
+              selectedIds={selectedIds}
+              onToggleSelect={toggleSelect}
             />
           ))}
         </div>
@@ -160,6 +227,28 @@ export const KanbanBoard = () => {
         onClose={() => setEditTarget(null)}
         onSaved={handleSaved}
       />
+
+      {/* Single delete confirm */}
+      <DeleteBookModal
+        book={deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onDeleted={handleDeleted}
+      />
+
+      {/* Bulk delete confirm */}
+      <RoomModal open={bulkConfirmOpen} title="DELETE BOOKS" onClose={() => setBulkConfirmOpen(false)}>
+        <div className="flex flex-col gap-4">
+          <p className="text-sm text-zinc-700 dark:text-zinc-300">
+            Remove <span className="font-semibold text-zinc-900 dark:text-zinc-50">{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span> from your collection? This can&apos;t be undone.
+          </p>
+          <div className="flex gap-3">
+            <Button variant="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
+              Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
+            </Button>
+            <Button variant="secondary" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
+          </div>
+        </div>
+      </RoomModal>
     </div>
   )
 

@@ -2,7 +2,6 @@
 
 import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
-import { deleteJson } from '@/lib/api'
 import type { UserBookItem } from '@/types/book'
 import { Button } from '@/app/_components/Button'
 import { BOOKMARK_KEYS, COLORS } from '@/app/_components/room/panels/BookmarkPanel'
@@ -10,10 +9,13 @@ import { BOOKMARK_KEYS, COLORS } from '@/app/_components/room/panels/BookmarkPan
 type Props = {
   book: UserBookItem;
   onEdit: (book: UserBookItem) => void;
-  onDeleted: (id: string) => void;
+  onDelete: (book: UserBookItem) => void;
+  selectionMode: boolean;
+  selected: boolean;
+  onToggleSelect: (id: string) => void;
 };
 
-export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
+export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, onToggleSelect }: Props) => {
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useDraggable({ id: book.id })
 
@@ -26,41 +28,49 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
     ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]]
     : undefined;
 
-  const handleDelete = async () => {
-    if (!window.confirm(`Remove "${book.title}" from your collection?`)) return
-    await deleteJson(`/api/books/${book.id}`)
-    onDeleted(book.id)
-  }
-
   return (
     <div
       ref={setNodeRef}
       style={{
         ...style,
         backgroundColor: 'var(--kanban-card-bg)',
-        borderTopColor: 'var(--kanban-border)',
-        borderRightColor: 'var(--kanban-border)',
-        borderBottomColor: 'var(--kanban-border)',
-        borderLeftColor: bookmarkColor ?? 'var(--kanban-border)',
-        borderLeftWidth: bookmarkColor ? '3px' : undefined,
+        borderTopColor: selected ? 'var(--kanban-amber)' : 'var(--kanban-border)',
+        borderRightColor: selected ? 'var(--kanban-amber)' : 'var(--kanban-border)',
+        borderBottomColor: selected ? 'var(--kanban-amber)' : 'var(--kanban-border)',
+        borderLeftColor: selected ? 'var(--kanban-amber)' : (bookmarkColor ?? 'var(--kanban-border)'),
+        borderLeftWidth: (selected || bookmarkColor) ? '3px' : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
       className="group relative flex gap-2 border p-2.5"
+      onClick={selectionMode ? () => onToggleSelect(book.id) : undefined}
     >
 
-      {book.bookmarkSlot &&
+      {book.bookmarkSlot && !selectionMode &&
         <div
           className='bookmark-card-book'
           style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]] }}
         />
       }
 
+      {/* Selection checkbox */}
+      {selectionMode && (
+        <div className="absolute left-1.5 top-1.5 z-10">
+          <input
+            type="checkbox"
+            checked={selected}
+            onChange={() => onToggleSelect(book.id)}
+            onClick={(e) => e.stopPropagation()}
+            className="h-4 w-4 cursor-pointer rounded accent-amber-500"
+          />
+        </div>
+      )}
+
       {/* Drag handle */}
       <div
         {...listeners}
         {...attributes}
         suppressHydrationWarning
-        className="flex cursor-grab items-start pt-0.5 active:cursor-grabbing"
+        className={`flex cursor-grab items-start pt-0.5 active:cursor-grabbing ${selectionMode ? 'opacity-0 pointer-events-none' : ''}`}
         style={{ color: 'var(--kanban-muted)' }}
         aria-label="Drag"
       >
@@ -111,11 +121,13 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
         )}
       </div>
 
-      {/* Actions — shown on hover */}
-      <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-        <Button variant="icon" size="sm" onClick={() => onEdit(book)} aria-label="Edit">✏</Button>
-        <Button variant="icon-danger" size="sm" onClick={handleDelete} aria-label="Delete">✕</Button>
-      </div>
+      {/* Actions — shown on hover, hidden in selection mode */}
+      {!selectionMode && (
+        <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
+          <Button variant="icon" size="sm" onClick={() => onEdit(book)} aria-label="Edit">✏</Button>
+          <Button variant="icon-danger" size="sm" onClick={() => onDelete(book)} aria-label="Delete">✕</Button>
+        </div>
+      )}
     </div>
   )
 }

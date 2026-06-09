@@ -10,10 +10,13 @@ type Props = {
   status: ReadingStatus;
   books: UserBookItem[];
   onEdit: (book: UserBookItem) => void;
-  onDeleted: (id: string) => void;
+  onDelete: (book: UserBookItem) => void;
+  selectionMode: boolean;
+  selectedIds: Set<string>;
+  onToggleSelect: (id: string) => void;
 };
 
-export const KanbanColumn = ({ status, books, onEdit, onDeleted }: Props) => {
+export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, selectedIds, onToggleSelect }: Props) => {
   const { isOver, setNodeRef } = useDroppable({ id: status })
   const colors = STATUS_COLORS[status]
 
@@ -61,7 +64,10 @@ export const KanbanColumn = ({ status, books, onEdit, onDeleted }: Props) => {
               key={b.id}
               book={b}
               onEdit={onEdit}
-              onDeleted={onDeleted}
+              onDelete={onDelete}
+              selectionMode={selectionMode}
+              selected={selectedIds.has(b.id)}
+              onToggleSelect={onToggleSelect}
             />
           ))}
 
