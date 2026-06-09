@@ -1,58 +1,38 @@
-import { Prisma } from "@/generated/prisma/client";
-import { prisma } from "@/lib/prisma";
-import { generateResetToken, hashResetToken } from "@/lib/password-reset";
-import { NextResponse } from "next/server";
+import { prisma } from '@/lib/prisma'
+import { generateResetToken, hashResetToken } from '@/lib/password-reset'
+import { sendPasswordResetEmail } from '@/lib/email'
+import { ok, err } from '@/lib/server-utils'
+import { NextRequest } from 'next/server'
 
-export const POST = async (request: Request) => {
-  const body = (await request.json().catch(() => null)) as unknown;
-  if (!body || typeof body !== "object") {
-    return NextResponse.json({ ok: true });
-  }
+export const POST = async (request: NextRequest) => {
+  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
+  if (!body) return err('Invalid payload', 422)
 
-  const email = "email" in body ? body.email : undefined;
-  if (typeof email !== "string") {
-    return NextResponse.json({ ok: true });
-  }
+  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+  if (!email) return err('Email is required', 422)
 
-  const normalizedEmail = email.trim().toLowerCase();
-  if (!normalizedEmail) {
-    return NextResponse.json({ ok: true });
-  }
+  const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })
+  if (!user) return err('Email not found', 404)
 
-  const user = await prisma.user.findUnique({
-    where: { email: normalizedEmail },
-    select: { id: true },
-  });
-  if (!user) {
-    return NextResponse.json({ ok: true });
-  }
+  const expiresAt = new Date(Date.now() + 3600000)
 
-  const expiresAt = new Date(Date.now() + 60 * 60 * 1000);
-
-  let token = "";
   for (let i = 0; i < 3; i++) {
-    token = generateResetToken();
-    const tokenHash = hashResetToken(token);
+    const token = generateResetToken()
+    const tokenHash = hashResetToken(token)
     try {
-      await prisma.passwordResetToken.create({
-        data: { userId: user.id, tokenHash, expiresAt },
-      });
-      break;
-    } catch (e) {
-      if (
-        e instanceof Prisma.PrismaClientKnownRequestError &&
-        e.code === "P2002"
-      ) {
-        continue;
+      await prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } })
+      const resetUrl = `${request.nextUrl.origin}/reset-password?token=${encodeURIComponent(token)}`
+
+      const sent = await sendPasswordResetEmail(email, resetUrl)
+      const response: { ok: true; resetUrl?: string } = { ok: true }
+      if (!sent && process.env.NODE_ENV !== 'production') {
+        response.resetUrl = resetUrl
       }
-      return NextResponse.json({ ok: true });
+      return ok(response)
+    } catch {
+      continue
     }
   }
 
-  const baseUrl = process.env.NEXTAUTH_URL ?? "http://localhost:3000";
-  const resetUrl = `${baseUrl}/reset-password?token=${encodeURIComponent(token)}`;
-
-  const response: { ok: true; resetUrl?: string } = { ok: true };
-  if (process.env.NODE_ENV !== "production") response.resetUrl = resetUrl;
-  return NextResponse.json(response);
-};
+  return err('Something went wrong', 400)
+}

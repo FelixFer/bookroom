@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { getJson } from "@/lib/api";
+import { useEffect, useState } from 'react'
+import { getJson } from '@/lib/api'
 
 type NoteBook = {
   id: string;
@@ -12,17 +12,17 @@ type NoteBook = {
 };
 
 export const NotebookPanel = () => {
-  const [books, setBooks] = useState<NoteBook[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [books, setBooks] = useState<NoteBook[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getJson<{ books: NoteBook[] }>("/api/room/notes")
+    getJson<{ books: NoteBook[] }>('/api/room/notes')
       .then((data) => setBooks(data.books))
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (loading) return <p className="form-help">Loading notes…</p>;
+  if (loading) return <p className="form-help">Loading notes…</p>
   if (!books.length)
     return (
       <div className="flex flex-col items-center gap-4 pt-8 text-center">
@@ -31,7 +31,7 @@ export const NotebookPanel = () => {
           No notes yet. Add your thoughts to books in your collection!
         </p>
       </div>
-    );
+    )
 
   return (
     <div className="flex flex-col gap-4">
@@ -57,5 +57,5 @@ export const NotebookPanel = () => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}

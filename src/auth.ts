@@ -1,8 +1,8 @@
-import type { NextAuthOptions } from "next-auth";
-import type { JWT } from "next-auth/jwt";
-import Credentials from "next-auth/providers/credentials";
-import { prisma } from "@/lib/prisma";
-import { verifyPassword } from "@/lib/password";
+import type { NextAuthOptions } from 'next-auth'
+import type { JWT } from 'next-auth/jwt'
+import Credentials from 'next-auth/providers/credentials'
+import { prisma } from '@/lib/prisma'
+import { verifyPassword } from '@/lib/password'
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -10,48 +10,54 @@ export const authOptions: NextAuthOptions = {
   providers: [
     Credentials({
       credentials: {
-        email: { label: "Email", type: "email" },
-        password: { label: "Password", type: "password" },
+        email: { label: 'Email', type: 'email' },
+        password: { label: 'Password', type: 'password' },
       },
       authorize: async (credentials) => {
-        const email = credentials?.email;
-        const password = credentials?.password;
-        if (typeof email !== "string" || typeof password !== "string")
-          return null;
+        const email = credentials?.email
+        const password = credentials?.password
+        if (typeof email !== 'string' || typeof password !== 'string')
+          throw new Error('Email and password are required')
 
-        const normalizedEmail = email.trim().toLowerCase();
-        if (!normalizedEmail) return null;
+        const normalizedEmail = email.trim().toLowerCase()
+        if (!normalizedEmail) throw new Error('Email is required')
 
-        const user = await prisma.user.findUnique({
-          where: { email: normalizedEmail },
-          select: { id: true, email: true, name: true, passwordHash: true },
-        });
-        if (!user) return null;
-        if (!verifyPassword(password, user.passwordHash)) return null;
+        try {
+          const user = await prisma.user.findUnique({
+            where: { email: normalizedEmail },
+            select: { id: true, email: true, name: true, passwordHash: true },
+          })
+          if (!user) throw new Error('Incorrect email or password')
+          if (!verifyPassword(password, user.passwordHash))
+            throw new Error('Incorrect email or password')
 
-        return { id: user.id, email: user.email, name: user.name ?? undefined };
+          return { id: user.id, email: user.email, name: user.name ?? undefined }
+        } catch (e) {
+          if (e instanceof Error) throw e
+          throw new Error('Login failed. Please try again.')
+        }
       },
     }),
   ],
 
-  session: { strategy: "jwt" },
+  session: { strategy: 'jwt' },
 
   callbacks: {
     // Persist user id into the token on sign-in
     jwt: ({ token, user }): JWT => {
-      if (user) token.id = user.id;
-      return token;
+      if (user) token.id = user.id
+      return token
     },
 
     // Expose user id (and name) to the session object
     session: ({ session, token }) => {
-      if (token.id) session.user.id = token.id as string;
-      if (token.name) session.user.name = token.name;
-      return session;
+      if (token.id) session.user.id = token.id as string
+      if (token.name) session.user.name = token.name
+      return session
     },
   },
 
   pages: {
-    signIn: "/",
+    signIn: '/',
   },
-};
+}

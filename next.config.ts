@@ -1,5 +1,5 @@
-import type { NextConfig } from "next";
-const { version } = require('./package.json');
+import type { NextConfig } from 'next'
+import { version } from './package.json'
 
 const nextConfig: NextConfig = {
   /* config options here */
@@ -7,6 +7,6 @@ const nextConfig: NextConfig = {
   env: {
     APP_VERSION: version,
   },
-};
+}
 
-export default nextConfig;
+export default nextConfig

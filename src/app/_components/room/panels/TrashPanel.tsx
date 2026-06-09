@@ -1,7 +1,7 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
-import { getJson } from "@/lib/api";
+import { useEffect, useState } from 'react'
+import { getJson } from '@/lib/api'
 
 type Book = {
   id: string;
@@ -11,24 +11,24 @@ type Book = {
 };
 
 export const TrashPanel = () => {
-  const [books, setBooks] = useState<Book[]>([]);
-  const [loading, setLoading] = useState(true);
+  const [books, setBooks] = useState<Book[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    getJson<{ books: Book[] }>("/api/room/books?status=DROPPED")
+    getJson<{ books: Book[] }>('/api/room/books?status=DROPPED')
       .then((data) => setBooks(data.books))
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false))
+  }, [])
 
-  if (loading) return <p className="form-help">Loading…</p>;
+  if (loading) return <p className="form-help">Loading…</p>
   if (!books.length)
     return (
       <div className="flex flex-col items-center gap-4 pt-8 text-center">
         <span className="text-4xl">🗑️</span>
         <p className="form-help">Nothing here. Every book deserves a chance!</p>
       </div>
-    );
+    )
 
   return (
     <div className="flex flex-col gap-3">
@@ -59,5 +59,5 @@ export const TrashPanel = () => {
         </div>
       ))}
     </div>
-  );
-};
+  )
+}

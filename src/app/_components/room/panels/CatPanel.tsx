@@ -1,9 +1,9 @@
-"use client";
+'use client'
 
-import { useState, useCallback } from "react";
-import { getJson } from "@/lib/api";
-import { Button } from "@/app/_components/Button";
-import { LoaderOverlay } from "@/app/_components/Loader";
+import { useState, useCallback } from 'react'
+import { getJson } from '@/lib/api'
+import { Button } from '@/app/_components/Button'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 type Book = {
   id: string;
@@ -14,16 +14,16 @@ type Book = {
 };
 
 export const CatPanel = () => {
-  const [book, setBook] = useState<Book | null | "empty">(null);
-  const [loading, setLoading] = useState(false);
+  const [book, setBook] = useState<Book | null | 'empty'>(null)
+  const [loading, setLoading] = useState(false)
 
   const roll = useCallback(() => {
-    setLoading(true);
-    getJson<{ book: Book | null }>("/api/room/random")
-      .then((data) => setBook(data.book ?? "empty"))
+    setLoading(true)
+    getJson<{ book: Book | null }>('/api/room/random')
+      .then((data) => setBook(data.book ?? 'empty'))
       .catch(console.error)
-      .finally(() => setLoading(false));
-  }, []);
+      .finally(() => setLoading(false))
+  }, [])
 
   return (
     <>
@@ -38,11 +38,11 @@ export const CatPanel = () => {
         </Button>
       )}
 
-      {book === "empty" && (
+      {book === 'empty' && (
         <p className="form-help">Your shelf is empty. Add some books first!</p>
       )}
 
-      {book && book !== "empty" && (
+      {book && book !== 'empty' && (
         <div className="flex flex-col items-center gap-4">
           {book.coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
@@ -62,7 +62,7 @@ export const CatPanel = () => {
               </p>
             )}
             <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-600">
-              {book.status.replace("_", " ")}
+              {book.status.replace('_', ' ')}
             </p>
           </div>
           <Button variant="secondary" onClick={roll} loading={loading}>
@@ -73,5 +73,5 @@ export const CatPanel = () => {
     </div>
     {loading && <LoaderOverlay />}
     </>
-  );
-};
+  )
+}

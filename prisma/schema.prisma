@@ -31,6 +31,7 @@ model User {
 
   userBooks UserBook[]
   passwordResetTokens PasswordResetToken[]
+  Bookmark  Bookmark[]
 }
 
 model Book {
@@ -49,6 +50,7 @@ model UserBook {
   userId    String
   bookId    String
   status    ReadingStatus @default(PLAN_TO_READ)
+  bookmarkSlot  Int?
   rating    Int?          // 1-5
   notes     String?
   favorite  Boolean       @default(false)
@@ -76,4 +78,15 @@ model PasswordResetToken {
 
   @@index([userId])
   @@index([expiresAt])
+}
+
+model Bookmark {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  slot      Int
+  label     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  @@unique([userId, slot])
 }

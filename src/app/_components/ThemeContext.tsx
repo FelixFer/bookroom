@@ -1,4 +1,4 @@
-"use client";
+'use client'
 
 import {
   createContext,
@@ -6,9 +6,9 @@ import {
   useEffect,
   useState,
   useCallback,
-} from "react";
+} from 'react'
 
-type Theme = "light" | "dark";
+type Theme = 'light' | 'dark';
 
 type ThemeContextValue = {
   theme: Theme;
@@ -17,47 +17,48 @@ type ThemeContextValue = {
 };
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: "light",
+  theme: 'light',
   toggleTheme: () => {},
   isDark: false,
-});
+})
 
-export const useTheme = () => useContext(ThemeContext);
+export const useTheme = () => useContext(ThemeContext)
 
 export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>('light')
+
+  const applyTheme = useCallback((t: Theme) => {
+    const html = document.documentElement
+    if (t === 'dark') {
+      html.classList.add('dark')
+      html.classList.remove('light')
+    } else {
+      html.classList.add('light')
+      html.classList.remove('dark')
+    }
+  }, [])
 
   useEffect(() => {
-    const stored = localStorage.getItem("theme") as Theme | null;
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
-    const resolved = stored ?? (prefersDark ? "dark" : "light");
-    setTheme(resolved);
-    applyTheme(resolved);
-  }, []);
-
-  const applyTheme = (t: Theme) => {
-    const html = document.documentElement;
-    if (t === "dark") {
-      html.classList.add("dark");
-      html.classList.remove("light");
-    } else {
-      html.classList.add("light");
-      html.classList.remove("dark");
-    }
-  };
+    const stored = localStorage.getItem('theme') as Theme | null
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    const resolved = stored ?? (prefersDark ? 'dark' : 'light')
+    applyTheme(resolved)
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setTheme(resolved)
+  }, [applyTheme])
 
   const toggleTheme = useCallback(() => {
     setTheme((prev) => {
-      const next = prev === "dark" ? "light" : "dark";
-      localStorage.setItem("theme", next);
-      applyTheme(next);
-      return next;
-    });
-  }, []);
+      const next = prev === 'dark' ? 'light' : 'dark'
+      localStorage.setItem('theme', next)
+      applyTheme(next)
+      return next
+    })
+  }, [applyTheme])
 
   return (
-    <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === "dark" }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
       {children}
     </ThemeContext.Provider>
-  );
-};
+  )
+}
