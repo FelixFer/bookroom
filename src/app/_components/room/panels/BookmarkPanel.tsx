@@ -5,7 +5,7 @@ import { LoaderOverlay } from '@/app/_components/Loader'
 import { Button } from '@/app/_components/Button'
 import { getJson, putJson } from '@/lib/api'
 
-const BOOKMARK_KEYS = ['first', 'second', 'third', 'fourth', 'fifth'] as const
+export const BOOKMARK_KEYS = ['first', 'second', 'third', 'fourth', 'fifth'] as const
 const PLACEHOLDERS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
   first: 'Favorites',
   second: 'Classics',
@@ -13,7 +13,7 @@ const PLACEHOLDERS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
   fourth: 'Masterpiece',
   fifth: 'Buy Later',
 }
-const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
+export const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
   first: '#4C7DFF',
   second: '#3FAF7A',
   third: '#D94A4A',

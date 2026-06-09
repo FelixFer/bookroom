@@ -5,6 +5,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { deleteJson } from '@/lib/api'
 import type { UserBookItem } from '@/types/book'
 import { Button } from '@/app/_components/Button'
+import { BOOKMARK_KEYS, COLORS } from '@/app/_components/room/panels/BookmarkPanel'
 
 type Props = {
   book: UserBookItem;
@@ -21,6 +22,10 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
     opacity: isDragging ? 0 : 1,
   }
 
+  const bookmarkColor = book.bookmarkSlot != null
+    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot]]
+    : undefined;
+
   const handleDelete = async () => {
     if (!window.confirm(`Remove "${book.title}" from your collection?`)) return
     await deleteJson(`/api/books/${book.id}`)
@@ -34,10 +39,19 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
         ...style,
         backgroundColor: 'var(--kanban-card-bg)',
         borderColor: 'var(--kanban-border)',
+        borderLeft: bookmarkColor ? `3px solid ${bookmarkColor}` : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
       className="group relative flex gap-2 border p-2.5"
     >
+
+      {book.bookmarkSlot &&
+        <div
+          className='bookmark-card-book'
+          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot]] }}
+        />
+      }
+
       {/* Drag handle */}
       <div
         {...listeners}
@@ -103,16 +117,27 @@ export const KanbanCard = ({ book, onEdit, onDeleted }: Props) => {
   )
 }
 
-export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => (
+export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => {
+  const bookmarkColor = book.bookmarkSlot != null
+    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot]]
+    : undefined;
+  return (
   <div
     className="flex w-64 gap-2 border p-2.5"
     style={{
       backgroundColor: 'var(--kanban-card-bg)',
       borderColor: 'var(--kanban-amber)',
+      borderLeft: bookmarkColor ? `3px solid ${bookmarkColor}` : undefined,
       outline: '2px solid var(--kanban-amber)',
       boxShadow: '3px 3px 0 var(--kanban-rod)',
     }}
   >
+    {book.bookmarkSlot &&
+      <div
+        className='bookmark-card-book'
+        style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot]] }}
+      />
+    }
     <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: 'var(--kanban-muted)' }}>⠿</div>
     {book.coverUrl ? (
       // eslint-disable-next-line @next/next/no-img-element
@@ -141,4 +166,5 @@ export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => (
       )}
     </div>
   </div>
-)
+  );
+}
