@@ -7,6 +7,7 @@ import { STATUS_LABELS, STATUS_ORDER } from '@/types/book'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
 import { TBookMark } from '@/app/_components/room/panels/BookmarkPanel'
+import { RoomModal } from '@/app/_components/room/RoomModal'
 
 type Props = {
   book: UserBookItem | 'new' | null; // null = closed, "new" = create mode
@@ -30,16 +31,6 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
   const [bookmarks, setBookmarks] = useState<TBookMark[]>([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-
-  // Close on Escape
-  useEffect(() => {
-    if (!open) return
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose()
-    }
-    window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
-  }, [open, onClose])
 
   useEffect(() => {
     if (!open) return
@@ -89,167 +80,135 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
   }
 
   return (
-    <>
-      {/* Backdrop */}
-      <div
-        className="fixed inset-0 z-40 bg-black/50"
-        onClick={onClose}
-        aria-hidden="true"
-      />
+    <RoomModal open={open} title={isNew ? 'ADD BOOK' : 'EDIT BOOK'} onClose={onClose}>
+      <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+        <label className="form-label">
+          <p>Title <span className="text-red-500">*</span></p>
+          <input
+            className="form-input"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            disabled={isEdit}
+            placeholder="e.g. The Hobbit"
+            required
+          />
+        </label>
 
-      {/* Modal */}
-      <div
-        className="fixed left-1/2 top-1/2 z-50 flex max-h-[calc(100vh-64px)] w-full max-w-md -translate-x-1/2 -translate-y-1/2 flex-col overflow-hidden rounded-xl border border-zinc-200 bg-white shadow-xl dark:border-zinc-800 dark:bg-zinc-950"
-        role="dialog"
-        aria-modal="true"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {/* Header */}
-        <div className="flex items-center justify-between border-b border-zinc-200 px-5 py-4 dark:border-zinc-800">
-          <h2 className="text-sm font-semibold text-zinc-900 dark:text-zinc-50">
-            {isNew ? 'ADD BOOK' : 'EDIT BOOK'}
-          </h2>
-          <Button variant="icon" onClick={onClose} aria-label="Close">✕</Button>
-        </div>
+        {isNew && (
+          <>
+            <label className="form-label">
+              Author
+              <input
+                className="form-input"
+                value={author}
+                onChange={(e) => setAuthor(e.target.value)}
+                placeholder="e.g. J.R.R. Tolkien"
+              />
+            </label>
+            <label className="form-label">
+              Cover URL
+              <input
+                className="form-input"
+                type="url"
+                value={coverUrl}
+                onChange={(e) => setCoverUrl(e.target.value)}
+                placeholder="https://…"
+              />
+            </label>
+          </>
+        )}
 
-        {/* Body */}
-        <form
-          className="flex flex-col gap-4 overflow-y-auto p-5"
-          onSubmit={handleSubmit}
-        >
-          <label className="form-label">
-            <p>Title <span className="text-red-500">*</span></p>
-            <input
-              className="form-input"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              disabled={isEdit}
-              placeholder="e.g. The Hobbit"
-              required
-            />
-          </label>
+        <label className="form-label">
+          Status
+          <select
+            className="form-input"
+            value={status}
+            onChange={(e) => setStatus(e.target.value)}
+          >
+            {STATUS_ORDER.map((s) => (
+              <option key={s} value={s}>
+                {STATUS_LABELS[s]}
+              </option>
+            ))}
+          </select>
+        </label>
 
-          {isNew && (
-            <>
-              <label className="form-label">
-                Author
-                <input
-                  className="form-input"
-                  value={author}
-                  onChange={(e) => setAuthor(e.target.value)}
-                  placeholder="e.g. J.R.R. Tolkien"
-                />
-              </label>
-              <label className="form-label">
-                Cover URL
-                <input
-                  className="form-input"
-                  type="url"
-                  value={coverUrl}
-                  onChange={(e) => setCoverUrl(e.target.value)}
-                  placeholder="https://…"
-                />
-              </label>
-            </>
-          )}
+        <label className="form-label">
+          Bookmark
+          <select
+            className="form-input"
+            value={bookmark ?? ''}
+            onChange={(e) => setBookmark(e.target.value ? Number(e.target.value) : null)}
+          >
+            <option value="">— No tag —</option>
+            {bookmarks.map((b, i) => (
+              <option key={i} value={b.slot}>
+                {b.label}
+              </option>
+            ))}
+          </select>
+        </label>
 
-          <label className="form-label">
-            Status
-            <select
-              className="form-input"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              {STATUS_ORDER.map((s) => (
-                <option key={s} value={s}>
-                  {STATUS_LABELS[s]}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          <label className="form-label">
-            Bookmark
-            <select
-              className="form-input"
-              value={bookmark ?? ''}
-              onChange={(e) => setBookmark(e.target.value ? Number(e.target.value) : null)}
-            >
-              <option value="">— No tag —</option>
-              {bookmarks.map((b, i) => (
-                <option key={i} value={b.slot}>
-                  {b.label}
-                </option>
-              ))}
-            </select>
-          </label>
-
-          {isEdit && (
-            <>
-              {/* Star rating */}
-              <div className="flex flex-col gap-1">
-                <span className="text-sm text-zinc-700 dark:text-zinc-300">
-                  Rating
-                </span>
-                <div className="flex gap-1">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <button
-                      key={n}
-                      type="button"
-                      className="text-xl leading-none"
-                      onClick={() =>
-                        setRating(rating === n ? null : n)
-                      }
-                      aria-label={`${n} star`}
-                    >
-                      {n <= (rating ?? 0) ? '★' : '☆'}
-                    </button>
-                  ))}
-                  {rating && (
-                    <button
-                      type="button"
-                      className="ml-2 text-xs text-zinc-400 underline"
-                      onClick={() => setRating(null)}
-                    >
-                      clear
-                    </button>
-                  )}
-                </div>
+        {isEdit && (
+          <>
+            <div className="flex flex-col gap-1">
+              <span className="text-sm text-zinc-700 dark:text-zinc-300">Rating</span>
+              <div className="flex gap-1">
+                {[1, 2, 3, 4, 5].map((n) => (
+                  <button
+                    key={n}
+                    type="button"
+                    className="text-xl leading-none"
+                    onClick={() => setRating(rating === n ? null : n)}
+                    aria-label={`${n} star`}
+                  >
+                    {n <= (rating ?? 0) ? '★' : '☆'}
+                  </button>
+                ))}
+                {rating && (
+                  <button
+                    type="button"
+                    className="ml-2 text-xs text-zinc-400 underline"
+                    onClick={() => setRating(null)}
+                  >
+                    clear
+                  </button>
+                )}
               </div>
+            </div>
 
-              <label className="form-label">
-                Notes
-                <textarea
-                  className="form-input min-h-20 resize-y"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Your thoughts…"
-                />
-              </label>
+            <label className="form-label">
+              Notes
+              <textarea
+                className="form-input min-h-20 resize-y"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Your thoughts…"
+              />
+            </label>
 
-              <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
-                <input
-                  type="checkbox"
-                  checked={favorite}
-                  onChange={(e) => setFavorite(e.target.checked)}
-                  className="h-4 w-4 rounded border-zinc-300"
-                />
-                Mark as favourite ⭐
-              </label>
-            </>
-          )}
+            <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+              <input
+                type="checkbox"
+                checked={favorite}
+                onChange={(e) => setFavorite(e.target.checked)}
+                className="h-4 w-4 rounded border-zinc-300"
+              />
+              Mark as favourite ⭐
+            </label>
+          </>
+        )}
 
-          {error && <p className="form-error">{error}</p>}
+        {error && <p className="form-error">{error}</p>}
 
-          <div className="flex gap-3 pt-1">
-            <Button type="submit" variant="primary" loading={loading} className="flex-1">
-              {isNew ? 'Add book' : 'Save changes'}
-            </Button>
-            <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          </div>
-          {loading && <LoaderOverlay />}
-        </form>
-      </div>
-    </>
+        <div className="flex gap-3 pt-1">
+          <Button type="submit" variant="primary" loading={loading} className="flex-1">
+            {isNew ? 'Add book' : 'Save changes'}
+          </Button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        </div>
+        {loading && <LoaderOverlay />}
+      </form>
+    </RoomModal>
   )
 }
