@@ -18,11 +18,17 @@ export const CouchPanel = () => {
   const [books, setBooks] = useState<Book[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const fetchBooks = () => {
     getJson<{ books: Book[] }>('/api/room/books?status=READING')
       .then((data) => setBooks(data.books))
       .catch(console.error)
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    fetchBooks()
+    window.addEventListener('bookmarks-updated', fetchBooks)
+    return () => window.removeEventListener('bookmarks-updated', fetchBooks)
   }, [])
 
   if (loading) return <p className="form-help">Loading…</p>

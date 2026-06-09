@@ -24,14 +24,27 @@ export const PUT = async (request: Request) => {
   if (!Array.isArray(body)) return err('Invalid payload', 422)
 
   try {
+    const entries = body as { slot: number; label: string | null }[]
     await Promise.all(
-      body.map(({ slot, label }: { slot: number; label: string | null }) =>
-        prisma.bookmark.upsert({
-          where: { userId_slot: { userId, slot } },
-          create: { userId, slot, label: label || null },
-          update: { label: label || null },
-        }),
-      ),
+      entries.map(({ slot, label }) => {
+        const normalized = label || null
+        const ops: Promise<unknown>[] = [
+          prisma.bookmark.upsert({
+            where: { userId_slot: { userId, slot } },
+            create: { userId, slot, label: normalized },
+            update: { label: normalized },
+          }),
+        ]
+        if (!normalized) {
+          ops.push(
+            prisma.userBook.updateMany({
+              where: { userId, bookmarkSlot: slot },
+              data: { bookmarkSlot: null },
+            }),
+          )
+        }
+        return Promise.all(ops)
+      }),
     )
     return ok({ message: 'Changes Saved' }, 201)
   } catch (e) {

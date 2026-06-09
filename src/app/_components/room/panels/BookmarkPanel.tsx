@@ -66,6 +66,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
     setLoading(true)
     try {
       await putJson('/api/room/bookmarks', data)
+      window.dispatchEvent(new CustomEvent('bookmarks-updated'))
     } catch (err: unknown) {
       if (err instanceof Error) console.error(err.message)
     } finally {

@@ -17,11 +17,17 @@ export const KanbanBoard = () => {
   const [search, setSearch] = useState('')
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
 
-  useEffect(() => {
+  const fetchBooks = useCallback(() => {
     getJson<{ books: UserBookItem[] }>('/api/room/books')
       .then((res) => setBooks(res.books))
       .catch(console.error)
   }, [])
+
+  useEffect(() => {
+    fetchBooks()
+    window.addEventListener('bookmarks-updated', fetchBooks)
+    return () => window.removeEventListener('bookmarks-updated', fetchBooks)
+  }, [fetchBooks])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
