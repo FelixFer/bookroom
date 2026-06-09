@@ -38,11 +38,11 @@ export const StatsPanel = () => {
   ]
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       {items.map(({ label, value, emoji }) => (
         <div
           key={label}
-          className="flex items-center justify-between rounded-lg border border-zinc-200 px-4 py-3 dark:border-zinc-800"
+          className="panel-card--shelf flex items-center justify-between"
         >
           <span className="text-sm text-zinc-700 dark:text-zinc-300">
             {emoji} {label}

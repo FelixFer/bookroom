@@ -116,7 +116,7 @@ export const DiscoverPanel = () => {
             return (
               <div
                 key={book.key}
-                className="flex flex-col overflow-hidden rounded-lg border border-zinc-200 dark:border-zinc-800"
+                className="panel-card--shelf flex flex-col overflow-hidden"
               >
                 {/* Cover */}
                 <div className="flex h-32 items-center justify-center bg-zinc-100 dark:bg-zinc-900">

@@ -2,12 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { getJson } from '@/lib/api'
+import { BOOKMARK_KEYS, COLORS } from '@/app/_components/room/panels/BookmarkPanel'
 
 type Book = {
   id: string;
   title: string;
   author: string | null;
   coverUrl: string | null;
+  bookmarkSlot: number | null;
 };
 
 export const TrashPanel = () => {
@@ -31,13 +33,21 @@ export const TrashPanel = () => {
     )
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-4">
       <p className="form-help text-xs">Books you started but didn&apos;t finish.</p>
-      {books.map((b) => (
+      {books.map((b) => {
+        const bookmarkColor = b.bookmarkSlot != null
+          ? COLORS[BOOKMARK_KEYS[b.bookmarkSlot - 1]]
+          : undefined
+        return (
         <div
           key={b.id}
-          className="flex gap-3 rounded-lg border border-zinc-200 p-3 opacity-70 dark:border-zinc-800"
+          className="panel-card--shelf relative flex gap-3 opacity-70"
+          style={bookmarkColor ? { borderLeftColor: bookmarkColor, borderLeftWidth: '3px' } : undefined}
         >
+          {b.bookmarkSlot && (
+            <div className="bookmark-card-book" style={{ backgroundColor: bookmarkColor, left: '24px' }} />
+          )}
           {b.coverUrl && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -57,7 +67,8 @@ export const TrashPanel = () => {
             )}
           </div>
         </div>
-      ))}
+        )
+      })}
     </div>
   )
 }
