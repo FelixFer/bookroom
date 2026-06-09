@@ -51,9 +51,10 @@ export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     setTheme((prev) => {
       const next = prev === 'dark' ? 'light' : 'dark'
       localStorage.setItem('theme', next)
+      applyTheme(next)
       return next
     })
-  }, [])
+  }, [applyTheme])
 
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, isDark: theme === 'dark' }}>
