@@ -17,7 +17,7 @@ export default function ForgotPasswordPage() {
       <div className="auth-card">
         <h1 className="page-title">Reset password</h1>
         <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
-          Enter your email and we&apos;ll generate a reset link.
+          Enter your email and we&apos;ll send you a reset link.
         </p>
 
         <form
@@ -26,7 +26,6 @@ export default function ForgotPasswordPage() {
             e.preventDefault()
             setLoading(true)
             setError(null)
-            setResetUrl(null)
 
             try {
               const data = await postJson<{ ok: true; resetUrl?: string }>(
@@ -64,11 +63,11 @@ export default function ForgotPasswordPage() {
 
         {done ? (
           <div className="info-box">
-            If an account exists for that email, a reset link has been created.
+            If that email is registered, check your inbox for the reset link.
             {resetUrl ? (
-              <div className="mt-2 break-all">
-                <a className="underline underline-offset-4" href={resetUrl}>
-                  {resetUrl}
+              <div className="mt-2">
+                <a className="text-sm underline underline-offset-4" href={resetUrl}>
+                  Click here to reset →
                 </a>
               </div>
             ) : null}

@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { generateResetToken, hashResetToken } from '@/lib/password-reset'
+import { sendPasswordResetEmail } from '@/lib/email'
 import { ok, err } from '@/lib/server-utils'
 import { NextRequest } from 'next/server'
 
@@ -20,9 +21,12 @@ export const POST = async (request: NextRequest) => {
     const tokenHash = hashResetToken(token)
     try {
       await prisma.passwordResetToken.create({ data: { userId: user.id, tokenHash, expiresAt } })
+      const resetUrl = `${request.nextUrl.origin}/reset-password?token=${encodeURIComponent(token)}`
+
+      const sent = await sendPasswordResetEmail(email, resetUrl)
       const response: { ok: true; resetUrl?: string } = { ok: true }
-      if (process.env.NODE_ENV !== 'production') {
-        response.resetUrl = `${request.nextUrl.origin}/reset-password?token=${encodeURIComponent(token)}`
+      if (!sent && process.env.NODE_ENV !== 'production') {
+        response.resetUrl = resetUrl
       }
       return ok(response)
     } catch {
