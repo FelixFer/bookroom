@@ -965,3 +965,120 @@
   padding: 6px 16px;
   border-radius: 20px;
 }
+
+.remove-panel {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px;
+  padding: 0;
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  margin-bottom: 0;
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease,
+    height 0.5s ease,
+    margin-bottom 0.5s ease,
+    padding 0.5s ease;
+
+  & .remove-select-btn {
+    height: 0;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  &-show {
+    height: 56px;
+    opacity: 1;
+    visibility: visible;
+    margin-bottom: 12px;
+    padding: 8px 16px;
+
+    & .remove-select-btn {
+      height: 38.6px;
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.filter-panel {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  // align-items: flex-end;
+  padding: 0;
+  width: 100%;
+  margin-bottom: 0;
+  background-color: var(--kanban-muted);
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease,
+    height 0.5s ease,
+    padding 0.5s ease,
+    margin-bottom 0.5s ease;
+
+  &-show {
+    height: 90px;
+    opacity: 1;
+    visibility: visible;
+    margin-bottom: 12px;
+    padding: 6px 8px;
+
+    & .filter-pill {
+      height: 28px;
+      opacity: 1;
+      visibility: visible;
+    }
+
+    & .filter-list {
+      opacity: 1;
+      visibility: visible;
+    }
+  }
+}
+
+.filter-list {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  opacity: 0;
+  visibility: hidden;
+}
+
+.filter-pill {
+  height: 0;
+  opacity: 0;
+  visibility: hidden;
+  padding: 2px 8px;
+  font-size: 14px;
+  color: var(--kanban-text);
+  cursor: pointer;
+  user-select: none;
+  border-radius: 6px;
+  border: 1.5px solid var(--kanban-rod);
+  background-color: var((--kanban-card-bg));
+  transition:
+    opacity 0.5s ease,
+    visibility 0.5s ease,
+    height 0.5s ease;
+
+  &-included {
+    border-color: #4fa376;
+    background-color: #4fa37655;
+    color: #fdf8f0;
+  }
+
+  &-excluded {
+    border: 1.5px dashed #c65a5a;
+    background-color: #c65a5a55;
+    color: #fdf8f0;
+  }
+}

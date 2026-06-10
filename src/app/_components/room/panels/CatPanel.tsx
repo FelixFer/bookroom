@@ -4,14 +4,10 @@ import { useState, useCallback } from 'react'
 import { getJson } from '@/lib/api'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
+import { BookCover } from '@/app/_components/BookCover'
+import type { UserBookItem } from '@/types/book'
 
-type Book = {
-  id: string;
-  title: string;
-  author: string | null;
-  coverUrl: string | null;
-  status: string;
-};
+type Book = Pick<UserBookItem, 'id' | 'title' | 'author' | 'coverUrl' | 'status'>;
 
 export const CatPanel = () => {
   const [book, setBook] = useState<Book | null | 'empty'>(null)
@@ -33,7 +29,7 @@ export const CatPanel = () => {
       </p>
 
       {book === null && (
-        <Button variant="primary" onClick={roll} loading={loading}>
+        <Button variant="filled" onClick={roll} loading={loading}>
           Surprise me!
         </Button>
       )}
@@ -44,14 +40,11 @@ export const CatPanel = () => {
 
       {book && book !== 'empty' && (
         <div className="flex flex-col items-center gap-4">
-          {book.coverUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={book.coverUrl}
-              alt={book.title}
-              className="h-48 w-auto rounded-lg shadow-md object-cover"
-            />
-          )}
+          <BookCover
+            coverUrl={book.coverUrl}
+            title={book.title}
+            className="h-48 w-auto rounded-lg shadow-md object-cover"
+          />
           <div>
             <p className="font-semibold text-zinc-900 dark:text-zinc-50">
               {book.title}
@@ -65,7 +58,7 @@ export const CatPanel = () => {
               {book.status.replace('_', ' ')}
             </p>
           </div>
-          <Button variant="secondary" onClick={roll} loading={loading}>
+          <Button variant="outline" onClick={roll} loading={loading}>
             🎲 Roll again
           </Button>
         </div>

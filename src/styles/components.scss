@@ -1,3 +1,4 @@
+@use 'sass:map';
 @reference "tailwindcss";
 
 // ─── Page layout ─────────────────────────────────────────────────────────────
@@ -260,9 +261,7 @@
 .form-wrapper.is-active .form-header {
   opacity: 1;
   transform: translateX(0);
-  transition:
-    opacity 0.4s ease-in,
-    transform 0.35s ease-in;
+  transition: opacity 0.4s ease-in, transform 0.35s ease-in;
 }
 
 .form legend {
@@ -545,9 +544,7 @@
   color: var(--room-drawer-title);
   cursor: pointer;
   pointer-events: all;
-  transition:
-    background 0.15s,
-    color 0.15s;
+  transition: background 0.15s, color 0.15s;
 
   &:hover {
     background: var(--room-drawer-close-hover-bg);
@@ -1146,6 +1143,168 @@
     100% {
       opacity: 0;
       transform: translateY(6px) scaleY(0.97);
+    }
+  }
+}
+
+// ─── Button ──────────────────────────────────────────────────────────────────
+// Three independent axes composed by class: variant (filled/outline/soft/link/icon),
+// color (primary/success/danger/warning/grey), size (xs/s/m/l/xl).
+// Single source of truth lives in the maps below — edit a hex or add a color here.
+
+$btn-sizes: (
+  xs: (pad: 4px 10px,  font: 12px),
+  s:  (pad: 6px 12px,  font: 14px),
+  m:  (pad: 8px 16px,  font: 14px),   // ≈ legacy px-4 / text-sm button
+  l:  (pad: 10px 20px, font: 16px),
+  xl: (pad: 12px 24px, font: 18px),
+);
+$btn-icon-sizes: (xs: 24px, s: 28px, m: 32px, l: 36px, xl: 40px);  // xs = legacy icon "sm"
+
+// Per color: light + dark sub-maps with the channels each variant needs.
+$btn-colors: (
+  'primary': (
+    light: (solid: #3d2e1a, solid-hover: #2a1f10, on: #fdf8f0, accent: #3d2e1a, border: #d4c4a0, soft: #e8d5b0, soft-hover: #d4c4a0, tint: #f5ede0),
+    dark:  (solid: #c4a878, solid-hover: #e8d5b0, on: #1e1a14, accent: #e8d5b0, border: #4a3a22, soft: #4a3a22, soft-hover: #5a4a2e, tint: #2e2518),
+  ),
+  'success': (
+    light: (solid: #4fa376, solid-hover: #3f8a63, on: #ffffff, accent: #2f7d57, border: #a8d8c0, soft: #d8efe3, soft-hover: #c4e6d4, tint: #eaf6f0),
+    dark:  (solid: #5cb98a, solid-hover: #6fc99a, on: #0f1f17, accent: #8fd9b3, border: #2f5a44, soft: #1e3a2c, soft-hover: #274a38, tint: #16271e),
+  ),
+  'danger': (
+    light: (solid: #c65a5a, solid-hover: #b24a4a, on: #ffffff, accent: #b24a4a, border: #e8b4b4, soft: #f5dcdc, soft-hover: #eecaca, tint: #fbeeee),
+    dark:  (solid: #d47373, solid-hover: #e08585, on: #2a0f0f, accent: #e8a5a5, border: #5a2e2e, soft: #3a1f1f, soft-hover: #492727, tint: #281616),
+  ),
+  'warning': (
+    light: (solid: #f59e0b, solid-hover: #d98908, on: #422006, accent: #b45309, border: #f3d39b, soft: #fdebc8, soft-hover: #fbdfa8, tint: #fdf3e0),
+    dark:  (solid: #fbbf24, solid-hover: #fcd34d, on: #422006, accent: #fcd34d, border: #5a4a1e, soft: #3a2e10, soft-hover: #4a3a16, tint: #281f0c),
+  ),
+  'grey': (   // warm taupe
+    light: (solid: #6b5030, solid-hover: #574127, on: #fdf8f0, accent: #6b5030, border: #d4c4a0, soft: #ece3d3, soft-hover: #ddd0ba, tint: #f5ede0),
+    dark:  (solid: #a07850, solid-hover: #b78d63, on: #1e1a14, accent: #c4a878, border: #4a3a22, soft: #2e2518, soft-hover: #3a2e1c, tint: #2e2518),
+  ),
+);
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 500;
+  border-radius: 8px;
+  cursor: pointer;
+  border: 1px solid transparent;   // stable box so filled & outline share footprint
+  transition: background-color 0.15s, border-color 0.15s, color 0.15s;
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 2px solid currentColor;
+    outline-offset: 2px;
+  }
+}
+
+@each $name, $cfg in $btn-sizes {
+  .btn--#{$name} {
+    padding: map.get($cfg, pad);
+    font-size: map.get($cfg, font);
+  }
+}
+
+@each $name, $sz in $btn-icon-sizes {
+  .btn--icon-#{$name} {
+    width: $sz;
+    height: $sz;
+    padding: 0;
+  }
+}
+
+.btn--icon {
+  border-radius: 6px;
+  padding: 0;
+}
+
+// Placed after the size rules so its reset (padding: 0) wins by source order.
+.btn--link {
+  border: none;
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  text-underline-offset: 4px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// color × variant — the color depends on the variant, hence compound selectors.
+@each $color, $modes in $btn-colors {
+  $l: map.get($modes, light);
+  $d: map.get($modes, dark);
+
+  .btn--filled.btn--#{$color} {
+    background: map.get($l, solid);
+    color: map.get($l, on);
+
+    &:hover { background: map.get($l, solid-hover); }
+
+    :where(.dark, .dark *) & {
+      background: map.get($d, solid);
+      color: map.get($d, on);
+
+      &:hover { background: map.get($d, solid-hover); }
+    }
+  }
+
+  .btn--outline.btn--#{$color} {
+    border-color: map.get($l, border);
+    color: map.get($l, accent);
+
+    &:hover { background: map.get($l, tint); }
+
+    :where(.dark, .dark *) & {
+      border-color: map.get($d, border);
+      color: map.get($d, accent);
+
+      &:hover { background: map.get($d, tint); }
+    }
+  }
+
+  .btn--soft.btn--#{$color} {
+    border-color: map.get($l, border);
+    background: map.get($l, soft);
+    color: map.get($l, accent);
+
+    &:hover { background: map.get($l, soft-hover); }
+
+    :where(.dark, .dark *) & {
+      border-color: map.get($d, border);
+      background: map.get($d, soft);
+      color: map.get($d, accent);
+
+      &:hover { background: map.get($d, soft-hover); }
+    }
+  }
+
+  .btn--link.btn--#{$color} {
+    color: map.get($l, accent);
+
+    :where(.dark, .dark *) & { color: map.get($d, accent); }
+  }
+
+  .btn--icon.btn--#{$color} {
+    border-color: map.get($l, border);
+    color: map.get($l, accent);
+
+    &:hover { background: map.get($l, tint); }
+
+    :where(.dark, .dark *) & {
+      border-color: map.get($d, border);
+      color: map.get($d, accent);
+
+      &:hover { background: map.get($d, tint); }
     }
   }
 }

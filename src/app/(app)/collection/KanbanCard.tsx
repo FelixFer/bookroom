@@ -4,7 +4,8 @@ import { useDraggable } from '@dnd-kit/core'
 import { CSS } from '@dnd-kit/utilities'
 import type { UserBookItem } from '@/types/book'
 import { Button } from '@/app/_components/Button'
-import { BOOKMARK_KEYS, COLORS } from '@/app/_components/room/panels/BookmarkPanel'
+import { BookCover } from '@/app/_components/BookCover'
+import { getBookmarkColor } from '@/lib/bookmarks'
 
 type Props = {
   book: UserBookItem;
@@ -24,9 +25,7 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
     opacity: isDragging ? 0 : 1,
   }
 
-  const bookmarkColor = book.bookmarkSlot != null
-    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]]
-    : undefined;
+  const bookmarkColor = getBookmarkColor(book.bookmarkSlot)
 
   return (
     <div
@@ -41,26 +40,26 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         borderLeftWidth: (selected || bookmarkColor) ? '3px' : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
-      className="group relative flex gap-2 border p-2.5"
+      className='group relative flex gap-2 border p-2.5'
       onClick={selectionMode ? () => onToggleSelect(book.id) : undefined}
     >
 
       {book.bookmarkSlot && !selectionMode &&
         <div
           className='bookmark-card-book'
-          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]] }}
+          style={{ backgroundColor: bookmarkColor }}
         />
       }
 
       {/* Selection checkbox */}
       {selectionMode && (
-        <div className="absolute left-1.5 top-1.5 z-10">
+        <div className='absolute left-1.5 top-1.5 z-10'>
           <input
-            type="checkbox"
+            type='checkbox'
             checked={selected}
             onChange={() => onToggleSelect(book.id)}
             onClick={(e) => e.stopPropagation()}
-            className="h-4 w-4 cursor-pointer rounded accent-amber-500"
+            className='h-4 w-4 cursor-pointer rounded accent-amber-500'
           />
         </div>
       )}
@@ -72,60 +71,51 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         suppressHydrationWarning
         className={`flex cursor-grab items-start pt-0.5 active:cursor-grabbing ${selectionMode ? 'opacity-0 pointer-events-none' : ''}`}
         style={{ color: 'var(--kanban-muted)' }}
-        aria-label="Drag"
+        aria-label='Drag'
       >
         ⠿
       </div>
 
       {/* Cover */}
-      {book.coverUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={book.coverUrl}
-          alt={book.title}
-          className="h-16 w-11 shrink-0 object-cover"
-        />
-      ) : (
-        <div
-          className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
-          style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
-        >
-          📖
-        </div>
-      )}
+      <BookCover
+        coverUrl={book.coverUrl}
+        title={book.title}
+        className='h-16 w-11 shrink-0 object-cover'
+        placeholderClassName='h-16 w-11 text-xl bg-(--kanban-card-placeholder)'
+      />
 
       {/* Info */}
-      <div className="min-w-0 flex-1">
+      <div className='min-w-0 flex-1'>
         <p
-          className="line-clamp-2 text-sm font-medium leading-tight"
+          className='line-clamp-2 text-sm font-medium leading-tight'
           style={{ color: 'var(--kanban-text)' }}
         >
           {book.title}
         </p>
         {book.author && (
           <p
-            className="mt-0.5 truncate text-xs"
+            className='mt-0.5 truncate text-xs'
             style={{ color: 'var(--kanban-muted)' }}
           >
             {book.author}
           </p>
         )}
         {book.rating && (
-          <p className="mt-1 text-xs text-amber-500">
+          <p className='mt-1 text-xs text-amber-500'>
             {'★'.repeat(book.rating)}
             {'☆'.repeat(5 - book.rating)}
           </p>
         )}
         {book.favorite && (
-          <span className="mt-0.5 inline-block text-xs">⭐</span>
+          <span className='mt-0.5 inline-block text-xs'>⭐</span>
         )}
       </div>
 
       {/* Actions — shown on hover, hidden in selection mode */}
       {!selectionMode && (
-        <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button variant="icon" size="sm" onClick={() => onEdit(book)} aria-label="Edit">✏</Button>
-          <Button variant="icon-danger" size="sm" onClick={() => onDelete(book)} aria-label="Delete">✕</Button>
+        <div className='absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
+          <Button variant='icon' size='xs' onClick={() => onEdit(book)} aria-label='Edit'>✏</Button>
+          <Button variant='icon' color='danger' size='xs' onClick={() => onDelete(book)} aria-label='Delete'>✕</Button>
         </div>
       )}
     </div>
@@ -133,12 +123,10 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
 }
 
 export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => {
-  const bookmarkColor = book.bookmarkSlot != null
-    ? COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]]
-    : undefined;
+  const bookmarkColor = getBookmarkColor(book.bookmarkSlot)
   return (
     <div
-      className="flex w-64 gap-2 border p-2.5"
+      className='flex w-64 gap-2 border p-2.5'
       style={{
         backgroundColor: 'var(--kanban-card-bg)',
         borderTopColor: 'var(--kanban-amber)',
@@ -153,36 +141,31 @@ export const KanbanCardOverlay = ({ book }: { book: UserBookItem }) => {
       {book.bookmarkSlot &&
         <div
           className='bookmark-card-book'
-          style={{ backgroundColor: COLORS[BOOKMARK_KEYS[book.bookmarkSlot - 1]] }}
+          style={{ backgroundColor: bookmarkColor }}
         />
       }
-      <div className="flex cursor-grabbing items-start pt-0.5" style={{ color: 'var(--kanban-muted)' }}>⠿</div>
-      {book.coverUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={book.coverUrl} alt={book.title} className="h-16 w-11 shrink-0 object-cover" />
-      ) : (
-        <div
-          className="flex h-16 w-11 shrink-0 items-center justify-center text-xl"
-          style={{ backgroundColor: 'var(--kanban-card-placeholder)' }}
-        >
-          📖
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="line-clamp-2 text-sm font-medium leading-tight" style={{ color: 'var(--kanban-text)' }}>
+      <div className='flex cursor-grabbing items-start pt-0.5' style={{ color: 'var(--kanban-muted)' }}>⠿</div>
+      <BookCover
+        coverUrl={book.coverUrl}
+        title={book.title}
+        className='h-16 w-11 shrink-0 object-cover'
+        placeholderClassName='h-16 w-11 text-xl bg-(--kanban-card-placeholder)'
+      />
+      <div className='min-w-0 flex-1'>
+        <p className='line-clamp-2 text-sm font-medium leading-tight' style={{ color: 'var(--kanban-text)' }}>
           {book.title}
         </p>
         {book.author && (
-          <p className="mt-0.5 truncate text-xs" style={{ color: 'var(--kanban-muted)' }}>
+          <p className='mt-0.5 truncate text-xs' style={{ color: 'var(--kanban-muted)' }}>
             {book.author}
           </p>
         )}
         {book.rating && (
-          <p className="mt-1 text-xs text-amber-500">
+          <p className='mt-1 text-xs text-amber-500'>
             {'★'.repeat(book.rating)}{'☆'.repeat(5 - book.rating)}
           </p>
         )}
       </div>
     </div>
-  );
+  )
 }

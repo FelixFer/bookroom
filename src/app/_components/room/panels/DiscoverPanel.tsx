@@ -1,9 +1,15 @@
 'use client'
 
 import { useState } from 'react'
+import axios from 'axios'
 import { postJson } from '@/lib/api'
+import { DEFAULT_STATUS } from '@/types/book'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
+import { EmptyState } from '@/app/_components/EmptyState'
+import { BookCover } from '@/app/_components/BookCover'
+import { FormError } from '@/app/_components/FormField'
+import { useSubmit } from '@/hooks/useSubmit'
 
 type OpenLibBook = {
   key: string;
@@ -13,34 +19,26 @@ type OpenLibBook = {
   first_publish_year?: number;
 };
 
+const openLibCoverUrl = (coverId: number) =>
+  `https://covers.openlibrary.org/b/id/${coverId}-M.jpg`
+
 export const DiscoverPanel = () => {
   const [query, setQuery] = useState('')
   const [results, setResults] = useState<OpenLibBook[]>([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
   // Track per-book state: "idle" | "adding" | "added" | "owned"
   const [bookState, setBookState] = useState<Record<string, 'adding' | 'added' | 'owned'>>({})
 
-  const search = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const { handleSubmit: search, loading, error } = useSubmit(async () => {
     if (!query.trim()) return
-    setError(null)
-    setLoading(true)
     setResults([])
     setBookState({})
-    try {
-      const res = await fetch(
-        `https://openlibrary.org/search.json?q=${encodeURIComponent(query.trim())}&limit=12&fields=key,title,author_name,cover_i,first_publish_year`,
-      )
-      if (!res.ok) throw new Error('Search failed')
-      const data = (await res.json()) as { docs: OpenLibBook[] }
-      setResults(data.docs ?? [])
-    } catch {
-      setError('Could not reach Open Csollection. Check your connection.')
-    } finally {
-      setLoading(false)
-    }
-  }
+    const res = await fetch(
+      `https://openlibrary.org/search.json?q=${encodeURIComponent(query.trim())}&limit=12&fields=key,title,author_name,cover_i,first_publish_year`,
+    ).catch(() => null)
+    if (!res?.ok) throw new Error('Could not reach Open Library. Check your connection.')
+    const data = (await res.json()) as { docs: OpenLibBook[] }
+    setResults(data.docs ?? [])
+  }, 'Could not reach Open Library. Check your connection.')
 
   const addBook = async (book: OpenLibBook) => {
     setBookState((prev) => ({ ...prev, [book.key]: 'adding' }))
@@ -48,16 +46,13 @@ export const DiscoverPanel = () => {
       await postJson('/api/books', {
         title: book.title,
         author: book.author_name?.[0] ?? null,
-        coverUrl: book.cover_i
-          ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-          : null,
-        status: 'PLAN_TO_READ',
+        coverUrl: book.cover_i ? openLibCoverUrl(book.cover_i) : null,
+        status: DEFAULT_STATUS,
       })
       setBookState((prev) => ({ ...prev, [book.key]: 'added' }))
     } catch (err: unknown) {
       // 409 = already in collection
-      const msg = err instanceof Error ? err.message : ''
-      if (msg.includes('409') || msg.toLowerCase().includes('already')) {
+      if (axios.isAxiosError(err) && err.response?.status === 409) {
         setBookState((prev) => ({ ...prev, [book.key]: 'owned' }))
       } else {
         setBookState((prev) => {
@@ -79,24 +74,21 @@ export const DiscoverPanel = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Button type="submit" variant="primary" loading={loading}>
+        <Button type="submit" variant="filled" loading={loading}>
           Search
         </Button>
       </form>
       {loading && <LoaderOverlay />}
 
-      {error && <p className="form-error text-xs">{error}</p>}
+      <FormError error={error} />
 
       {/* Empty state */}
       {!loading && results.length === 0 && !error && (
-        <div className="flex flex-col items-center gap-3 pt-6 text-center">
-          <span className="text-4xl">🔍</span>
-          <p className="form-help text-xs">
-            Search millions of books from Open Library.
-            <br />
-            Find one and add it to your collection instantly.
-          </p>
-        </div>
+        <EmptyState emoji="🔍">
+          Search millions of books from Open Library.
+          <br />
+          Find one and add it to your collection instantly.
+        </EmptyState>
       )}
 
       {/* Loading */}
@@ -109,9 +101,7 @@ export const DiscoverPanel = () => {
         <div className="grid grid-cols-2 gap-3">
           {results.map((book) => {
             const state = bookState[book.key]
-            const coverUrl = book.cover_i
-              ? `https://covers.openlibrary.org/b/id/${book.cover_i}-M.jpg`
-              : null
+            const coverUrl = book.cover_i ? openLibCoverUrl(book.cover_i) : null
 
             return (
               <div
@@ -120,16 +110,12 @@ export const DiscoverPanel = () => {
               >
                 {/* Cover */}
                 <div className="flex h-32 items-center justify-center bg-zinc-100 dark:bg-zinc-900">
-                  {coverUrl ? (
-                    // eslint-disable-next-line @next/next/no-img-element
-                    <img
-                      src={coverUrl}
-                      alt={book.title}
-                      className="h-full w-full object-cover"
-                    />
-                  ) : (
-                    <span className="text-3xl">📖</span>
-                  )}
+                  <BookCover
+                    coverUrl={coverUrl}
+                    title={book.title}
+                    className="h-full w-full object-cover"
+                    placeholderClassName="text-3xl"
+                  />
                 </div>
 
                 {/* Info */}

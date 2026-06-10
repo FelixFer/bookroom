@@ -14,6 +14,8 @@ export type UserBookItem = {
   updatedAt: string; // ISO string (serialized from Prisma Date)
 };
 
+export const DEFAULT_STATUS: ReadingStatus = 'PLAN_TO_READ'
+
 export const STATUS_LABELS: Record<ReadingStatus, string> = {
   PLAN_TO_READ: 'Wishlist Shelf',
   READING: 'Reading Desk',

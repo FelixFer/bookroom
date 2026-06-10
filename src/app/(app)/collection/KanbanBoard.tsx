@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { KanbanColumn } from './KanbanColumn'
 import { KanbanCardOverlay } from './KanbanCard'
@@ -12,12 +12,30 @@ import type { UserBookItem } from '@/types/book'
 import { STATUS_ORDER } from '@/types/book'
 import type { ReadingStatus } from '@/generated/prisma/enums'
 import { Button } from '@/app/_components/Button'
+import type { TBookMark } from '@/lib/bookmarks'
+import { useGet } from '@/hooks/useGet'
+
+export type filterSelection = {
+  included: number[] | null
+  excluded: number[] | null
+}
 
 export const KanbanBoard = () => {
   const [books, setBooks] = useState<UserBookItem[]>([])
+  const { data: bookmarksData } = useGet<{ data: TBookMark[] }, TBookMark[]>(
+    '/api/room/bookmarks?labeled=true',
+    (res) => res.data,
+    'bookmarks-updated',
+  )
+  const bookmarks = bookmarksData ?? []
   const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<UserBookItem | null>(null)
   const [selectionMode, setSelectionMode] = useState(false)
+  const [showFilter, setShowFilter] = useState(false)
+  const [filter, setFilter] = useState<filterSelection>({
+    included: [],
+    excluded: [],
+  })
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false)
   const [bulkDeleting, setBulkDeleting] = useState(false)
@@ -93,7 +111,7 @@ export const KanbanBoard = () => {
   const toggleSelect = useCallback((id: string) => {
     setSelectedIds((prev) => {
       const next = new Set(prev)
-      next.has(id) ? next.delete(id) : next.add(id)
+      if (next.has(id)) { next.delete(id) } else { next.add(id) }
       return next
     })
   }, [])
@@ -117,13 +135,53 @@ export const KanbanBoard = () => {
     }
   }, [selectedIds, clearSelection])
 
-  const filtered = search
-    ? books.filter(
-      (b) =>
-        b.title.toLowerCase().includes(search.toLowerCase()) ||
-        (b.author ?? '').toLowerCase().includes(search.toLowerCase()),
-    )
-    : books
+  const handleFilterStatus = useCallback((slot: number) => {
+    setFilter((prev) => {
+      const inIncluded = prev.included?.includes(slot)
+      const inExcluded = prev.excluded?.includes(slot)
+
+      if (!inIncluded && !inExcluded) {
+        return { ...prev, included: [...(prev.included ?? []), slot] }
+      }
+      if (inIncluded) {
+        return {
+          included: prev.included?.filter((s) => s !== slot) ?? [],
+          excluded: [...(prev.excluded ?? []), slot],
+        }
+      }
+      if (inExcluded) {
+        return {
+          ...prev,
+          excluded: prev.excluded?.filter((s) => s !== slot) ?? [],
+        }
+      }
+      return prev
+    })
+  }, [])
+
+  const filtered = useMemo(() => {
+    let result = search
+      ? books.filter(
+        (b) =>
+          b.title.toLowerCase().includes(search.toLowerCase()) ||
+          (b.author ?? '').toLowerCase().includes(search.toLowerCase()),
+      )
+      : books
+
+    if (filter.included?.length) {
+      result = result.filter((book) =>
+        book.bookmarkSlot !== null && filter.included!.includes(book.bookmarkSlot)
+      )
+    }
+
+    if (filter.excluded?.length) {
+      result = result.filter((book) =>
+        book.bookmarkSlot === null || !filter.excluded!.includes(book.bookmarkSlot)
+      )
+    }
+
+    return result
+  }, [books, search, filter])
 
   const byStatus = (status: ReadingStatus) =>
     filtered.filter((b) => b.status === status)
@@ -144,54 +202,81 @@ export const KanbanBoard = () => {
         className="flex flex-wrap items-center gap-3 border-b px-4 py-3"
         style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
       >
-        <Button href="/" variant="secondary">← Room</Button>
+        <Button href="/" variant="outline">← Room</Button>
 
         <h1 className="text-base font-semibold" style={{ color: 'var(--kanban-text)' }}>
           My Collection
         </h1>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+        {/* Search */}
+        <input
+          className="form-input h-9 flex-1 text-sm"
+          placeholder="Search…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Button
           variant="soft"
           onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
         >
-          {selectionMode ? 'Cancel' : 'Select'}
+          {selectionMode ? 'Cancel' : 'Remove Book(s)'}
         </Button>
 
-        <div className="flex flex-1 justify-end gap-3">
-          {/* Search */}
-          <input
-            className="form-input h-9 w-40 text-sm"
-            placeholder="Search…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <Button
+          variant='soft'
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
+        </Button>
 
-          {!selectionMode && (
-            <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
-          )}
+        {!selectionMode && (
+          <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+        )}
+      </div>
+
+      <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
+        <Button
+          variant='soft'
+          size='s'
+          onClick={() => setFilter({ included: [], excluded: [] })}
+          disabled={!filter.excluded?.length && !filter.included?.length}
+        >
+          Reset Filter
+        </Button>
+        <div className='filter-list'>
+          {bookmarks.length && bookmarks.map((b) => {
+            return (
+              <p
+                key={b.slot}
+                className={`filter-pill ${filter.included?.includes(b.slot) ? 'filter-pill-included' : ''} ${filter.excluded?.includes(b.slot) ? 'filter-pill-excluded' : ''}`}
+                onClick={() => handleFilterStatus(b.slot)}
+              >
+                {b.label}
+              </p>
+            )
+          })}
         </div>
       </div>
 
       {/* Bulk action bar */}
-      {selectionMode && (
-        <div
-          className="flex flex-wrap items-center gap-3 border-b px-4 py-2"
-          style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
-        >
-          <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
-            {selectedIds.size} selected
-          </span>
-          <Button variant="soft" onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
-          <Button variant="soft" onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
-          {selectedIds.size > 0 && (
-            <Button variant="danger" onClick={() => setBulkConfirmOpen(true)}>
-              Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
-            </Button>
-          )}
-        </div>
-      )}
+
+      <div
+        className={`remove-panel ${selectionMode ? 'remove-panel-show' : ''}`}
+        style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
+      >
+        <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
+          {selectedIds.size} selected
+        </span>
+        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
+        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
+        {selectedIds.size > 0 && (
+          <Button variant="filled" color="danger" className='remove-select-btn' onClick={() => setBulkConfirmOpen(true)}>
+            Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
+          </Button>
+        )}
+      </div>
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -242,10 +327,10 @@ export const KanbanBoard = () => {
             Remove <span className="font-semibold text-zinc-900 dark:text-zinc-50">{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span> from your collection? This can&apos;t be undone.
           </p>
           <div className="flex gap-3">
-            <Button variant="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
+            <Button variant="filled" color="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
               Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
             </Button>
-            <Button variant="secondary" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
           </div>
         </div>
       </RoomModal>

@@ -1,6 +1,7 @@
 import { getServerSession } from 'next-auth/next'
 import { authOptions } from '@/auth'
 import { NextResponse } from 'next/server'
+import { prisma } from '@/lib/prisma'
 
 export function ok<T>(data: T, status = 200) {
   return NextResponse.json(data, { status })
@@ -17,12 +18,24 @@ export async function requireAuth(): Promise<string | null> {
 
 export async function parseBody<T extends Record<string, unknown>>(
   request: Request,
-): Promise<{ body: T | null; response: Response | null }> {
+): Promise<{ body: T; response: null } | { body: null; response: Response }> {
   const raw = (await request.json().catch(() => null)) as unknown
   if (!raw || typeof raw !== 'object') {
     return { body: null, response: err('Invalid payload', 400) }
   }
   return { body: raw as T, response: null }
+}
+
+export const userBookSelect = {
+  id: true, status: true, bookmarkSlot: true, rating: true, notes: true, favorite: true, updatedAt: true,
+  book: { select: { id: true, title: true, author: true, coverUrl: true } },
+} as const
+
+export async function findOwnedUserBook(id: string, userId: string) {
+  const userBook = await prisma.userBook.findUnique({ where: { id } })
+  if (!userBook) return { userBook: null, response: err('Not found', 404) } as const
+  if (userBook.userId !== userId) return { userBook: null, response: err('Forbidden', 403) } as const
+  return { userBook, response: null } as const
 }
 
 type UserBookWithBook = {

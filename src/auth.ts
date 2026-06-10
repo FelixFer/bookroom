@@ -3,6 +3,7 @@ import type { JWT } from 'next-auth/jwt'
 import Credentials from 'next-auth/providers/credentials'
 import { prisma } from '@/lib/prisma'
 import { verifyPassword } from '@/lib/password'
+import { normalizeEmail } from '@/lib/validation'
 
 export const authOptions: NextAuthOptions = {
   secret: process.env.NEXTAUTH_SECRET,
@@ -19,7 +20,7 @@ export const authOptions: NextAuthOptions = {
         if (typeof email !== 'string' || typeof password !== 'string')
           throw new Error('Email and password are required')
 
-        const normalizedEmail = email.trim().toLowerCase()
+        const normalizedEmail = normalizeEmail(email)
         if (!normalizedEmail) throw new Error('Email is required')
 
         try {
