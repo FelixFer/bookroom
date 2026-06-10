@@ -66,8 +66,8 @@ export const AddBookPanel = ({ onClose }: Props) => {
           Book added to your collection!
         </p>
         <div className="flex gap-3">
-          <Button variant="primary" onClick={() => setSuccess(false)}>Add another</Button>
-          <Button variant="secondary" onClick={onClose}>Done</Button>
+          <Button variant="filled" onClick={() => setSuccess(false)}>Add another</Button>
+          <Button variant="outline" onClick={onClose}>Done</Button>
         </div>
       </div>
     )
@@ -141,10 +141,10 @@ export const AddBookPanel = ({ onClose }: Props) => {
       {error && <p className="form-error">{error}</p>}
 
       <div className="flex gap-3">
-        <Button type="submit" variant="primary" loading={loading} className="flex-1">
+        <Button type="submit" variant="filled" loading={loading} className="flex-1">
           Add book
         </Button>
-        <Button variant="secondary" onClick={onClose}>Cancel</Button>
+        <Button variant="outline" onClick={onClose}>Cancel</Button>
       </div>
       {loading && <LoaderOverlay />}
     </form>

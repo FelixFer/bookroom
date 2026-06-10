@@ -39,10 +39,10 @@ export const DeleteBookModal = ({ book, onClose, onDeleted }: Props) => {
         </p>
         {error && <p className="form-error">{error}</p>}
         <div className="flex gap-3">
-          <Button variant="danger" loading={loading} onClick={handleConfirm} className="flex-1">
+          <Button variant="filled" color="danger" loading={loading} onClick={handleConfirm} className="flex-1">
             Remove
           </Button>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
         </div>
       </div>
     </RoomModal>

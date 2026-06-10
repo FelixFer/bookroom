@@ -55,7 +55,7 @@ export default function ForgotPasswordPage() {
 
           {error ? <p className="form-error">{error}</p> : null}
 
-          <Button type="submit" variant="primary" loading={loading}>
+          <Button type="submit" variant="filled" loading={loading}>
             Send reset link
           </Button>
         </form>

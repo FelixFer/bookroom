@@ -33,7 +33,7 @@ export const CatPanel = () => {
       </p>
 
       {book === null && (
-        <Button variant="primary" onClick={roll} loading={loading}>
+        <Button variant="filled" onClick={roll} loading={loading}>
           Surprise me!
         </Button>
       )}
@@ -65,7 +65,7 @@ export const CatPanel = () => {
               {book.status.replace('_', ' ')}
             </p>
           </div>
-          <Button variant="secondary" onClick={roll} loading={loading}>
+          <Button variant="outline" onClick={roll} loading={loading}>
             🎲 Roll again
           </Button>
         </div>

@@ -202,10 +202,10 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
         {error && <p className="form-error">{error}</p>}
 
         <div className="flex gap-3 pt-1">
-          <Button type="submit" variant="primary" loading={loading} className="flex-1">
+          <Button type="submit" variant="filled" loading={loading} className="flex-1">
             {isNew ? 'Add book' : 'Save changes'}
           </Button>
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button variant="outline" onClick={onClose}>Cancel</Button>
         </div>
         {loading && <LoaderOverlay />}
       </form>

@@ -166,7 +166,7 @@ function LandingScreenInner() {
 
                 <Button
                   type="submit"
-                  variant="primary"
+                  variant="filled"
                   className="btn-login"
                   loading={loginLoading}
                 >
@@ -248,7 +248,7 @@ function LandingScreenInner() {
 
                 <Button
                   type="submit"
-                  variant="secondary"
+                  variant="outline"
                   className="btn-signup"
                   loading={signupLoading}
                 >

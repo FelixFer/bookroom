@@ -132,7 +132,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
         <div className="flex items-center gap-2">
           <Button
             type="submit"
-            variant="primary"
+            variant="filled"
             loading={loading}
             className="flex-1"
           >

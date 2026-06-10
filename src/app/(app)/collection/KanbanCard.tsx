@@ -124,8 +124,8 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
       {/* Actions — shown on hover, hidden in selection mode */}
       {!selectionMode && (
         <div className="absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100">
-          <Button variant="icon" size="sm" onClick={() => onEdit(book)} aria-label="Edit">✏</Button>
-          <Button variant="icon-danger" size="sm" onClick={() => onDelete(book)} aria-label="Delete">✕</Button>
+          <Button variant="icon" size="xs" onClick={() => onEdit(book)} aria-label="Edit">✏</Button>
+          <Button variant="icon" color="danger" size="xs" onClick={() => onDelete(book)} aria-label="Delete">✕</Button>
         </div>
       )}
     </div>

@@ -79,7 +79,7 @@ export const DiscoverPanel = () => {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
         />
-        <Button type="submit" variant="primary" loading={loading}>
+        <Button type="submit" variant="filled" loading={loading}>
           Search
         </Button>
       </form>

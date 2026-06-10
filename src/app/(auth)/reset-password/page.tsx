@@ -57,7 +57,7 @@ function ResetPasswordForm() {
             <p className="form-help">Password must be at least 8 characters.</p>
           )}
 
-          <Button type="submit" variant="primary" loading={loading} disabled={!token}>
+          <Button type="submit" variant="filled" loading={loading} disabled={!token}>
             Save new password
           </Button>
         </form>

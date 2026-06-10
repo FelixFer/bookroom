@@ -208,7 +208,7 @@ export const KanbanBoard = () => {
         className="flex flex-wrap items-center gap-3 border-b px-4 py-3"
         style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
       >
-        <Button href="/" variant="secondary">← Room</Button>
+        <Button href="/" variant="outline">← Room</Button>
 
         <h1 className="text-base font-semibold" style={{ color: 'var(--kanban-text)' }}>
           My Collection
@@ -240,7 +240,7 @@ export const KanbanBoard = () => {
           </Button>
 
           {!selectionMode && (
-            <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+            <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
           )}
         </div>
       </div>
@@ -279,7 +279,7 @@ export const KanbanBoard = () => {
           <Button variant="soft" onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
           <Button variant="soft" onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
           {selectedIds.size > 0 && (
-            <Button variant="danger" onClick={() => setBulkConfirmOpen(true)}>
+            <Button variant="filled" color="danger" onClick={() => setBulkConfirmOpen(true)}>
               Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
             </Button>
           )}
@@ -335,10 +335,10 @@ export const KanbanBoard = () => {
             Remove <span className="font-semibold text-zinc-900 dark:text-zinc-50">{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span> from your collection? This can&apos;t be undone.
           </p>
           <div className="flex gap-3">
-            <Button variant="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
+            <Button variant="filled" color="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
               Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
             </Button>
-            <Button variant="secondary" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
           </div>
         </div>
       </RoomModal>
