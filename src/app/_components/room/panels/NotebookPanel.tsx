@@ -1,7 +1,7 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getJson } from '@/lib/api'
+import { useGet } from '@/hooks/useGet'
+import { EmptyState } from '@/app/_components/EmptyState'
 
 type NoteBook = {
   id: string;
@@ -12,25 +12,17 @@ type NoteBook = {
 };
 
 export const NotebookPanel = () => {
-  const [books, setBooks] = useState<NoteBook[]>([])
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getJson<{ books: NoteBook[] }>('/api/room/notes')
-      .then((data) => setBooks(data.books))
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: books, loading } = useGet<{ books: NoteBook[] }, NoteBook[]>(
+    '/api/room/notes',
+    (res) => res.books,
+  )
 
   if (loading) return <p className="form-help">Loading notes…</p>
-  if (!books.length)
+  if (!books?.length)
     return (
-      <div className="flex flex-col items-center gap-4 pt-8 text-center">
-        <span className="text-4xl">📋</span>
-        <p className="form-help">
-          No notes yet. Add your thoughts to books in your collection!
-        </p>
-      </div>
+      <EmptyState emoji="📋">
+        No notes yet. Add your thoughts to books in your collection!
+      </EmptyState>
     )
 
   return (

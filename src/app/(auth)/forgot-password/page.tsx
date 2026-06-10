@@ -1,16 +1,25 @@
 'use client'
 
 import { useState } from 'react'
-import { getApiErrorMessage, postJson } from '@/lib/api'
+import { postJson } from '@/lib/api'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
+import { TextField, FormError } from '@/app/_components/FormField'
+import { useSubmit } from '@/hooks/useSubmit'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
-  const [loading, setLoading] = useState(false)
   const [resetUrl, setResetUrl] = useState<string | null>(null)
   const [done, setDone] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const { handleSubmit, loading, error } = useSubmit(async () => {
+    const data = await postJson<{ ok: true; resetUrl?: string }>(
+      '/api/auth/password/forgot',
+      { email },
+    )
+    setDone(true)
+    if (data?.resetUrl) setResetUrl(data.resetUrl)
+  }, 'Failed to request reset link')
 
   return (
     <div className="page-center">
@@ -20,40 +29,17 @@ export default function ForgotPasswordPage() {
           Enter your email and we&apos;ll send you a reset link.
         </p>
 
-        <form
-          className="auth-form"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            setLoading(true)
-            setError(null)
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <TextField
+            label="Email"
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
 
-            try {
-              const data = await postJson<{ ok: true; resetUrl?: string }>(
-                '/api/auth/password/forgot',
-                { email },
-              )
-              setDone(true)
-              if (data?.resetUrl) setResetUrl(data.resetUrl)
-            } catch (err) {
-              setError(getApiErrorMessage(err, 'Failed to request reset link'))
-            } finally {
-              setLoading(false)
-            }
-          }}
-        >
-          <label className="form-label">
-            Email
-            <input
-              className="form-input"
-              type="email"
-              autoComplete="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </label>
-
-          {error ? <p className="form-error">{error}</p> : null}
+          <FormError error={error} />
 
           <Button type="submit" variant="filled" loading={loading}>
             Send reset link

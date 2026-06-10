@@ -4,28 +4,16 @@ import { useState, useRef, useEffect } from 'react'
 import { LoaderOverlay } from '@/app/_components/Loader'
 import { Button } from '@/app/_components/Button'
 import { getJson, putJson } from '@/lib/api'
+import { BOOKMARK_KEYS, BOOKMARK_COLORS, type BookmarkKey, type TBookMark } from '@/lib/bookmarks'
+import { FormError } from '@/app/_components/FormField'
+import { useSubmit } from '@/hooks/useSubmit'
 
-export const BOOKMARK_KEYS = ['first', 'second', 'third', 'fourth', 'fifth'] as const
-const PLACEHOLDERS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
+const PLACEHOLDERS: Record<BookmarkKey, string> = {
   first: 'Favorites',
   second: 'Classics',
   third: 'Cozy Reads',
   fourth: 'Masterpiece',
   fifth: 'Buy Later',
-}
-export const COLORS: Record<(typeof BOOKMARK_KEYS)[number], string> = {
-  first: '#4C7DFF',
-  second: '#3FAF7A',
-  third: '#D94A4A',
-  fourth: '#9C72D9',
-  fifth: '#D9A441',
-}
-
-type BookmarkKey = (typeof BOOKMARK_KEYS)[number];
-
-export type TBookMark = {
-  slot: number;
-  label: string | null;
 }
 
 type Props = {
@@ -33,7 +21,6 @@ type Props = {
 };
 
 export const BookmarkPanel = ({ isOpen }: Props) => {
-  const [loading, setLoading] = useState(false)
   const [erasing, setErasing] = useState(false)
   const [focusIndex, setFocusIndex] = useState<BookmarkKey | null>(null)
   const inputRefs = useRef<(HTMLInputElement | null)[]>([])
@@ -57,22 +44,14 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
     setBookmarks((prev) => ({ ...prev, [key]: value }))
   }
 
-  const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
-    e.preventDefault()
+  const { handleSubmit, loading, error } = useSubmit(async () => {
     const data = BOOKMARK_KEYS.map((key, i) => ({
       slot: i + 1,
       label: bookmarks[key],
     }))
-    setLoading(true)
-    try {
-      await putJson('/api/room/bookmarks', data)
-      window.dispatchEvent(new CustomEvent('bookmarks-updated'))
-    } catch (err: unknown) {
-      if (err instanceof Error) console.error(err.message)
-    } finally {
-      setLoading(false)
-    }
-  }
+    await putJson('/api/room/bookmarks', data)
+    window.dispatchEvent(new CustomEvent('bookmarks-updated'))
+  })
 
   useEffect(() => {
     if (!isOpen) return
@@ -121,7 +100,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
             </label>
             <div
               className={`bookmark-sideway ${focusIndex === i ? 'bookmark-sideway-active' : ''}`}
-              style={{ background: COLORS[i] }}
+              style={{ background: BOOKMARK_COLORS[i] }}
               onClick={() => {
                 setFocusIndex(i)
                 inputRefs.current[BOOKMARK_KEYS.indexOf(i)]?.focus()
@@ -129,6 +108,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
             />
           </div>
         ))}
+        <FormError error={error} />
         <div className="flex items-center gap-2">
           <Button
             type="submit"

@@ -1,14 +1,15 @@
 import { prisma } from '@/lib/prisma'
 import { generateResetToken, hashResetToken } from '@/lib/password-reset'
 import { sendPasswordResetEmail } from '@/lib/email'
-import { ok, err } from '@/lib/server-utils'
+import { ok, err, parseBody } from '@/lib/server-utils'
+import { normalizeEmail } from '@/lib/validation'
 import { NextRequest } from 'next/server'
 
 export const POST = async (request: NextRequest) => {
-  const body = (await request.json().catch(() => null)) as Record<string, unknown> | null
-  if (!body) return err('Invalid payload', 422)
+  const { body, response } = await parseBody(request)
+  if (!body) return response
 
-  const email = typeof body.email === 'string' ? body.email.trim().toLowerCase() : ''
+  const email = normalizeEmail(body.email)
   if (!email) return err('Email is required', 422)
 
   const user = await prisma.user.findUnique({ where: { email }, select: { id: true } })

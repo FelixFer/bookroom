@@ -2,9 +2,11 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { Suspense, useState } from 'react'
-import { getApiErrorMessage, postJson } from '@/lib/api'
+import { postJson } from '@/lib/api'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
+import { TextField } from '@/app/_components/FormField'
+import { useSubmit } from '@/hooks/useSubmit'
 
 function ResetPasswordForm() {
   const router = useRouter()
@@ -12,44 +14,26 @@ function ResetPasswordForm() {
   const token = searchParams.get('token') ?? ''
 
   const [password, setPassword] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState<string | null>(null)
+
+  const { handleSubmit, loading, error } = useSubmit(async () => {
+    await postJson<{ ok: true }>('/api/auth/password/reset', { token, password })
+    router.push('/')
+  }, 'Failed to reset password')
 
   return (
     <div className="page-center">
       <div className="auth-card">
         <h1 className="page-title">Set new password</h1>
 
-        <form
-          className="auth-form"
-          onSubmit={async (e) => {
-            e.preventDefault()
-            setError(null)
-            setLoading(true)
-            try {
-              await postJson<{ ok: true }>('/api/auth/password/reset', {
-                token,
-                password,
-              })
-              router.push('/')
-            } catch (err) {
-              setError(getApiErrorMessage(err, 'Failed to reset password'))
-            } finally {
-              setLoading(false)
-            }
-          }}
-        >
-          <label className="form-label">
-            New password
-            <input
-              className="form-input"
-              type="password"
-              autoComplete="new-password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </label>
+        <form className="auth-form" onSubmit={handleSubmit}>
+          <TextField
+            label="New password"
+            type="password"
+            autoComplete="new-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
 
           {error ? (
             <p className="form-error">{error}</p>

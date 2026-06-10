@@ -12,7 +12,8 @@ import type { UserBookItem } from '@/types/book'
 import { STATUS_ORDER } from '@/types/book'
 import type { ReadingStatus } from '@/generated/prisma/enums'
 import { Button } from '@/app/_components/Button'
-import { TBookMark } from '@/app/_components/room/panels/BookmarkPanel'
+import type { TBookMark } from '@/lib/bookmarks'
+import { useGet } from '@/hooks/useGet'
 
 export type filterSelection = {
   included: number[] | null
@@ -21,7 +22,12 @@ export type filterSelection = {
 
 export const KanbanBoard = () => {
   const [books, setBooks] = useState<UserBookItem[]>([])
-  const [bookmarks, setBookmarks] = useState<TBookMark[]>([])
+  const { data: bookmarksData } = useGet<{ data: TBookMark[] }, TBookMark[]>(
+    '/api/room/bookmarks?labeled=true',
+    (res) => res.data,
+    'bookmarks-updated',
+  )
+  const bookmarks = bookmarksData ?? []
   const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<UserBookItem | null>(null)
   const [selectionMode, setSelectionMode] = useState(false)
@@ -47,18 +53,6 @@ export const KanbanBoard = () => {
     window.addEventListener('bookmarks-updated', fetchBooks)
     return () => window.removeEventListener('bookmarks-updated', fetchBooks)
   }, [fetchBooks])
-
-  const fetchBookmarks = useCallback(() => {
-    getJson<{ data: TBookMark[] }>('/api/room/bookmarks?labeled=true')
-      .then(res => setBookmarks(res.data))
-      .catch(console.error)
-  }, [])
-
-  useEffect(() => {
-    fetchBookmarks()
-    window.addEventListener('bookmarks-updated', fetchBookmarks)
-    return () => window.removeEventListener('bookmarks-updated', fetchBookmarks)
-  }, [fetchBookmarks])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -270,23 +264,22 @@ export const KanbanBoard = () => {
       </div>
 
       {/* Bulk action bar */}
-      {selectionMode && (
-        <div
-          className="flex flex-wrap items-center gap-3 border-b px-4 py-2"
-          style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
-        >
-          <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
-            {selectedIds.size} selected
-          </span>
-          <Button variant="soft" onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
-          <Button variant="soft" onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
-          {selectedIds.size > 0 && (
-            <Button variant="filled" color="danger" onClick={() => setBulkConfirmOpen(true)}>
-              Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
-            </Button>
-          )}
-        </div>
-      )}
+
+      <div
+        className={`remove-panel ${selectionMode ? 'remove-panel-show' : ''}`}
+        style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
+      >
+        <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
+          {selectedIds.size} selected
+        </span>
+        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
+        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
+        {selectedIds.size > 0 && (
+          <Button variant="filled" color="danger" className='remove-select-btn' onClick={() => setBulkConfirmOpen(true)}>
+            Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
+          </Button>
+        )}
+      </div>
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

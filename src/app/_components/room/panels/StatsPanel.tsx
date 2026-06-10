@@ -1,7 +1,6 @@
 'use client'
 
-import { useEffect, useState } from 'react'
-import { getJson } from '@/lib/api'
+import { useGet } from '@/hooks/useGet'
 
 type Stats = {
   totalBooks: number;
@@ -13,15 +12,7 @@ type Stats = {
 };
 
 export const StatsPanel = () => {
-  const [stats, setStats] = useState<Stats | null>(null)
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    getJson<Stats>('/api/room/stats')
-      .then(setStats)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }, [])
+  const { data: stats, loading } = useGet<Stats>('/api/room/stats')
 
   if (loading) return <p className="form-help">Loading stats…</p>
   if (!stats) return <p className="form-error">Failed to load stats.</p>

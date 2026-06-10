@@ -1,5 +1,5 @@
 import { prisma } from '@/lib/prisma'
-import { requireAuth, ok, err, toUserBookItem } from '@/lib/server-utils'
+import { requireAuth, ok, err, findOwnedUserBook, toUserBookItem, userBookSelect } from '@/lib/server-utils'
 
 type Params = { params: Promise<{ id: string }> };
 
@@ -9,9 +9,8 @@ export const PATCH = async (request: Request, { params }: Params) => {
 
   const { id } = await params
 
-  const userBook = await prisma.userBook.findUnique({ where: { id } })
-  if (!userBook) return err('Not found', 404)
-  if (userBook.userId !== userId) return err('Forbidden', 403)
+  const { userBook, response } = await findOwnedUserBook(id, userId)
+  if (!userBook) return response
 
   const body = (await request.json().catch(() => ({}))) as Record<string, unknown>
 
@@ -25,10 +24,7 @@ export const PATCH = async (request: Request, { params }: Params) => {
   const updated = await prisma.userBook.update({
     where: { id },
     data,
-    select: {
-      id: true, status: true, bookmarkSlot: true, rating: true, notes: true, favorite: true, updatedAt: true,
-      book: { select: { id: true, title: true, author: true, coverUrl: true } },
-    },
+    select: userBookSelect,
   })
 
   return ok(toUserBookItem(updated))
@@ -40,9 +36,8 @@ export const DELETE = async (_request: Request, { params }: Params) => {
 
   const { id } = await params
 
-  const userBook = await prisma.userBook.findUnique({ where: { id } })
-  if (!userBook) return err('Not found', 404)
-  if (userBook.userId !== userId) return err('Forbidden', 403)
+  const { userBook, response } = await findOwnedUserBook(id, userId)
+  if (!userBook) return response
 
   const bookId = userBook.bookId
   await prisma.userBook.delete({ where: { id } })
