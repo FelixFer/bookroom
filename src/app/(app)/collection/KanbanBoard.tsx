@@ -248,6 +248,7 @@ export const KanbanBoard = () => {
       <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
         <Button
           variant='soft'
+          size='s'
           onClick={() => setFilter({ included: [], excluded: [] })}
           disabled={!filter.excluded?.length && !filter.included?.length}
         >
