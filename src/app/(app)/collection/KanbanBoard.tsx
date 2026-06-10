@@ -246,17 +246,25 @@ export const KanbanBoard = () => {
       </div>
 
       <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
-        {bookmarks.length && bookmarks.map((b) => {
-          return (
-            <p
-              key={b.slot}
-              className={`filter-pill ${filter.included?.includes(b.slot) ? 'filter-pill-included' : ''} ${filter.excluded?.includes(b.slot) ? 'filter-pill-excluded' : ''}`}
-              onClick={() => handleFilterStatus(b.slot)}
-            >
-              {b.label}
-            </p>
-          )
-        })}
+        <Button
+          variant='soft'
+          onClick={() => setFilter({ included: [], excluded: [] })}
+        >
+          Reset Filter
+        </Button>
+        <div className='filter-list'>
+          {bookmarks.length && bookmarks.map((b) => {
+            return (
+              <p
+                key={b.slot}
+                className={`filter-pill ${filter.included?.includes(b.slot) ? 'filter-pill-included' : ''} ${filter.excluded?.includes(b.slot) ? 'filter-pill-excluded' : ''}`}
+                onClick={() => handleFilterStatus(b.slot)}
+              >
+                {b.label}
+              </p>
+            )
+          })}
+        </div>
       </div>
 
       {/* Bulk action bar */}
