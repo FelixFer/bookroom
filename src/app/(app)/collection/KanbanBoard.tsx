@@ -249,6 +249,7 @@ export const KanbanBoard = () => {
         <Button
           variant='soft'
           onClick={() => setFilter({ included: [], excluded: [] })}
+          disabled={!filter.excluded?.length && !filter.included?.length}
         >
           Reset Filter
         </Button>
