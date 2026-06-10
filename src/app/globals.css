@@ -37,6 +37,8 @@
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
   --font-accent: var(--font-accent);
+  --color-danger: #C65A5A;
+  --color-success: #4FA376;
 }
 
 /* System dark mode fallback (before JS hydrates) */

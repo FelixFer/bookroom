@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect } from 'react'
+import { useState, useCallback, useEffect, useMemo } from 'react'
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { KanbanColumn } from './KanbanColumn'
 import { KanbanCardOverlay } from './KanbanCard'
@@ -12,12 +12,24 @@ import type { UserBookItem } from '@/types/book'
 import { STATUS_ORDER } from '@/types/book'
 import type { ReadingStatus } from '@/generated/prisma/enums'
 import { Button } from '@/app/_components/Button'
+import { TBookMark } from '@/app/_components/room/panels/BookmarkPanel'
+
+export type filterSelection = {
+  included: number[] | null
+  excluded: number[] | null
+}
 
 export const KanbanBoard = () => {
   const [books, setBooks] = useState<UserBookItem[]>([])
+  const [bookmarks, setBookmarks] = useState<TBookMark[]>([])
   const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<UserBookItem | null>(null)
   const [selectionMode, setSelectionMode] = useState(false)
+  const [showFilter, setShowFilter] = useState(false)
+  const [filter, setFilter] = useState<filterSelection>({
+    included: [],
+    excluded: [],
+  })
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set())
   const [bulkConfirmOpen, setBulkConfirmOpen] = useState(false)
   const [bulkDeleting, setBulkDeleting] = useState(false)
@@ -35,6 +47,18 @@ export const KanbanBoard = () => {
     window.addEventListener('bookmarks-updated', fetchBooks)
     return () => window.removeEventListener('bookmarks-updated', fetchBooks)
   }, [fetchBooks])
+
+  const fetchBookmarks = useCallback(() => {
+    getJson<{ data: TBookMark[] }>('/api/room/bookmarks?labeled=true')
+      .then(res => setBookmarks(res.data))
+      .catch(console.error)
+  }, [])
+
+  useEffect(() => {
+    fetchBookmarks()
+    window.addEventListener('bookmarks-updated', fetchBookmarks)
+    return () => window.removeEventListener('bookmarks-updated', fetchBookmarks)
+  }, [fetchBookmarks])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -117,13 +141,53 @@ export const KanbanBoard = () => {
     }
   }, [selectedIds, clearSelection])
 
-  const filtered = search
-    ? books.filter(
-      (b) =>
-        b.title.toLowerCase().includes(search.toLowerCase()) ||
-        (b.author ?? '').toLowerCase().includes(search.toLowerCase()),
-    )
-    : books
+  const handleFilterStatus = useCallback((slot: number) => {
+    setFilter((prev) => {
+      const inIncluded = prev.included?.includes(slot)
+      const inExcluded = prev.excluded?.includes(slot)
+
+      if (!inIncluded && !inExcluded) {
+        return { ...prev, included: [...(prev.included ?? []), slot] }
+      }
+      if (inIncluded) {
+        return {
+          included: prev.included?.filter((s) => s !== slot) ?? [],
+          excluded: [...(prev.excluded ?? []), slot],
+        }
+      }
+      if (inExcluded) {
+        return {
+          ...prev,
+          excluded: prev.excluded?.filter((s) => s !== slot) ?? [],
+        }
+      }
+      return prev
+    })
+  }, [])
+
+  const filtered = useMemo(() => {
+    let result = search
+      ? books.filter(
+        (b) =>
+          b.title.toLowerCase().includes(search.toLowerCase()) ||
+          (b.author ?? '').toLowerCase().includes(search.toLowerCase()),
+      )
+      : books
+
+    if (filter.included?.length) {
+      result = result.filter((book) =>
+        book.bookmarkSlot !== null && filter.included!.includes(book.bookmarkSlot)
+      )
+    }
+
+    if (filter.excluded?.length) {
+      result = result.filter((book) =>
+        book.bookmarkSlot === null || !filter.excluded!.includes(book.bookmarkSlot)
+      )
+    }
+
+    return result
+  }, [books, search, filter])
 
   const byStatus = (status: ReadingStatus) =>
     filtered.filter((b) => b.status === status)
@@ -151,27 +215,48 @@ export const KanbanBoard = () => {
         </h1>
       </div>
 
-      <div className="flex flex-wrap items-center gap-3 p-4">
+      <div className="flex flex-wrap items-start gap-3 p-4">
         <Button
           variant="soft"
           onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
         >
-          {selectionMode ? 'Cancel' : 'Select'}
+          {selectionMode ? 'Cancel' : 'Remove Book(s)'}
         </Button>
 
-        <div className="flex flex-1 justify-end gap-3">
+        <div className="flex flex-1 flex-wrap justify-end gap-3">
           {/* Search */}
           <input
-            className="form-input h-9 w-40 text-sm"
+            className="form-input h-9 flex-1 text-sm"
             placeholder="Search…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
           />
 
+          <Button
+            variant='soft'
+            onClick={() => setShowFilter((prev) => !prev)}
+          >
+            {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
+          </Button>
+
           {!selectionMode && (
             <Button variant="primary" onClick={() => setEditTarget('new')}>+ Add Book</Button>
           )}
         </div>
+      </div>
+
+      <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
+        {bookmarks.length && bookmarks.map((b) => {
+          return (
+            <p
+              key={b.slot}
+              className={`filter-pill ${filter.included?.includes(b.slot) ? 'filter-pill-included' : ''} ${filter.excluded?.includes(b.slot) ? 'filter-pill-excluded' : ''}`}
+              onClick={() => handleFilterStatus(b.slot)}
+            >
+              {b.label}
+            </p>
+          )
+        })}
       </div>
 
       {/* Bulk action bar */}

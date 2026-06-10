@@ -32,7 +32,7 @@ export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, s
       >
         {/* Column header */}
         <div
-          className="flex items-center justify-between border-b px-3 py-2.5"
+          className="flex items-center justify-between border-b px-3 py-2.5 -ml-px"
           style={{
             backgroundColor: 'var(--kanban-header-bg)',
             borderColor: 'var(--kanban-border)',
