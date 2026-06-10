@@ -209,7 +209,14 @@ export const KanbanBoard = () => {
         </h1>
       </div>
 
-      <div className="flex flex-wrap items-start gap-3 p-4">
+      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+        {/* Search */}
+        <input
+          className="form-input h-9 flex-1 text-sm"
+          placeholder="Search…"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
         <Button
           variant="soft"
           onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
@@ -217,26 +224,16 @@ export const KanbanBoard = () => {
           {selectionMode ? 'Cancel' : 'Remove Book(s)'}
         </Button>
 
-        <div className="flex flex-1 flex-wrap justify-end gap-3">
-          {/* Search */}
-          <input
-            className="form-input h-9 flex-1 text-sm"
-            placeholder="Search…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-          />
+        <Button
+          variant='soft'
+          onClick={() => setShowFilter((prev) => !prev)}
+        >
+          {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
+        </Button>
 
-          <Button
-            variant='soft'
-            onClick={() => setShowFilter((prev) => !prev)}
-          >
-            {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
-          </Button>
-
-          {!selectionMode && (
-            <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
-          )}
-        </div>
+        {!selectionMode && (
+          <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+        )}
       </div>
 
       <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
