@@ -119,8 +119,10 @@ const MobileMapMinimap = ({
     ? stageWidth
     : (typeof window !== 'undefined' ? getImageWidth() : IMG_W)
   const vpW = typeof window !== 'undefined' ? window.innerWidth : 375
-  const rectW = Math.max(4, Math.round((vpW / imgW) * MINIMAP_W))
-  const rectLeft = Math.round((-offset / imgW) * MINIMAP_W)
+  // Percentages resolve against the minimap's inner box, so the 2px border
+  // doesn't skew positions the way px math against MINIMAP_W did
+  const rectW = (vpW / imgW) * 100
+  const rectLeft = (-offset / imgW) * 100
 
   return (
     <div className="room-map__minimap" style={{ height: MINIMAP_H }}>
@@ -134,7 +136,7 @@ const MobileMapMinimap = ({
       />
       <div
         className="room-map__minimap-rect"
-        style={{ width: rectW, left: rectLeft }}
+        style={{ width: `${rectW}%`, left: `${rectLeft}%` }}
       />
     </div>
   )
