@@ -204,7 +204,7 @@ export const KanbanBoard = () => {
       >
         <Button href="/" variant="outline">← Room</Button>
 
-        <h1 className="text-base font-semibold" style={{ color: 'var(--kanban-text)' }}>
+        <h1 className="text-base font-semibold hidden sm:block" style={{ color: 'var(--kanban-text)' }}>
           My Collection
         </h1>
       </div>

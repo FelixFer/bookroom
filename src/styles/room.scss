@@ -416,13 +416,17 @@
   background: #3d2e1a;
   position: fixed;
   top: -18px;
-  right: 240px;
+  right: 186px;
   z-index: 30;
   clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 80%, 0 100%);
   cursor: pointer;
   border: none;
   padding: 0;
   transition: filter 0.15s;
+
+  @media (min-width: 446px) {
+    right: 240px;
+  }
 
   &::before {
     content: "栞";
