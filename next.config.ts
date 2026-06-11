@@ -7,6 +7,9 @@ const nextConfig: NextConfig = {
   env: {
     APP_VERSION: version,
   },
+  images: {
+    remotePatterns: [{ protocol: 'https', hostname: 'covers.openlibrary.org' }],
+  },
 }
 
 export default nextConfig

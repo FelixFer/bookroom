@@ -33,7 +33,6 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-heading);
   --font-body: var(--font-body);
   --font-accent: var(--font-accent);
@@ -95,6 +94,17 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: var(--font-body), 'Nunito', sans-serif;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 /* Custom scrollbar — light mode */

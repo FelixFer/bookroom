@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 
 type Props = {
   open: boolean;
@@ -10,14 +10,22 @@ type Props = {
 };
 
 export const RoomDrawer = ({ open, title, onClose, children }: Props) => {
+  const closeRef = useRef<HTMLButtonElement>(null)
+  const returnRef = useRef<HTMLElement | null>(null)
+
   // Close on Escape key
   useEffect(() => {
     if (!open) return
+    returnRef.current = document.activeElement as HTMLElement
+    closeRef.current?.focus()
     const handler = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onClose()
     }
     window.addEventListener('keydown', handler)
-    return () => window.removeEventListener('keydown', handler)
+    return () => {
+      window.removeEventListener('keydown', handler)
+      returnRef.current?.focus()
+    }
   }, [open, onClose])
 
   return (
@@ -36,6 +44,7 @@ export const RoomDrawer = ({ open, title, onClose, children }: Props) => {
         <div className="room-drawer__header">
           <span className="room-drawer__title">{title}</span>
           <button
+            ref={closeRef}
             className="room-drawer__close"
             onClick={onClose}
             aria-label="Close"

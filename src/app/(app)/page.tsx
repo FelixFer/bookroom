@@ -7,5 +7,10 @@ export default async function Home() {
   const session = await getServerSession(authOptions)
   if (!session?.user?.id) return <LandingScreen />
 
-  return <RoomScene />
+  return (
+    <>
+      <h1 className="sr-only">Your Room</h1>
+      <RoomScene />
+    </>
+  )
 }

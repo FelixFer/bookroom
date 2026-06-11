@@ -41,6 +41,7 @@ export const KanbanBoard = () => {
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [search, setSearch] = useState('')
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
+  const [announcement, setAnnouncement] = useState('')
 
   const fetchBooks = useCallback(() => {
     getJson<{ books: UserBookItem[] }>('/api/room/books')
@@ -85,11 +86,13 @@ export const KanbanBoard = () => {
 
       try {
         await patchJson(`/api/books/${bookId}`, { status: newStatus })
+        setAnnouncement(`${book.title} moved to ${newStatus.replaceAll('_', ' ').toLowerCase()}`)
       } catch {
         // Revert on failure
         setBooks((prev) =>
           prev.map((b) => (b.id === bookId ? { ...b, status: book.status } : b)),
         )
+        setAnnouncement(`Failed to move ${book.title}`)
       }
     },
     [books],
@@ -204,7 +207,7 @@ export const KanbanBoard = () => {
       >
         <Button href="/" variant="outline">← Room</Button>
 
-        <h1 className="text-base font-semibold hidden sm:block" style={{ color: 'var(--kanban-text)' }}>
+        <h1 className="text-base font-semibold max-sm:sr-only" style={{ color: 'var(--kanban-text)' }}>
           My Collection
         </h1>
       </div>
@@ -247,14 +250,18 @@ export const KanbanBoard = () => {
         </Button>
         <div className='filter-list'>
           {bookmarks.length && bookmarks.map((b) => {
+            const included = filter.included?.includes(b.slot)
+            const excluded = filter.excluded?.includes(b.slot)
             return (
-              <p
+              <button
                 key={b.slot}
-                className={`filter-pill ${filter.included?.includes(b.slot) ? 'filter-pill-included' : ''} ${filter.excluded?.includes(b.slot) ? 'filter-pill-excluded' : ''}`}
+                type='button'
+                className={`filter-pill ${included ? 'filter-pill-included' : ''} ${excluded ? 'filter-pill-excluded' : ''}`}
+                aria-pressed={included}
                 onClick={() => handleFilterStatus(b.slot)}
               >
-                {b.label}
-              </p>
+                {b.label}{excluded ? <span className='sr-only'> (excluded)</span> : null}
+              </button>
             )
           })}
         </div>
@@ -298,6 +305,8 @@ export const KanbanBoard = () => {
           {activeBook ? <KanbanCardOverlay book={activeBook} /> : null}
         </DragOverlay>
       </DndContext>
+
+      <div aria-live="polite" className="sr-only">{announcement}</div>
 
       {/* Total count */}
       <div className="px-4 py-2 text-xs" style={{ color: 'var(--kanban-muted)' }}>

@@ -19,9 +19,12 @@ export const DarkModeToggle = () => {
 
   return (
     <div className={`sky ${isDark ? 'dark' : ''}`}>
-      <div
+      <button
+        type='button'
         className={`switch ${isDark ? 'night show-stars' : ''}`}
         onClick={toggleTheme}
+        aria-label={isDark ? 'Switch to light mode' : 'Switch to dark mode'}
+        aria-pressed={isDark}
       >
         <div className='track day'>
           <div className={`moon ${isDark ? 'moon-slide' : ''}`} />
@@ -29,7 +32,7 @@ export const DarkModeToggle = () => {
 
         <Stars />
         <Stars />
-      </div>
+      </button>
     </div>
   )
 }

@@ -1,0 +1,21 @@
+{
+  "name": "Bookroom",
+  "short_name": "Bookroom",
+  "description": "Your cozy personal library. Track what you read, what you love, and what's next.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fdf8f0",
+  "theme_color": "#c4a878",
+  "icons": [
+    {
+      "src": "/icon/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icon/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
