@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: '/',
       disallow: ['/api/', '/collection/'],
     },
-    sitemap: 'https://bookroom.vercel.app/sitemap.xml',
+    sitemap: 'https://mybookroom.vercel.app/sitemap.xml',
   }
 }

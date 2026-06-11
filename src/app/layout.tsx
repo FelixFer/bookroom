@@ -30,7 +30,7 @@ const pressStart2P = Press_Start_2P({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://bookroom.vercel.app'),
+  metadataBase: new URL('https://mybookroom.vercel.app'),
   title: {
     template: '%s | Bookroom',
     default: 'Bookroom — Your Cozy Personal Library',
@@ -40,7 +40,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Bookroom — Your Cozy Personal Library',
     description: 'Track your reading journey with Bookroom. Organize books with a Kanban board, rate your favorites, and manage your personal library.',
-    url: 'https://bookroom.vercel.app',
+    url: 'https://mybookroom.vercel.app',
     siteName: 'Bookroom',
     type: 'website',
     locale: 'en_US',
@@ -122,7 +122,7 @@ export default function RootLayout({
               '@type': 'WebApplication',
               name: 'Bookroom',
               description: 'Your cozy personal library. Track what you read, what you love, and what\'s next.',
-              url: 'https://bookroom.vercel.app',
+              url: 'https://mybookroom.vercel.app',
               applicationCategory: 'LifestyleApplication',
               operatingSystem: 'Any',
               offers: {
