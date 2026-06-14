@@ -220,37 +220,50 @@ export const KanbanBoard = () => {
         </h1>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-3 p-4">
+      <div className="flex flex-col gap-3 p-4 pb-2">
         {/* Search */}
         <input
-          className="form-input h-9 flex-1 text-sm"
+          className="form-input h-9 w-full text-sm"
           placeholder="Search…"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <Button
-          variant="soft"
-          onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
-        >
-          {selectionMode ? 'Cancel' : 'Remove Book(s)'}
-        </Button>
 
-        <Button
-          variant='soft'
-          onClick={() => setShowFilter((prev) => !prev)}
-        >
-          {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
-        </Button>
+        {/* Actions */}
+        <div className="flex flex-wrap items-center gap-3">
+          {!selectionMode && (
+            <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+          )}
 
-        {!selectionMode && (
-          <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
-        )}
+          <Button
+            variant='soft'
+            onClick={() => setShowFilter((prev) => !prev)}
+          >
+            {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
+          </Button>
+
+          <Button
+            variant="soft"
+            color="grey"
+            className="sm:ml-auto"
+            onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
+          >
+            {selectionMode ? 'Cancel' : 'Remove Book(s)'}
+          </Button>
+        </div>
+
+        {/* Collection count */}
+        <p className="text-xs" style={{ color: 'var(--kanban-muted)' }}>
+          {books.length} book{books.length !== 1 ? 's' : ''} in your collection
+          {search && ` · ${filtered.length} matching "${search}"`}
+        </p>
       </div>
 
       <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
         <Button
           variant='soft'
           size='s'
+          className='self-start'
           onClick={() => setFilter({ included: [], excluded: [] })}
           disabled={!filter.excluded?.length && !filter.included?.length}
         >
@@ -272,7 +285,9 @@ export const KanbanBoard = () => {
               </button>
             )
           }) : (
-            <p>You don&apos;t have any Bookmark(s) yet</p>
+            <p className='mr-auto text-sm' style={{ color: 'var(--kanban-text)' }}>
+              No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2'>open the Bookmarks panel</button> to create them, then filter books by shelf.
+            </p>
           )}
         </div>
       </div>
@@ -335,12 +350,6 @@ export const KanbanBoard = () => {
           </button>
         </div>
       )}
-
-      {/* Total count */}
-      <div className="px-4 py-2 text-xs" style={{ color: 'var(--kanban-muted)' }}>
-        {books.length} book{books.length !== 1 ? 's' : ''} in your collection
-        {search && ` · ${filtered.length} matching "${search}"`}
-      </div>
 
       {/* Add/Edit modal */}
       <EditBookModal

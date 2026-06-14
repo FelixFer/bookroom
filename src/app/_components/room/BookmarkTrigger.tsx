@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { RoomDrawer } from './RoomDrawer'
 import { BookmarkPanel } from './panels/BookmarkPanel'
 
@@ -11,6 +11,12 @@ type Props = {
 export const BookMarkTrigger = ({ classname }: Props) => {
   const [animating, setAnimating] = useState(false)
   const [showPanel, setShowPanel] = useState(false)
+
+  useEffect(() => {
+    const open = () => setShowPanel(true)
+    window.addEventListener('open-bookmarks', open)
+    return () => window.removeEventListener('open-bookmarks', open)
+  }, [])
 
   function handleClick() {
     if (animating) return
