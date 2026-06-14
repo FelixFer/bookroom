@@ -42,6 +42,13 @@ export const KanbanBoard = () => {
   const [search, setSearch] = useState('')
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
   const [announcement, setAnnouncement] = useState('')
+  const [errorToast, setErrorToast] = useState('')
+
+  useEffect(() => {
+    if (!errorToast) return
+    const t = setTimeout(() => setErrorToast(''), 4000)
+    return () => clearTimeout(t)
+  }, [errorToast])
 
   const fetchBooks = useCallback(() => {
     getJson<{ books: UserBookItem[] }>('/api/room/books')
@@ -93,6 +100,7 @@ export const KanbanBoard = () => {
           prev.map((b) => (b.id === bookId ? { ...b, status: book.status } : b)),
         )
         setAnnouncement(`Failed to move ${book.title}`)
+        setErrorToast(`Couldn't move "${book.title}". Please try again.`)
       }
     },
     [books],
@@ -249,7 +257,7 @@ export const KanbanBoard = () => {
           Reset Filter
         </Button>
         <div className='filter-list'>
-          {bookmarks.length && bookmarks.map((b) => {
+          {bookmarks.length ? bookmarks.map((b) => {
             const included = filter.included?.includes(b.slot)
             const excluded = filter.excluded?.includes(b.slot)
             return (
@@ -263,7 +271,9 @@ export const KanbanBoard = () => {
                 {b.label}{excluded ? <span className='sr-only'> (excluded)</span> : null}
               </button>
             )
-          })}
+          }) : (
+            <p>You don&apos;t have any Bookmark(s) yet</p>
+          )}
         </div>
       </div>
 
@@ -307,6 +317,24 @@ export const KanbanBoard = () => {
       </DndContext>
 
       <div aria-live="polite" className="sr-only">{announcement}</div>
+
+      {errorToast && (
+        <div
+          role="alert"
+          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 border px-4 py-2.5 text-sm shadow-lg"
+          style={{ backgroundColor: 'var(--color-danger)', borderColor: 'var(--kanban-border)', color: '#fff' }}
+        >
+          <span>{errorToast}</span>
+          <button
+            type="button"
+            onClick={() => setErrorToast('')}
+            aria-label="Dismiss"
+            className="text-white/80 hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Total count */}
       <div className="px-4 py-2 text-xs" style={{ color: 'var(--kanban-muted)' }}>

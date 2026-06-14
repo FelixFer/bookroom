@@ -27,6 +27,7 @@
   --kanban-text: #3d2e1a;
   --kanban-muted: #a07850;
   --kanban-amber: #c4a878;
+  --kanban-dropzone-active: rgba(232, 213, 176, 0.3);
 }
 
 @theme inline {
@@ -63,6 +64,7 @@
     --kanban-text: #e8d5b0;
     --kanban-muted: #8a6840;
     --kanban-amber: #c4a878;
+    --kanban-dropzone-active: rgba(74, 58, 34, 0.3);
   }
 }
 
@@ -88,6 +90,7 @@ html.dark {
   --kanban-text: #e8d5b0;
   --kanban-muted: #8a6840;
   --kanban-amber: #c4a878;
+  --kanban-dropzone-active: rgba(74, 58, 34, 0.3);
 }
 
 body {

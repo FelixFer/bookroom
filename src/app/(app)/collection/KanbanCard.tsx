@@ -85,7 +85,7 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
       />
 
       {/* Info */}
-      <div className='min-w-0 flex-1'>
+      <div className={`min-w-0 flex-1 ${!selectionMode ? 'pr-16' : ''}`}>
         <p
           className='line-clamp-2 text-sm font-medium leading-tight'
           style={{ color: 'var(--kanban-text)' }}
@@ -101,9 +101,11 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
           </p>
         )}
         {book.rating && (
-          <p className='mt-1 text-xs text-amber-500'>
-            {'★'.repeat(book.rating)}
-            {'☆'.repeat(5 - book.rating)}
+          <p className='mt-1 text-xs text-amber-500' aria-label={`Rated ${book.rating} out of 5`}>
+            <span aria-hidden='true'>
+              {'★'.repeat(book.rating)}
+              {'☆'.repeat(5 - book.rating)}
+            </span>
           </p>
         )}
         {book.favorite && (
@@ -113,7 +115,7 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
 
       {/* Actions — shown on hover, hidden in selection mode */}
       {!selectionMode && (
-        <div className='absolute right-1.5 top-1.5 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100'>
+        <div className='absolute right-1.5 top-1.5 flex gap-1 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100'>
           <Button variant='icon' size='xs' onClick={() => onEdit(book)} aria-label='Edit'>✏</Button>
           <Button variant='icon' color='danger' size='xs' onClick={() => onDelete(book)} aria-label='Delete'>✕</Button>
         </div>
