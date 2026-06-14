@@ -571,6 +571,21 @@
   flex-shrink: 0;
 }
 
+.room-signout__name {
+  display: inline-block;
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: middle;
+}
+
+@media (max-width: 480px) {
+  .room-signout__name {
+    display: none;
+  }
+}
+
 // ─── Dark mode toggle ─────────────────────────────────────────────────────────
 .sky {
   display: flex;

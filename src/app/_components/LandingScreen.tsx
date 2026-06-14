@@ -201,6 +201,7 @@ function LandingScreenInner() {
                       autoComplete="name"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
+                      maxLength={12}
                       required
                     />
                   </label>

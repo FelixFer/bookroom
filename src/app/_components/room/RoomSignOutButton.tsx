@@ -21,7 +21,7 @@ export const RoomSignOutButton = ({ userName }: Props) => {
         aria-label="Sign out"
       >
         <span className="room-signout__avatar">{initial}</span>
-        <span className="room-signout__name">{userName || 'Sign out'}</span>
+        <span className="room-signout__name" title={userName || undefined}>{userName || 'Sign out'}</span>
         <span aria-hidden="true">⏻</span>
       </button>
     </div>
