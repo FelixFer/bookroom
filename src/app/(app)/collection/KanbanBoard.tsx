@@ -119,7 +119,7 @@ export const KanbanBoard = () => {
           prev.map((b) => (b.id === bookId ? { ...b, status: book.status } : b)),
         )
         setAnnouncement(`Failed to move ${book.title}`)
-        setErrorToast(`Couldn't move "${book.title}". Please try again.`)
+        setErrorToast(`Couldn't move '${book.title}'. Please try again.`)
       }
     },
     [books],
@@ -221,54 +221,56 @@ export const KanbanBoard = () => {
   }, [filtered.length, updateScrollEdges])
 
   return (
-    <div className="relative flex h-[100dvh] flex-col overflow-hidden pb-2">
+    <div className='relative flex h-[100dvh] flex-col overflow-hidden pb-2'>
       <div
-        className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden"
+        className='pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden'
         style={{ backgroundImage: "url('/library-day.png')" }}
       />
       <div
-        className="pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block"
+        className='pointer-events-none fixed inset-0 -z-10 hidden bg-cover bg-center bg-no-repeat dark:block'
         style={{ backgroundImage: "url('/library-night.png')" }}
       />
-      <div className="pointer-events-none fixed inset-0 -z-10" />
+      <div className='pointer-events-none fixed inset-0 -z-10' />
       {/* Header */}
       <div
-        className="flex flex-wrap items-center gap-3 border-b px-4 py-3"
+        className='flex flex-wrap items-center gap-3 border-b px-4 py-3'
         style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
       >
-        <Button href="/" variant="outline">← Room</Button>
+        <Button href='/' variant='outline'>← Room</Button>
 
-        <h1 className="text-base font-semibold max-sm:sr-only" style={{ color: 'var(--kanban-text)' }}>
+        <h1 className='text-base font-semibold max-sm:sr-only' style={{ color: 'var(--kanban-text)' }}>
           My Collection
         </h1>
       </div>
 
-      <div className="flex flex-col gap-3 p-4 pb-2">
+      <div className='flex flex-col gap-3 p-4 pb-2'>
         {/* Search */}
         <input
-          className="form-input h-9 w-full text-sm"
-          placeholder="Search…"
+          className='form-input h-9 w-full text-sm'
+          placeholder='Search…'
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
 
         {/* Actions */}
-        <div className="flex flex-wrap items-center gap-3">
+        <div className='flex flex-wrap items-center gap-3'>
           {!selectionMode && (
-            <Button variant="filled" onClick={() => setEditTarget('new')}>+ Add Book</Button>
+            <Button variant='filled' size='s' onClick={() => setEditTarget('new')}>+ Add Book</Button>
           )}
 
           <Button
             variant='soft'
+            size='s'
             onClick={() => setShowFilter((prev) => !prev)}
           >
             {showFilter ? 'Hide Filter ▲' : 'Show Filter ▼'}
           </Button>
 
           <Button
-            variant="soft"
-            color="grey"
-            className="sm:ml-auto"
+            variant='soft'
+            color='grey'
+            size='s'
+            className='sm:ml-auto'
             onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
           >
             {selectionMode ? 'Cancel' : 'Remove Book(s)'}
@@ -277,11 +279,11 @@ export const KanbanBoard = () => {
 
         {/* Collection count */}
         <p
-          className="w-fit rounded border px-2 py-0.5 text-xs"
+          className='w-fit rounded border px-2 py-0.5 text-xs'
           style={{ color: 'var(--kanban-text)', backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
         >
           {books.length} book{books.length !== 1 ? 's' : ''} in your collection
-          {search && ` · ${filtered.length} matching "${search}"`}
+          {search && ` · ${filtered.length} matching '${search}'`}
         </p>
       </div>
 
@@ -329,13 +331,13 @@ export const KanbanBoard = () => {
         className={`remove-panel ${selectionMode ? 'remove-panel-show' : ''}`}
         style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
       >
-        <span className="text-sm" style={{ color: 'var(--kanban-muted)' }}>
+        <span className='text-sm' style={{ color: 'var(--kanban-muted)' }}>
           {selectedIds.size} selected
         </span>
-        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
-        <Button variant="soft" className='remove-select-btn' onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
+        <Button variant='soft' size='s' className='remove-select-btn' onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
+        <Button variant='soft' size='s' className='remove-select-btn' onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
         {selectedIds.size > 0 && (
-          <Button variant="filled" color="danger" className='remove-select-btn' onClick={() => setBulkConfirmOpen(true)}>
+          <Button variant='filled' size='s' color='danger' className='remove-select-btn' onClick={() => setBulkConfirmOpen(true)}>
             Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
           </Button>
         )}
@@ -343,10 +345,10 @@ export const KanbanBoard = () => {
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="relative min-h-0 flex-1">
+        <div className='relative min-h-0 flex-1'>
           {loading && (
             <div
-              className="flex h-full items-center justify-center p-4 text-sm"
+              className='flex h-full items-center justify-center p-4 text-sm'
               style={{ color: 'var(--kanban-muted)' }}
             >
               Tidying your shelves…
@@ -372,15 +374,15 @@ export const KanbanBoard = () => {
           </div>
           {!loading && scrollEdges.left && (
             <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 left-0 w-8"
+              aria-hidden='true'
+              className='pointer-events-none absolute inset-y-0 left-0 w-8'
               style={{ background: 'linear-gradient(to right, var(--kanban-scroll-fade), transparent)' }}
             />
           )}
           {!loading && scrollEdges.right && (
             <div
-              aria-hidden="true"
-              className="pointer-events-none absolute inset-y-0 right-0 w-8"
+              aria-hidden='true'
+              className='pointer-events-none absolute inset-y-0 right-0 w-8'
               style={{ background: 'linear-gradient(to left, var(--kanban-scroll-fade), transparent)' }}
             />
           )}
@@ -390,20 +392,20 @@ export const KanbanBoard = () => {
         </DragOverlay>
       </DndContext>
 
-      <div aria-live="polite" className="sr-only">{announcement}</div>
+      <div aria-live='polite' className='sr-only'>{announcement}</div>
 
       {errorToast && (
         <div
-          role="alert"
-          className="fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 border px-4 py-2.5 text-sm shadow-lg"
+          role='alert'
+          className='fixed bottom-4 left-1/2 z-50 flex -translate-x-1/2 items-center gap-3 border px-4 py-2.5 text-sm shadow-lg'
           style={{ backgroundColor: 'var(--color-danger)', borderColor: 'var(--kanban-border)', color: '#fff' }}
         >
           <span>{errorToast}</span>
           <button
-            type="button"
+            type='button'
             onClick={() => setErrorToast('')}
-            aria-label="Dismiss"
-            className="text-white/80 hover:text-white"
+            aria-label='Dismiss'
+            className='text-white/80 hover:text-white'
           >
             ✕
           </button>
@@ -426,16 +428,16 @@ export const KanbanBoard = () => {
       />
 
       {/* Bulk delete confirm */}
-      <RoomModal open={bulkConfirmOpen} title="DELETE BOOKS" onClose={() => setBulkConfirmOpen(false)}>
-        <div className="flex flex-col gap-4">
-          <p className="text-sm text-zinc-700 dark:text-zinc-300">
-            Remove <span className="font-semibold text-zinc-900 dark:text-zinc-50">{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span> from your collection? This can&apos;t be undone.
+      <RoomModal open={bulkConfirmOpen} title='DELETE BOOKS' onClose={() => setBulkConfirmOpen(false)}>
+        <div className='flex flex-col gap-4'>
+          <p className='text-sm text-zinc-700 dark:text-zinc-300'>
+            Remove <span className='font-semibold text-zinc-900 dark:text-zinc-50'>{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span> from your collection? This can&apos;t be undone.
           </p>
-          <div className="flex gap-3">
-            <Button variant="filled" color="danger" loading={bulkDeleting} onClick={handleBulkDelete} className="flex-1">
+          <div className='flex gap-3'>
+            <Button variant='filled' color='danger' loading={bulkDeleting} onClick={handleBulkDelete} className='flex-1'>
               Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
             </Button>
-            <Button variant="outline" onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
+            <Button variant='outline' onClick={() => setBulkConfirmOpen(false)}>Cancel</Button>
           </div>
         </div>
       </RoomModal>
