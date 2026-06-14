@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useCallback, useEffect, useMemo } from 'react'
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react'
 import { DndContext, DragEndEvent, DragStartEvent, DragOverlay, PointerSensor, TouchSensor, useSensor, useSensors } from '@dnd-kit/core'
 import { KanbanColumn } from './KanbanColumn'
 import { KanbanCardOverlay } from './KanbanCard'
@@ -43,12 +43,29 @@ export const KanbanBoard = () => {
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
   const [announcement, setAnnouncement] = useState('')
   const [errorToast, setErrorToast] = useState('')
+  const boardRef = useRef<HTMLDivElement>(null)
+  const [scrollEdges, setScrollEdges] = useState({ left: false, right: false })
 
   useEffect(() => {
     if (!errorToast) return
     const t = setTimeout(() => setErrorToast(''), 4000)
     return () => clearTimeout(t)
   }, [errorToast])
+
+  const updateScrollEdges = useCallback(() => {
+    const el = boardRef.current
+    if (!el) return
+    setScrollEdges({
+      left: el.scrollLeft > 1,
+      right: el.scrollLeft + el.clientWidth < el.scrollWidth - 1,
+    })
+  }, [])
+
+  useEffect(() => {
+    updateScrollEdges()
+    window.addEventListener('resize', updateScrollEdges)
+    return () => window.removeEventListener('resize', updateScrollEdges)
+  }, [updateScrollEdges])
 
   const fetchBooks = useCallback(() => {
     getJson<{ books: UserBookItem[] }>('/api/room/books')
@@ -197,8 +214,12 @@ export const KanbanBoard = () => {
   const byStatus = (status: ReadingStatus) =>
     filtered.filter((b) => b.status === status)
 
+  useEffect(() => {
+    updateScrollEdges()
+  }, [filtered.length, updateScrollEdges])
+
   return (
-    <div className="relative flex min-h-screen flex-col">
+    <div className="relative flex h-[100dvh] flex-col overflow-hidden">
       <div
         className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden"
         style={{ backgroundImage: "url('/library-day.png')" }}
@@ -312,19 +333,39 @@ export const KanbanBoard = () => {
 
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-        <div className="flex gap-4 overflow-x-auto p-4 pt-0">
-          {STATUS_ORDER.map((status) => (
-            <KanbanColumn
-              key={status}
-              status={status}
-              books={byStatus(status)}
-              onEdit={setEditTarget}
-              onDelete={setDeleteTarget}
-              selectionMode={selectionMode}
-              selectedIds={selectedIds}
-              onToggleSelect={toggleSelect}
+        <div className="relative min-h-0 flex-1">
+          <div
+            ref={boardRef}
+            onScroll={updateScrollEdges}
+            className="flex h-full gap-4 overflow-x-auto p-4 pt-0"
+          >
+            {STATUS_ORDER.map((status) => (
+              <KanbanColumn
+                key={status}
+                status={status}
+                books={byStatus(status)}
+                onEdit={setEditTarget}
+                onDelete={setDeleteTarget}
+                selectionMode={selectionMode}
+                selectedIds={selectedIds}
+                onToggleSelect={toggleSelect}
+              />
+            ))}
+          </div>
+          {scrollEdges.left && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 left-0 w-8"
+              style={{ background: 'linear-gradient(to right, var(--kanban-scroll-fade), transparent)' }}
             />
-          ))}
+          )}
+          {scrollEdges.right && (
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute inset-y-0 right-0 w-8"
+              style={{ background: 'linear-gradient(to left, var(--kanban-scroll-fade), transparent)' }}
+            />
+          )}
         </div>
         <DragOverlay>
           {activeBook ? <KanbanCardOverlay book={activeBook} /> : null}

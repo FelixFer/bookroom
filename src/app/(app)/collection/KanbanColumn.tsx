@@ -55,8 +55,8 @@ export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, s
         {/* Drop zone */}
         <div
           ref={setNodeRef}
-          className='flex max-h-[65vh] flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors'
-          style={{ minHeight: 120, backgroundColor: isOver ? 'var(--kanban-dropzone-active)' : undefined }}
+          className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors'
+          style={{ backgroundColor: isOver ? 'var(--kanban-dropzone-active)' : undefined }}
         >
           {books.map((b) => (
             <KanbanCard

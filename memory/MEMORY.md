@@ -1,0 +1,1 @@
+- [Collection no page scroll](collection-no-page-scroll.md) — the Kanban board fits the viewport; only columns scroll, never the page (esp. mobile)

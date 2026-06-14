@@ -100,16 +100,22 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
             {book.author}
           </p>
         )}
-        {book.rating && (
-          <p className='mt-1 text-xs text-amber-500' aria-label={`Rated ${book.rating} out of 5`}>
-            <span aria-hidden='true'>
-              {'★'.repeat(book.rating)}
-              {'☆'.repeat(5 - book.rating)}
-            </span>
-          </p>
-        )}
-        {book.favorite && (
-          <span className='mt-0.5 inline-block text-xs'>⭐</span>
+        {(book.rating || book.favorite) && (
+          <div className='mt-1 flex items-center gap-1.5'>
+            {book.rating && (
+              <span className='text-xs text-amber-500' aria-label={`Rated ${book.rating} out of 5`}>
+                <span aria-hidden='true'>
+                  {'★'.repeat(book.rating)}
+                  {'☆'.repeat(5 - book.rating)}
+                </span>
+              </span>
+            )}
+            {book.favorite && (
+              <span className='text-xs' style={{ color: 'var(--color-danger)' }} aria-label='Favorite' title='Favorite'>
+                ♥
+              </span>
+            )}
+          </div>
         )}
       </div>
 
