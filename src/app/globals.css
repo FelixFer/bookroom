@@ -153,3 +153,23 @@ html.dark ::-webkit-scrollbar-thumb:hover {
     background: #6b5030;
   }
 }
+
+/* Kanban board — thin wood-toned scrollbars to match the shelves */
+.kanban-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: var(--kanban-shadow) transparent;
+}
+.kanban-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.kanban-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.kanban-scroll::-webkit-scrollbar-thumb {
+  background: var(--kanban-shadow);
+  border-radius: 9999px;
+}
+.kanban-scroll::-webkit-scrollbar-thumb:hover {
+  background: var(--kanban-rod);
+}

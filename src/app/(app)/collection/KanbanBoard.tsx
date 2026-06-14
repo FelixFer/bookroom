@@ -41,6 +41,7 @@ export const KanbanBoard = () => {
   const [bulkDeleting, setBulkDeleting] = useState(false)
   const [search, setSearch] = useState('')
   const [activeBook, setActiveBook] = useState<UserBookItem | null>(null)
+  const [loading, setLoading] = useState(true)
   const [announcement, setAnnouncement] = useState('')
   const [errorToast, setErrorToast] = useState('')
   const boardRef = useRef<HTMLDivElement>(null)
@@ -71,6 +72,7 @@ export const KanbanBoard = () => {
     getJson<{ books: UserBookItem[] }>('/api/room/books')
       .then((res) => setBooks(res.books))
       .catch(console.error)
+      .finally(() => setLoading(false))
   }, [])
 
   useEffect(() => {
@@ -219,7 +221,7 @@ export const KanbanBoard = () => {
   }, [filtered.length, updateScrollEdges])
 
   return (
-    <div className="relative flex h-[100dvh] flex-col overflow-hidden">
+    <div className="relative flex h-[100dvh] flex-col overflow-hidden pb-2">
       <div
         className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden"
         style={{ backgroundImage: "url('/library-day.png')" }}
@@ -274,7 +276,10 @@ export const KanbanBoard = () => {
         </div>
 
         {/* Collection count */}
-        <p className="text-xs" style={{ color: 'var(--kanban-muted)' }}>
+        <p
+          className="w-fit rounded border px-2 py-0.5 text-xs"
+          style={{ color: 'var(--kanban-text)', backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
+        >
           {books.length} book{books.length !== 1 ? 's' : ''} in your collection
           {search && ` · ${filtered.length} matching "${search}"`}
         </p>
@@ -339,10 +344,18 @@ export const KanbanBoard = () => {
       {/* Board */}
       <DndContext sensors={sensors} onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
         <div className="relative min-h-0 flex-1">
+          {loading && (
+            <div
+              className="flex h-full items-center justify-center p-4 text-sm"
+              style={{ color: 'var(--kanban-muted)' }}
+            >
+              Tidying your shelves…
+            </div>
+          )}
           <div
             ref={boardRef}
             onScroll={updateScrollEdges}
-            className="flex h-full gap-4 overflow-x-auto p-4 pt-0"
+            className={`flex h-full gap-4 overflow-x-auto p-4 pt-0 kanban-scroll ${loading ? 'hidden' : ''}`}
           >
             {STATUS_ORDER.map((status) => (
               <KanbanColumn
@@ -357,14 +370,14 @@ export const KanbanBoard = () => {
               />
             ))}
           </div>
-          {scrollEdges.left && (
+          {!loading && scrollEdges.left && (
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-0 left-0 w-8"
               style={{ background: 'linear-gradient(to right, var(--kanban-scroll-fade), transparent)' }}
             />
           )}
-          {scrollEdges.right && (
+          {!loading && scrollEdges.right && (
             <div
               aria-hidden="true"
               className="pointer-events-none absolute inset-y-0 right-0 w-8"

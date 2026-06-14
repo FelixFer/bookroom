@@ -21,13 +21,13 @@ export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, s
   const colors = STATUS_COLORS[status]
 
   return (
-    <div className="flex w-64 shrink-0 flex-col">
+    <div className="flex h-full min-h-0 w-64 shrink-0 flex-col">
       {/* Top wooden rod */}
       <div className="h-3 shrink-0" style={{ backgroundColor: 'var(--kanban-rod)' }} />
 
       {/* Column body */}
       <div
-        className="flex flex-1 flex-col border-x border-b"
+        className="flex min-h-0 flex-1 flex-col border-x border-b"
         style={{ backgroundColor: 'var(--kanban-bg)', borderColor: 'var(--kanban-border)' }}
       >
         {/* Column header */}
@@ -55,7 +55,7 @@ export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, s
         {/* Drop zone */}
         <div
           ref={setNodeRef}
-          className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors'
+          className='flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto p-2 transition-colors kanban-scroll'
           style={{ backgroundColor: isOver ? 'var(--kanban-dropzone-active)' : undefined }}
         >
           {books.map((b) => (
@@ -75,7 +75,7 @@ export const KanbanColumn = ({ status, books, onEdit, onDelete, selectionMode, s
               className="flex flex-1 items-center justify-center text-xs"
               style={{ color: 'var(--kanban-muted)' }}
             >
-              Drop here
+              This shelf is empty
             </p>
           )}
         </div>
