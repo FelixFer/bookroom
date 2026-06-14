@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from 'react'
 import { LoaderOverlay } from '@/app/_components/Loader'
 import { Button } from '@/app/_components/Button'
 import { getJson, putJson } from '@/lib/api'
-import { BOOKMARK_KEYS, BOOKMARK_COLORS, type BookmarkKey, type TBookMark } from '@/lib/bookmarks'
+import { BOOKMARK_KEYS, BOOKMARK_COLORS, MAX_BOOKMARK_LABEL_LENGTH, type BookmarkKey, type TBookMark } from '@/lib/bookmarks'
 import { FormError } from '@/app/_components/FormField'
 import { useSubmit } from '@/hooks/useSubmit'
 
@@ -84,6 +84,7 @@ export const BookmarkPanel = ({ isOpen }: Props) => {
                 value={bookmarks[i]}
                 onChange={(e) => handleBookmarkChange(i, e.target.value)}
                 placeholder={PLACEHOLDERS[i]}
+                maxLength={MAX_BOOKMARK_LABEL_LENGTH}
                 onFocus={() => setFocusIndex(i)}
                 onBlur={() => setFocusIndex(null)}
               />

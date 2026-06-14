@@ -1,5 +1,6 @@
 import { prisma } from '@/lib/prisma'
 import { requireAuth, ok, err } from '@/lib/server-utils'
+import { MAX_BOOKMARK_LABEL_LENGTH, BOOKMARK_LABEL_TOO_LONG } from '@/lib/bookmarks'
 
 export const GET = async (request: Request) => {
   const userId = await requireAuth()
@@ -23,11 +24,18 @@ export const PUT = async (request: Request) => {
   const body = (await request.json().catch(() => null)) as unknown
   if (!Array.isArray(body)) return err('Invalid payload', 422)
 
+  const entries = body as { slot: number; label: string | null }[]
+
+  for (const { label } of entries) {
+    if (typeof label === 'string' && label.trim().length > MAX_BOOKMARK_LABEL_LENGTH) {
+      return err(BOOKMARK_LABEL_TOO_LONG, 422)
+    }
+  }
+
   try {
-    const entries = body as { slot: number; label: string | null }[]
     await Promise.all(
       entries.map(({ slot, label }) => {
-        const normalized = label || null
+        const normalized = label?.trim() || null
         const ops: Promise<unknown>[] = [
           prisma.bookmark.upsert({
             where: { userId_slot: { userId, slot } },

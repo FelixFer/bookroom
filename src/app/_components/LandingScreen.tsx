@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { getApiErrorMessage, postJson } from '@/lib/api'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
+import { MAX_NAME_LENGTH } from '@/lib/validation'
 
 function LandingScreenInner() {
   const searchParams = useSearchParams()
@@ -194,14 +195,16 @@ function LandingScreenInner() {
                   <legend>Enter your details to create an account.</legend>
 
                   <label className="form-label">
-                    Name
+                    Username
                     <input
                       className="form-input"
                       type="text"
-                      autoComplete="name"
+                      autoComplete="username"
                       value={signupName}
                       onChange={(e) => setSignupName(e.target.value)}
-                      maxLength={12}
+                      maxLength={MAX_NAME_LENGTH}
+                      pattern="[A-Za-z0-9]+"
+                      title="Letters and numbers only, up to 12 characters"
                       required
                     />
                   </label>

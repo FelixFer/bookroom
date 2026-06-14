@@ -1,5 +1,9 @@
 export const BOOKMARK_KEYS = ['first', 'second', 'third', 'fourth', 'fifth'] as const
 
+export const MAX_BOOKMARK_LABEL_LENGTH = 20
+
+export const BOOKMARK_LABEL_TOO_LONG = `Bookmark label must be ${MAX_BOOKMARK_LABEL_LENGTH} characters or fewer`
+
 export type BookmarkKey = (typeof BOOKMARK_KEYS)[number]
 
 export const BOOKMARK_COLORS: Record<BookmarkKey, string> = {
