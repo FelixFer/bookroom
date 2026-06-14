@@ -281,36 +281,41 @@ export const KanbanBoard = () => {
       </div>
 
       <div className={`filter-panel ${showFilter ? 'filter-panel-show' : ''}`}>
-        <Button
-          variant='soft'
-          size='s'
-          className='self-start'
-          onClick={() => setFilter({ included: [], excluded: [] })}
-          disabled={!filter.excluded?.length && !filter.included?.length}
-        >
-          Reset Filter
-        </Button>
-        <div className='filter-list'>
-          {bookmarks.length ? bookmarks.map((b) => {
-            const included = filter.included?.includes(b.slot)
-            const excluded = filter.excluded?.includes(b.slot)
-            return (
-              <button
-                key={b.slot}
-                type='button'
-                className={`filter-pill ${included ? 'filter-pill-included' : ''} ${excluded ? 'filter-pill-excluded' : ''}`}
-                aria-pressed={included}
-                onClick={() => handleFilterStatus(b.slot)}
-              >
-                {b.label}{excluded ? <span className='sr-only'> (excluded)</span> : null}
-              </button>
-            )
-          }) : (
-            <p className='mr-auto text-sm' style={{ color: 'var(--kanban-text)' }}>
-              No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2'>open the Bookmarks panel</button> to create them, then filter books by shelf.
-            </p>
-          )}
-        </div>
+        {bookmarks.length ? (
+          <>
+            <span className='filter-label'>Filter by bookmark</span>
+            <div className='filter-list'>
+              {bookmarks.map((b) => {
+                const included = filter.included?.includes(b.slot)
+                const excluded = filter.excluded?.includes(b.slot)
+                return (
+                  <button
+                    key={b.slot}
+                    type='button'
+                    className={`filter-pill ${included ? 'filter-pill-included' : ''} ${excluded ? 'filter-pill-excluded' : ''}`}
+                    aria-pressed={included}
+                    onClick={() => handleFilterStatus(b.slot)}
+                  >
+                    {b.label}{excluded ? <span className='sr-only'> (excluded)</span> : null}
+                  </button>
+                )
+              })}
+              <span className='filter-hint'>Tap to include · again to exclude</span>
+            </div>
+            <Button
+              variant='soft'
+              size='s'
+              onClick={() => setFilter({ included: [], excluded: [] })}
+              disabled={!filter.excluded?.length && !filter.included?.length}
+            >
+              Reset
+            </Button>
+          </>
+        ) : (
+          <p className='text-sm' style={{ color: 'var(--kanban-text)' }}>
+            No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2'>open the Bookmarks panel</button> to create them, then filter books by shelf.
+          </p>
+        )}
       </div>
 
       {/* Bulk action bar */}

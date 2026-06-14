@@ -1019,29 +1019,31 @@
 
 .filter-panel {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  // align-items: flex-end;
-  padding: 0;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 10px;
+  padding: 0 8px;
   width: 100%;
   margin-bottom: 0;
   background-color: var(--kanban-muted);
-  height: 0;
+  max-height: 0;
   opacity: 0;
   visibility: hidden;
+  overflow: hidden;
   transition:
-    opacity 0.5s ease,
-    visibility 0.5s ease,
-    height 0.5s ease,
-    padding 0.5s ease,
-    margin-bottom 0.5s ease;
+    opacity 0.4s ease,
+    visibility 0.4s ease,
+    max-height 0.4s ease,
+    padding 0.4s ease,
+    margin-bottom 0.4s ease;
 
   &-show {
-    height: 90px;
+    max-height: 240px;
     opacity: 1;
     visibility: visible;
     margin-bottom: 12px;
-    padding: 6px 8px;
+    padding: 8px;
 
     & .filter-pill {
       height: 28px;
@@ -1056,8 +1058,24 @@
   }
 }
 
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  color: var(--kanban-text);
+}
+
+.filter-hint {
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--kanban-text);
+  opacity: 0.75;
+}
+
 .filter-list {
   display: flex;
+  flex: 1;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-start;
   gap: 8px;
