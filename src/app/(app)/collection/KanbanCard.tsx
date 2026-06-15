@@ -40,8 +40,18 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         borderLeftWidth: (selected || bookmarkColor) ? '3px' : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
-      className='group relative flex gap-2 border p-2.5'
+      className={`group relative flex gap-2 border p-2.5 ${selectionMode ? 'cursor-pointer' : ''}`}
       onClick={selectionMode ? () => onToggleSelect(book.id) : undefined}
+      onKeyDown={selectionMode ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          onToggleSelect(book.id)
+        }
+      } : undefined}
+      role={selectionMode ? 'button' : undefined}
+      tabIndex={selectionMode ? 0 : undefined}
+      aria-pressed={selectionMode ? selected : undefined}
+      aria-label={selectionMode ? `${selected ? 'Deselect' : 'Select'} ${book.title}` : undefined}
     >
 
       {book.bookmarkSlot && !selectionMode &&
@@ -51,16 +61,14 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         />
       }
 
-      {/* Selection checkbox */}
-      {selectionMode && (
-        <div className='absolute left-1.5 top-1.5 z-10'>
-          <input
-            type='checkbox'
-            checked={selected}
-            onChange={() => onToggleSelect(book.id)}
-            onClick={(e) => e.stopPropagation()}
-            className='h-4 w-4 cursor-pointer rounded accent-amber-500'
-          />
+      {/* Selection check badge */}
+      {selectionMode && selected && (
+        <div
+          className='absolute left-1.5 top-1.5 z-10 flex h-4 w-4 items-center justify-center rounded-full text-[10px] font-bold'
+          style={{ backgroundColor: 'var(--kanban-amber)', color: 'var(--kanban-rod)' }}
+          aria-hidden='true'
+        >
+          ✓
         </div>
       )}
 

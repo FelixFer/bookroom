@@ -289,7 +289,7 @@ export const KanbanBoard = () => {
             className='sm:ml-auto'
             onClick={() => selectionMode ? clearSelection() : setSelectionMode(true)}
           >
-            {selectionMode ? 'Cancel' : 'Remove Book(s)'}
+            {selectionMode ? 'Done' : 'Tidy up'}
           </Button>
         </div>
 
@@ -339,24 +339,6 @@ export const KanbanBoard = () => {
           <p className='text-sm' style={{ color: 'var(--kanban-text)' }}>
             No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2'>open the Bookmarks panel</button> to create them, then filter books by shelf.
           </p>
-        )}
-      </div>
-
-      {/* Bulk action bar */}
-
-      <div
-        className={`remove-panel ${selectionMode ? 'remove-panel-show' : ''}`}
-        style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)' }}
-      >
-        <span className='text-sm' style={{ color: 'var(--kanban-muted)' }}>
-          {selectedIds.size} selected
-        </span>
-        <Button variant='soft' size='s' className='remove-select-btn' onClick={() => setSelectedIds(new Set(filtered.map((b) => b.id)))}>Select all</Button>
-        <Button variant='soft' size='s' className='remove-select-btn' onClick={() => setSelectedIds(new Set())}>Deselect all</Button>
-        {selectedIds.size > 0 && (
-          <Button variant='filled' size='s' color='danger' className='remove-select-btn' onClick={() => setBulkConfirmOpen(true)}>
-            Delete {selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}
-          </Button>
         )}
       </div>
 
@@ -418,6 +400,33 @@ export const KanbanBoard = () => {
           {activeBook ? <KanbanCardOverlay book={activeBook} /> : null}
         </DragOverlay>
       </DndContext>
+
+      {/* Selection tray — only while tidying up */}
+      {selectionMode && (
+        <div
+          className='fixed bottom-4 left-1/2 z-40 flex -translate-x-1/2 items-center gap-3 rounded border px-4 py-2.5 text-sm shadow-lg'
+          style={{ backgroundColor: 'var(--kanban-header-bg)', borderColor: 'var(--kanban-border)', color: 'var(--kanban-text)' }}
+        >
+          {selectedIds.size === 0 ? (
+            <span style={{ color: 'var(--kanban-muted)' }}>Tap books to remove them</span>
+          ) : (
+            <>
+              <span>{selectedIds.size} selected</span>
+              <Button variant='filled' color='danger' size='s' onClick={() => setBulkConfirmOpen(true)}>
+                Remove
+              </Button>
+              <button
+                type='button'
+                onClick={() => setSelectedIds(new Set())}
+                className='underline underline-offset-2'
+                style={{ color: 'var(--kanban-muted)' }}
+              >
+                Clear
+              </button>
+            </>
+          )}
+        </div>
+      )}
 
       <div aria-live='polite' className='sr-only'>{announcement}</div>
 

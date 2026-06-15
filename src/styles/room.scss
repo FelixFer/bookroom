@@ -993,43 +993,6 @@
   border-radius: 20px;
 }
 
-.remove-panel {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 12px;
-  border-bottom: 1px;
-  padding: 0;
-  height: 0;
-  opacity: 0;
-  visibility: hidden;
-  margin-bottom: 0;
-  transition:
-    opacity 0.5s ease,
-    visibility 0.5s ease,
-    height 0.5s ease,
-    margin-bottom 0.5s ease,
-    padding 0.5s ease;
-
-  & .remove-select-btn {
-    opacity: 0;
-    visibility: hidden;
-  }
-
-  &-show {
-    height: 56px;
-    opacity: 1;
-    visibility: visible;
-    margin-bottom: 12px;
-    padding: 8px 16px;
-
-    & .remove-select-btn {
-      opacity: 1;
-      visibility: visible;
-    }
-  }
-}
-
 .filter-panel {
   display: flex;
   flex-direction: row;
