@@ -2,7 +2,7 @@ export const MIN_PASSWORD_LENGTH = 8
 
 export const PASSWORD_TOO_SHORT = `Password must be at least ${MIN_PASSWORD_LENGTH} characters`
 
-export const MAX_NAME_LENGTH = 12
+export const MAX_NAME_LENGTH = 10
 
 export const NAME_INVALID = `Username must be alphanumeric and ${MAX_NAME_LENGTH} characters or fewer`
 
