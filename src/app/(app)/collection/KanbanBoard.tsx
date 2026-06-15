@@ -216,12 +216,14 @@ export const KanbanBoard = () => {
   const byStatus = (status: ReadingStatus) =>
     filtered.filter((b) => b.status === status)
 
+  const noMatches = !loading && books.length > 0 && filtered.length === 0
+
   useEffect(() => {
     updateScrollEdges()
   }, [filtered.length, updateScrollEdges])
 
   return (
-    <div className='relative flex h-[100dvh] flex-col overflow-hidden pb-2'>
+    <div className='relative flex h-dvh flex-col overflow-hidden pb-2'>
       <div
         className='pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-no-repeat dark:hidden'
         style={{ backgroundImage: "url('/library-day.png')" }}
@@ -245,12 +247,26 @@ export const KanbanBoard = () => {
 
       <div className='flex flex-col gap-3 p-4 pb-2'>
         {/* Search */}
-        <input
-          className='form-input h-9 w-full text-sm'
-          placeholder='Search…'
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
-        />
+        <div className='relative'>
+          <input
+            className='form-input h-9 w-full pr-8 text-sm'
+            placeholder='Search…'
+            value={search}
+            maxLength={40}
+            onChange={(e) => setSearch(e.target.value)}
+          />
+          {search && (
+            <button
+              type='button'
+              className='absolute right-2 top-1/2 -translate-y-1/2 border-none bg-transparent p-0 leading-none'
+              style={{ color: 'var(--kanban-muted)' }}
+              onClick={() => setSearch('')}
+              aria-label='Clear search'
+            >
+              ✕
+            </button>
+          )}
+        </div>
 
         {/* Actions */}
         <div className='flex flex-wrap items-center gap-3'>
@@ -295,15 +311,16 @@ export const KanbanBoard = () => {
               {bookmarks.map((b) => {
                 const included = filter.included?.includes(b.slot)
                 const excluded = filter.excluded?.includes(b.slot)
+                const state = included ? 'including' : excluded ? 'excluding' : null
                 return (
                   <button
                     key={b.slot}
                     type='button'
                     className={`filter-pill ${included ? 'filter-pill-included' : ''} ${excluded ? 'filter-pill-excluded' : ''}`}
-                    aria-pressed={included}
+                    aria-label={state ? `${b.label}: ${state}` : (b.label ?? undefined)}
                     onClick={() => handleFilterStatus(b.slot)}
                   >
-                    {b.label}{excluded ? <span className='sr-only'> (excluded)</span> : null}
+                    {b.label}
                   </button>
                 )
               })}
@@ -354,10 +371,20 @@ export const KanbanBoard = () => {
               Tidying your shelves…
             </div>
           )}
+          {noMatches && (
+            <div
+              className='flex h-full items-center justify-center p-4 text-center text-sm'
+              style={{ color: 'var(--kanban-muted)' }}
+            >
+              {search
+                ? `No books match “${search}”`
+                : 'No books match the current filter'}
+            </div>
+          )}
           <div
             ref={boardRef}
             onScroll={updateScrollEdges}
-            className={`flex h-full gap-4 overflow-x-auto p-4 pt-0 kanban-scroll ${loading ? 'hidden' : ''}`}
+            className={`flex h-full gap-4 overflow-x-auto p-4 pt-0 kanban-scroll ${loading || noMatches ? 'hidden' : ''}`}
           >
             {STATUS_ORDER.map((status) => (
               <KanbanColumn
@@ -372,14 +399,14 @@ export const KanbanBoard = () => {
               />
             ))}
           </div>
-          {!loading && scrollEdges.left && (
+          {!loading && !noMatches && scrollEdges.left && (
             <div
               aria-hidden='true'
               className='pointer-events-none absolute inset-y-0 left-0 w-8'
               style={{ background: 'linear-gradient(to right, var(--kanban-scroll-fade), transparent)' }}
             />
           )}
-          {!loading && scrollEdges.right && (
+          {!loading && !noMatches && scrollEdges.right && (
             <div
               aria-hidden='true'
               className='pointer-events-none absolute inset-y-0 right-0 w-8'
