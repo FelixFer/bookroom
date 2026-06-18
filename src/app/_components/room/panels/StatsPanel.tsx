@@ -20,12 +20,12 @@ export const StatsPanel = () => {
   const year = new Date().getFullYear()
 
   const items = [
-    { label: 'Total books',       value: stats.totalBooks,     emoji: '📚' },
+    { label: 'Total books', value: stats.totalBooks, emoji: '📚' },
     { label: `Completed in ${year}`, value: stats.doneThisYear, emoji: '✅' },
-    { label: 'Completed all time', value: stats.doneCount,      emoji: '🏆' },
-    { label: 'Currently reading',  value: stats.currentlyReading, emoji: '📖' },
-    { label: 'Favourites',         value: stats.favoriteCount,  emoji: '⭐' },
-    { label: 'Dropped',            value: stats.dnfCount,       emoji: '🗑️' },
+    { label: 'Completed all time', value: stats.doneCount, emoji: '🏆' },
+    { label: 'Currently reading', value: stats.currentlyReading, emoji: '📖' },
+    { label: 'Favorites', value: stats.favoriteCount, emoji: '⭐' },
+    { label: 'Dropped', value: stats.dnfCount, emoji: '🗑️' },
   ]
 
   return (
