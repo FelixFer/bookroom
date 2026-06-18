@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import axios from 'axios'
-import { postJson } from '@/lib/api'
+import { postJson, getJson } from '@/lib/api'
 import { DEFAULT_STATUS } from '@/types/book'
 import { Button } from '@/app/_components/Button'
 import { LoaderOverlay } from '@/app/_components/Loader'
@@ -32,11 +32,9 @@ export const DiscoverPanel = () => {
     if (!query.trim()) return
     setResults([])
     setBookState({})
-    const res = await fetch(
-      `https://openlibrary.org/search.json?q=${encodeURIComponent(query.trim())}&limit=12&fields=key,title,author_name,cover_i,first_publish_year`,
-    ).catch(() => null)
-    if (!res?.ok) throw new Error('Could not reach Open Library. Check your connection.')
-    const data = (await res.json()) as { docs: OpenLibBook[] }
+    const data = await getJson<{ docs: OpenLibBook[] }>(
+      `/api/books/search?q=${encodeURIComponent(query.trim())}`
+    )
     setResults(data.docs ?? [])
   }, 'Could not reach Open Library. Check your connection.')
 
