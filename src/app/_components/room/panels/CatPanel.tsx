@@ -23,48 +23,48 @@ export const CatPanel = () => {
 
   return (
     <>
-    <div className="flex flex-col items-center gap-6 pt-4 text-center">
-      <p className="text-sm text-zinc-500 dark:text-zinc-400">
-        🐱 The cat has a recommendation for you…
-      </p>
+      <div className="flex flex-col items-center gap-6 pt-4 text-center">
+        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+          🐱 The cat has a recommendation for you…
+        </p>
 
-      {book === null && (
-        <Button variant="filled" onClick={roll} loading={loading}>
-          Surprise me!
-        </Button>
-      )}
-
-      {book === 'empty' && (
-        <p className="form-help">Your shelf is empty. Add some books first!</p>
-      )}
-
-      {book && book !== 'empty' && (
-        <div className="flex flex-col items-center gap-4">
-          <BookCover
-            coverUrl={book.coverUrl}
-            title={book.title}
-            className="h-48 w-auto rounded-lg shadow-md object-cover"
-          />
-          <div>
-            <p className="font-semibold text-zinc-900 dark:text-zinc-50">
-              {book.title}
-            </p>
-            {book.author && (
-              <p className="text-sm text-zinc-500 dark:text-zinc-400">
-                {book.author}
-              </p>
-            )}
-            <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-600">
-              {book.status.replace('_', ' ')}
-            </p>
-          </div>
-          <Button variant="outline" onClick={roll} loading={loading}>
-            🎲 Roll again
+        {book === null && (
+          <Button variant="filled" onClick={roll} loading={loading}>
+            Surprise me!
           </Button>
-        </div>
-      )}
-    </div>
-    {loading && <LoaderOverlay />}
+        )}
+
+        {book === 'empty' && (
+          <p className="form-help">Your shelf is empty. Add some books first!</p>
+        )}
+
+        {book && book !== 'empty' && (
+          <div className="flex flex-col items-center gap-4">
+            <BookCover
+              coverUrl={book.coverUrl}
+              title={book.title}
+              className="h-48 w-auto rounded-lg shadow-md object-cover"
+            />
+            <div>
+              <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+                {book.title}
+              </p>
+              {book.author && (
+                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                  {book.author}
+                </p>
+              )}
+              <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-600">
+                {book.status.replaceAll('_', ' ')}
+              </p>
+            </div>
+            <Button variant="outline" onClick={roll} loading={loading}>
+              🎲 Roll again
+            </Button>
+          </div>
+        )}
+      </div>
+      {loading && <LoaderOverlay />}
     </>
   )
 }
