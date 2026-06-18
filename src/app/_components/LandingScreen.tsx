@@ -204,7 +204,7 @@ function LandingScreenInner() {
                       onChange={(e) => setSignupName(e.target.value)}
                       maxLength={MAX_NAME_LENGTH}
                       pattern="[A-Za-z0-9]+"
-                      title="Letters and numbers only, up to 12 characters"
+                      title={`Letters and numbers only, up to ${MAX_NAME_LENGTH} characters`}
                       required
                     />
                   </label>
