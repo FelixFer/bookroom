@@ -12,7 +12,11 @@ type Stats = {
 };
 
 export const StatsPanel = () => {
-  const { data: stats, loading } = useGet<Stats>('/api/room/stats')
+  const { data: stats, loading } = useGet<Stats>(
+    '/api/room/stats',
+    undefined,
+    'books-updated'
+  )
 
   if (loading) return <p className="form-help">Loading stats…</p>
   if (!stats) return <p className="form-error">Failed to load stats.</p>

@@ -6,7 +6,7 @@ import { getJson } from '@/lib/api'
 export const useGet = <TResponse, TData = TResponse>(
   url: string | null,
   select?: (res: TResponse) => TData,
-  refetchEvent?: string,
+  refetchEvent?: string | string[],
 ) => {
   const [data, setData] = useState<TData | null>(null)
   const [fetchedUrl, setFetchedUrl] = useState<string | null>(null)
@@ -30,8 +30,13 @@ export const useGet = <TResponse, TData = TResponse>(
   useEffect(() => {
     refetch()
     if (!url || !refetchEvent) return
-    window.addEventListener(refetchEvent, refetch)
-    return () => window.removeEventListener(refetchEvent, refetch)
+
+    const events = Array.isArray(refetchEvent) ? refetchEvent : [refetchEvent]
+    events.forEach(event => window.addEventListener(event, refetch))
+
+    return () => {
+      events.forEach(event => window.removeEventListener(event, refetch))
+    }
   }, [url, refetchEvent, refetch])
 
   const loading = url !== null && fetchedUrl !== url

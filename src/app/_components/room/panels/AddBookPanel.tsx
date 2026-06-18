@@ -35,6 +35,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
     setAuthor('')
     setCoverUrl('')
     setStatus(DEFAULT_STATUS)
+    window.dispatchEvent(new CustomEvent('books-updated'))
   })
 
   if (success) {

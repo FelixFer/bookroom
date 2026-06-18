@@ -25,7 +25,7 @@ export const KanbanBoard = () => {
   const { data: bookmarksData } = useGet<{ data: TBookMark[] }, TBookMark[]>(
     '/api/room/bookmarks?labeled=true',
     (res) => res.data,
-    'bookmarks-updated',
+    ['bookmarks-updated', 'books-updated'],
   )
   const bookmarks = bookmarksData ?? []
   const [editTarget, setEditTarget] = useState<UserBookItem | 'new' | null>(null)

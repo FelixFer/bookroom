@@ -13,7 +13,7 @@ export const TrashPanel = () => {
   const { data: books, loading } = useGet<{ books: Book[] }, Book[]>(
     '/api/room/books?status=DROPPED',
     (res) => res.books,
-    'bookmarks-updated',
+    ['bookmarks-updated', 'books-updated'],
   )
 
   if (loading) return <LoaderOverlay />

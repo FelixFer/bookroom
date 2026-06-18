@@ -15,6 +15,7 @@ export const NotebookPanel = () => {
   const { data: books, loading } = useGet<{ books: NoteBook[] }, NoteBook[]>(
     '/api/room/notes',
     (res) => res.books,
+    'books-updated'
   )
 
   if (loading) return <p className="form-help">Loading notes…</p>

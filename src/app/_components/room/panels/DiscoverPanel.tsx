@@ -50,6 +50,7 @@ export const DiscoverPanel = () => {
         status: DEFAULT_STATUS,
       })
       setBookState((prev) => ({ ...prev, [book.key]: 'added' }))
+      window.dispatchEvent(new CustomEvent('books-updated'))
     } catch (err: unknown) {
       // 409 = already in collection
       if (axios.isAxiosError(err) && err.response?.status === 409) {
