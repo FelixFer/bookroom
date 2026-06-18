@@ -94,7 +94,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
         {isEdit && (
           <>
             <div className="flex flex-col gap-1">
-              <span className="text-sm text-zinc-700 dark:text-zinc-300">Rating</span>
+              <span className="text-sm text-kanban-muted">Rating</span>
               <div className="flex gap-1">
                 {[1, 2, 3, 4, 5].map((n) => (
                   <button
@@ -110,7 +110,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
                 {rating && (
                   <button
                     type="button"
-                    className="ml-2 text-xs text-zinc-400 underline"
+                    className="ml-2 text-xs text-kanban-muted underline"
                     onClick={() => setRating(null)}
                   >
                     clear
@@ -129,7 +129,7 @@ export const EditBookModal = ({ book, onClose, onSaved }: Props) => {
               />
             </label>
 
-            <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300">
+            <label className="flex items-center gap-2 text-sm text-kanban-muted">
               <input
                 type="checkbox"
                 checked={favorite}

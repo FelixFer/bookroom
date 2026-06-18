@@ -32,18 +32,18 @@ export const NotebookPanel = () => {
           key={b.id}
           className="panel-card--shelf"
         >
-          <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+          <p className="font-semibold text-room-text">
             {b.title}
           </p>
           {b.author && (
-            <p className="text-xs text-zinc-400 dark:text-zinc-600">
+            <p className="text-xs text-room-muted">
               {b.author}
             </p>
           )}
-          <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400 italic">
+          <p className="mt-2 text-sm text-room-muted italic">
             &ldquo;{b.notes}&rdquo;
           </p>
-          <p className="mt-2 text-xs text-zinc-400 dark:text-zinc-600">
+          <p className="mt-2 text-xs text-room-muted">
             {new Date(b.updatedAt).toLocaleDateString()}
           </p>
         </div>

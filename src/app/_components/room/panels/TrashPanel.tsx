@@ -39,11 +39,11 @@ export const TrashPanel = () => {
             className="h-16 w-10 shrink-0 rounded object-cover shadow grayscale"
           />
           <div className="flex flex-col justify-center gap-1">
-            <p className="font-medium text-zinc-700 line-through dark:text-zinc-400">
+            <p className="font-medium text-room-muted line-through">
               {b.title}
             </p>
             {b.author && (
-              <p className="text-xs text-zinc-400 dark:text-zinc-600">
+              <p className="text-xs text-room-muted">
                 {b.author}
               </p>
             )}

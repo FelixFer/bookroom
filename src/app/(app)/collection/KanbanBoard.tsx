@@ -466,8 +466,8 @@ export const KanbanBoard = () => {
       {/* Bulk delete confirm */}
       <RoomModal open={bulkConfirmOpen} title='DELETE BOOKS' onClose={() => setBulkConfirmOpen(false)}>
         <div className='flex flex-col gap-4'>
-          <p className='text-sm text-zinc-700 dark:text-zinc-300'>
-            Remove <span className='font-semibold text-zinc-900 dark:text-zinc-50'>{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span>&nbsp;from your collection? This can&apos;t be undone.
+          <p className='text-sm text-kanban-muted'>
+            Remove <span className='font-semibold text-kanban-text'>{selectedIds.size} book{selectedIds.size !== 1 ? 's' : ''}</span>&nbsp;from your collection? This can&apos;t be undone.
           </p>
           <div className='flex gap-3'>
             <Button variant='filled' color='danger' loading={bulkDeleting} onClick={handleBulkDelete} className='flex-1'>

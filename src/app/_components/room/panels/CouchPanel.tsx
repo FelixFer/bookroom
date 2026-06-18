@@ -36,17 +36,17 @@ export const CouchPanel = () => {
             coverUrl={b.coverUrl}
             title={b.title}
             className="h-20 w-14 shrink-0 rounded object-cover shadow"
-            placeholderClassName="h-20 w-14 rounded bg-zinc-100 text-2xl dark:bg-zinc-800"
+            placeholderClassName="h-20 w-14 rounded bg-room-bg text-2xl"
           />
           <div className="flex flex-col gap-1 overflow-hidden">
-            <p className="truncate font-semibold text-zinc-900 dark:text-zinc-50">
+            <p className="truncate font-semibold text-room-text">
               {b.title}
             </p>
-            <p className="truncate text-sm text-zinc-500 dark:text-zinc-400">
+            <p className="truncate text-sm text-room-muted">
               {b.author ?? '—'}
             </p>
             {b.notes && (
-              <p className="mt-1 line-clamp-2 text-xs text-zinc-400 dark:text-zinc-600">
+              <p className="mt-1 line-clamp-2 text-xs text-room-muted">
                 {b.notes}
               </p>
             )}

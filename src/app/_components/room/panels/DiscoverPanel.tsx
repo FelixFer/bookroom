@@ -109,7 +109,7 @@ export const DiscoverPanel = () => {
                 className="panel-card--shelf flex flex-col overflow-hidden"
               >
                 {/* Cover */}
-                <div className="flex h-32 items-center justify-center bg-zinc-100 dark:bg-zinc-900">
+                <div className="flex h-32 items-center justify-center bg-room-bg">
                   <BookCover
                     coverUrl={coverUrl}
                     title={book.title}
@@ -120,16 +120,16 @@ export const DiscoverPanel = () => {
 
                 {/* Info */}
                 <div className="flex flex-1 flex-col gap-1 p-2">
-                  <p className="line-clamp-2 text-xs font-semibold leading-tight text-zinc-900 dark:text-zinc-50">
+                  <p className="line-clamp-2 text-xs font-semibold leading-tight text-room-text">
                     {book.title}
                   </p>
                   {book.author_name?.[0] && (
-                    <p className="truncate text-xs text-zinc-500 dark:text-zinc-400">
+                    <p className="truncate text-xs text-room-muted">
                       {book.author_name[0]}
                     </p>
                   )}
                   {book.first_publish_year && (
-                    <p className="text-xs text-zinc-400 dark:text-zinc-600">
+                    <p className="text-xs text-room-muted">
                       {book.first_publish_year}
                     </p>
                   )}
@@ -139,8 +139,8 @@ export const DiscoverPanel = () => {
                     className={`mt-auto w-full rounded px-2 py-1 text-xs font-medium transition-colors ${state === 'added'
                       ? 'cursor-default bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
                       : state === 'owned'
-                        ? 'cursor-default bg-zinc-100 text-zinc-500 dark:bg-zinc-800 dark:text-zinc-500'
-                        : 'bg-zinc-900 text-white hover:bg-zinc-700 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200'
+                        ? 'cursor-default bg-room-bg text-room-muted'
+                        : 'bg-room-text text-room-bg hover:opacity-80'
                       }`}
                     onClick={() => !state && addBook(book)}
                     disabled={!!state}

@@ -41,7 +41,7 @@ export const AddBookPanel = ({ onClose }: Props) => {
     return (
       <div className="flex flex-col items-center gap-4 py-4 text-center">
         <span className="text-4xl">📚</span>
-        <p className="text-sm font-medium text-zinc-900 dark:text-zinc-50">
+        <p className="text-sm font-medium text-room-text">
           Book added to your collection!
         </p>
         <div className="flex gap-3">

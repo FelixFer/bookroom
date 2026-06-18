@@ -35,10 +35,10 @@ export const StatsPanel = () => {
           key={label}
           className="panel-card--shelf flex items-center justify-between"
         >
-          <span className="text-sm text-zinc-700 dark:text-zinc-300">
+          <span className="text-sm text-room-muted">
             {emoji} {label}
           </span>
-          <span className="text-xl font-bold text-zinc-900 dark:text-zinc-50">
+          <span className="text-xl font-bold text-room-text">
             {value}
           </span>
         </div>

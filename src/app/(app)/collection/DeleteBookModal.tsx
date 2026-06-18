@@ -34,8 +34,8 @@ export const DeleteBookModal = ({ book, onClose, onDeleted }: Props) => {
   return (
     <RoomModal open={book !== null} title="REMOVE BOOK" onClose={onClose}>
       <div className="flex flex-col gap-4">
-        <p className="text-sm text-zinc-700 dark:text-zinc-300">
-          Remove <span className="font-semibold text-zinc-900 dark:text-zinc-50">{book?.title}</span> from your collection?
+        <p className="text-sm text-kanban-muted">
+          Remove <span className="font-semibold text-kanban-text">{book?.title}</span> from your collection?
         </p>
         {error && <p className="form-error">{error}</p>}
         <div className="flex gap-3">

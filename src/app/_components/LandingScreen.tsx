@@ -103,7 +103,7 @@ function LandingScreenInner() {
           {/* Brand card */}
           <div className="landing-brand-card">
             <h1 className="page-title">Bookroom</h1>
-            <p className="mt-2 text-sm text-zinc-600 dark:text-zinc-400">
+            <p className="mt-2 text-sm text-room-muted">
               Your cozy personal library. Track what you read, what you love, and
               what&apos;s next.
             </p>
@@ -158,7 +158,7 @@ function LandingScreenInner() {
                   ) : null}
 
                   <Link
-                    className="text-xs text-zinc-600 underline underline-offset-4 dark:text-zinc-400 w-fit hover:text-zinc-800 dark:hover:text-zinc-300"
+                    className="text-xs text-room-muted underline underline-offset-4 w-fit hover:text-room-text"
                     href="/forgot-password"
                   >
                     Forgot password?

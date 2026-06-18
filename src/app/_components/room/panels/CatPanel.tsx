@@ -24,7 +24,7 @@ export const CatPanel = () => {
   return (
     <>
       <div className="flex flex-col items-center gap-6 pt-4 text-center">
-        <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-room-muted">
           🐱 The cat has a recommendation for you…
         </p>
 
@@ -46,15 +46,15 @@ export const CatPanel = () => {
               className="h-48 w-auto rounded-lg shadow-md object-cover"
             />
             <div>
-              <p className="font-semibold text-zinc-900 dark:text-zinc-50">
+              <p className="font-semibold text-room-text">
                 {book.title}
               </p>
               {book.author && (
-                <p className="text-sm text-zinc-500 dark:text-zinc-400">
+        <p className="text-sm text-room-muted">
                   {book.author}
                 </p>
               )}
-              <p className="mt-1 text-xs text-zinc-400 dark:text-zinc-600">
+              <p className="mt-1 text-xs text-room-muted">
                 {book.status.replaceAll('_', ' ')}
               </p>
             </div>
