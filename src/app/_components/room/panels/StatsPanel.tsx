@@ -36,7 +36,8 @@ export const StatsPanel = () => {
           className="panel-card--shelf flex items-center justify-between"
         >
           <span className="text-sm text-room-muted">
-            {emoji} {label}
+            <span>{emoji} </span>
+            {label}
           </span>
           <span className="text-xl font-bold text-room-text">
             {value}
