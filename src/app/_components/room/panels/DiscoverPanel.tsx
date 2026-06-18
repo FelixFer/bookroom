@@ -92,7 +92,7 @@ export const DiscoverPanel = () => {
 
       {/* Loading */}
       {loading && (
-        <p className="form-help text-center text-xs">Searching Open Library…</p>
+        <LoaderOverlay />
       )}
 
       {/* Results */}

@@ -1,6 +1,7 @@
 'use client'
 
 import { useGet } from '@/hooks/useGet'
+import { LoaderOverlay } from '@/app/_components/Loader';
 
 type Stats = {
   totalBooks: number;
@@ -18,7 +19,7 @@ export const StatsPanel = () => {
     'books-updated'
   )
 
-  if (loading) return <p className="form-help">Loading stats…</p>
+  if (loading) return <LoaderOverlay />
   if (!stats) return <p className="form-error">Failed to load stats.</p>
 
   const year = new Date().getFullYear()

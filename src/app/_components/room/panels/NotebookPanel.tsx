@@ -2,6 +2,7 @@
 
 import { useGet } from '@/hooks/useGet'
 import { EmptyState } from '@/app/_components/EmptyState'
+import { LoaderOverlay } from '@/app/_components/Loader';
 
 type NoteBook = {
   id: string;
@@ -18,7 +19,7 @@ export const NotebookPanel = () => {
     'books-updated'
   )
 
-  if (loading) return <p className="form-help">Loading notes…</p>
+  if (loading) return <LoaderOverlay />
   if (!books?.length)
     return (
       <EmptyState emoji="📋">
