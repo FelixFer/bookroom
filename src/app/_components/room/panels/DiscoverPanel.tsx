@@ -135,24 +135,21 @@ export const DiscoverPanel = () => {
                   )}
 
                   {/* Add button */}
-                  <button
-                    className={`mt-auto w-full rounded px-2 py-1 text-xs font-medium transition-colors ${state === 'added'
-                      ? 'cursor-default bg-emerald-100 text-emerald-700 dark:bg-emerald-950/40 dark:text-emerald-400'
-                      : state === 'owned'
-                        ? 'cursor-default bg-room-bg text-room-muted'
-                        : 'bg-room-text text-room-bg hover:opacity-80'
-                      }`}
-                    onClick={() => !state && addBook(book)}
-                    disabled={!!state}
+                  <Button
+                    variant={state === 'added' ? 'soft' : state === 'owned' ? 'soft' : 'filled'}
+                    color={state === 'added' ? 'success' : state === 'owned' ? 'grey' : 'primary'}
+                    size="xs"
+                    className="mt-auto w-full"
+                    loading={state === 'adding'}
+                    disabled={state === 'added' || state === 'owned'}
+                    onClick={() => addBook(book)}
                   >
-                    {state === 'adding'
-                      ? 'Adding…'
-                      : state === 'added'
-                        ? '✓ Added'
-                        : state === 'owned'
-                          ? 'Already in collection'
-                          : '＋ Add'}
-                  </button>
+                    {state === 'added'
+                      ? '✓ Added'
+                      : state === 'owned'
+                        ? 'Already in collection'
+                        : '＋ Add'}
+                  </Button>
                 </div>
               </div>
             )
