@@ -5,6 +5,7 @@ import { useGet } from '@/hooks/useGet'
 import { EmptyState } from '@/app/_components/EmptyState'
 import { BookCover } from '@/app/_components/BookCover'
 import type { UserBookItem } from '@/types/book'
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 type Book = Pick<UserBookItem, 'id' | 'title' | 'author' | 'coverUrl' | 'bookmarkSlot'>;
 
@@ -15,7 +16,7 @@ export const TrashPanel = () => {
     'bookmarks-updated',
   )
 
-  if (loading) return <p className="form-help">Loading…</p>
+  if (loading) return <LoaderOverlay />
   if (!books?.length)
     return <EmptyState emoji="🗑️">Nothing here. Every book deserves a chance!</EmptyState>
 
@@ -25,30 +26,30 @@ export const TrashPanel = () => {
       {books.map((b) => {
         const bookmarkColor = getBookmarkColor(b.bookmarkSlot)
         return (
-        <div
-          key={b.id}
-          className="panel-card--shelf relative flex gap-3 opacity-70"
-          style={bookmarkColor ? { borderLeftColor: bookmarkColor, borderLeftWidth: '3px' } : undefined}
-        >
-          {b.bookmarkSlot && (
-            <div className="bookmark-card-book" style={{ backgroundColor: bookmarkColor, left: '24px' }} />
-          )}
-          <BookCover
-            coverUrl={b.coverUrl}
-            title={b.title}
-            className="h-16 w-10 shrink-0 rounded object-cover shadow grayscale"
-          />
-          <div className="flex flex-col justify-center gap-1">
-            <p className="font-medium text-room-muted line-through">
-              {b.title}
-            </p>
-            {b.author && (
-              <p className="text-xs text-room-muted">
-                {b.author}
-              </p>
+          <div
+            key={b.id}
+            className="panel-card--shelf relative flex gap-3 opacity-70"
+            style={bookmarkColor ? { borderLeftColor: bookmarkColor, borderLeftWidth: '3px' } : undefined}
+          >
+            {b.bookmarkSlot && (
+              <div className="bookmark-card-book" style={{ backgroundColor: bookmarkColor, left: '24px' }} />
             )}
+            <BookCover
+              coverUrl={b.coverUrl}
+              title={b.title}
+              className="h-16 w-10 shrink-0 rounded object-cover shadow grayscale"
+            />
+            <div className="flex flex-col justify-center gap-1">
+              <p className="font-medium text-room-muted line-through">
+                {b.title}
+              </p>
+              {b.author && (
+                <p className="text-xs text-room-muted">
+                  {b.author}
+                </p>
+              )}
+            </div>
           </div>
-        </div>
         )
       })}
     </div>
