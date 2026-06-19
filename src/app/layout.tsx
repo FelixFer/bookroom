@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from 'next'
 import { Geist, Merriweather, Nunito, Press_Start_2P } from 'next/font/google'
+import { SITE_URL, SITE_NAME, SITE_DESCRIPTION } from '@/lib/constants'
 import './globals.css'
 import '@/styles/components.scss'
 import '@/styles/room.scss'
@@ -30,18 +31,18 @@ const pressStart2P = Press_Start_2P({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://mybookroom.vercel.app'),
+  metadataBase: new URL(SITE_URL),
   title: {
-    template: '%s | Bookroom',
-    default: 'Bookroom — Your Cozy Personal Library',
+    template: `%s | ${SITE_NAME}`,
+    default: `${SITE_NAME} — Your Cozy Personal Library`,
   },
-  description: 'Track your reading journey with Bookroom. Organize books with a Kanban board, rate your favorites, and manage your personal library in a cozy pixel-art room.',
-  applicationName: 'Bookroom',
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
   openGraph: {
-    title: 'Bookroom — Your Cozy Personal Library',
-    description: 'Track your reading journey with Bookroom. Organize books with a Kanban board, rate your favorites, and manage your personal library.',
-    url: 'https://mybookroom.vercel.app',
-    siteName: 'Bookroom',
+    title: `${SITE_NAME} — Your Cozy Personal Library`,
+    description: SITE_DESCRIPTION,
+    url: SITE_URL,
+    siteName: SITE_NAME,
     type: 'website',
     locale: 'en_US',
     images: [
@@ -55,8 +56,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Bookroom — Your Cozy Personal Library',
-    description: 'Track your reading journey with Bookroom. Organize books with a Kanban board, rate your favorites, and manage your personal library.',
+    title: `${SITE_NAME} — Your Cozy Personal Library`,
+    description: SITE_DESCRIPTION,
     images: ['/og-image.png'],
   },
   robots: {
@@ -79,6 +80,9 @@ export const metadata: Metadata = {
     ],
   },
   manifest: '/manifest.json',
+  verification: {
+    google: 'YisE5PdSzV6v1I0yXUmyy6LK39nvErDrrCUX3mWH_XM',
+  },
 }
 
 export const viewport: Viewport = {
@@ -120,9 +124,9 @@ export default function RootLayout({
             __html: JSON.stringify({
               '@context': 'https://schema.org',
               '@type': 'WebApplication',
-              name: 'Bookroom',
+              name: SITE_NAME,
               description: 'Your cozy personal library. Track what you read, what you love, and what\'s next.',
-              url: 'https://mybookroom.vercel.app',
+              url: SITE_URL,
               applicationCategory: 'LifestyleApplication',
               operatingSystem: 'Any',
               offers: {
