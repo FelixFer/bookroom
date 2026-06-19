@@ -2,7 +2,7 @@
 
 import { useGet } from '@/hooks/useGet'
 import { EmptyState } from '@/app/_components/EmptyState'
-import { LoaderOverlay } from '@/app/_components/Loader';
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 type NoteBook = {
   id: string;

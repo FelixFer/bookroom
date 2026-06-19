@@ -1,7 +1,7 @@
 'use client'
 
 import { useGet } from '@/hooks/useGet'
-import { LoaderOverlay } from '@/app/_components/Loader';
+import { LoaderOverlay } from '@/app/_components/Loader'
 
 type Stats = {
   totalBooks: number;
