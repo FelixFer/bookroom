@@ -40,6 +40,7 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         borderLeftWidth: (selected || bookmarkColor) ? '3px' : undefined,
         boxShadow: '2px 2px 0 var(--kanban-shadow)',
       }}
+      data-book-id={book.id}
       className={`group relative flex gap-2 border p-2.5 ${selectionMode ? 'cursor-pointer' : ''}`}
       onClick={selectionMode ? () => onToggleSelect(book.id) : undefined}
       onKeyDown={selectionMode ? (e) => {
@@ -49,7 +50,7 @@ export const KanbanCard = ({ book, onEdit, onDelete, selectionMode, selected, on
         }
       } : undefined}
       role={selectionMode ? 'button' : undefined}
-      tabIndex={selectionMode ? 0 : undefined}
+      tabIndex={0}
       aria-pressed={selectionMode ? selected : undefined}
       aria-label={selectionMode ? `${selected ? 'Deselect' : 'Select'} ${book.title}` : undefined}
     >

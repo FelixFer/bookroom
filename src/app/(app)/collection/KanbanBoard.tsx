@@ -78,8 +78,45 @@ export const KanbanBoard = () => {
   useEffect(() => {
     fetchBooks()
     window.addEventListener('bookmarks-updated', fetchBooks)
-    return () => window.removeEventListener('bookmarks-updated', fetchBooks)
+    window.addEventListener('books-updated', fetchBooks)
+    return () => {
+      window.removeEventListener('bookmarks-updated', fetchBooks)
+      window.removeEventListener('books-updated', fetchBooks)
+    }
   }, [fetchBooks])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key < '1' || e.key > '6') return
+      if (selectionMode) return
+
+      const target = e.target as HTMLElement
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.tagName === 'SELECT') return
+
+      const card = target.closest('[data-book-id]')
+      if (!card) return
+
+      const bookId = card.getAttribute('data-book-id')
+      if (!bookId) return
+      const statusIndex = parseInt(e.key) - 1
+      const newStatus = STATUS_ORDER[statusIndex]
+
+      const book = books.find(b => b.id === bookId)
+      if (!book || book.status === newStatus) return
+
+      patchJson(`/api/books/${bookId}`, { status: newStatus })
+        .then(() => {
+          window.dispatchEvent(new CustomEvent('books-updated'))
+          setAnnouncement(`Status changed to ${newStatus.replace(/_/g, ' ')}`)
+        })
+        .catch((err) => {
+          setErrorToast('Failed to update status')
+        })
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [books, selectionMode])
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
