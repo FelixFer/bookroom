@@ -11,9 +11,14 @@ export const useGet = <TResponse, TData = TResponse>(
   const [data, setData] = useState<TData | null>(null)
   const [fetchedUrl, setFetchedUrl] = useState<string | null>(null)
   const selectRef = useRef(select)
+  const refetchEventRef = useRef(refetchEvent)
 
   useEffect(() => {
     selectRef.current = select
+  })
+
+  useEffect(() => {
+    refetchEventRef.current = refetchEvent
   })
 
   const refetch = useCallback(() => {
@@ -29,15 +34,15 @@ export const useGet = <TResponse, TData = TResponse>(
 
   useEffect(() => {
     refetch()
-    if (!url || !refetchEvent) return
+    if (!url || !refetchEventRef.current) return
 
-    const events = Array.isArray(refetchEvent) ? refetchEvent : [refetchEvent]
+    const events = Array.isArray(refetchEventRef.current) ? refetchEventRef.current : [refetchEventRef.current]
     events.forEach(event => window.addEventListener(event, refetch))
 
     return () => {
       events.forEach(event => window.removeEventListener(event, refetch))
     }
-  }, [url, refetchEvent, refetch])
+  }, [url, refetch])
 
   const loading = url !== null && fetchedUrl !== url
 
