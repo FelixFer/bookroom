@@ -191,3 +191,53 @@ html.dark ::-webkit-scrollbar-thumb:hover {
   outline: 2px solid var(--kanban-amber);
   outline-offset: 2px;
 }
+
+/* Book cover skeleton — shimmer while image loads */
+.book-cover-skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.book-cover-skeleton img {
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+
+.book-cover-skeleton.is-loaded img {
+  opacity: 1;
+}
+
+.book-cover-skeleton:not(.is-loaded)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    var(--kanban-card-placeholder) 0%,
+    var(--kanban-card-placeholder) 40%,
+    var(--kanban-amber) 50%,
+    var(--kanban-card-placeholder) 60%,
+    var(--kanban-card-placeholder) 100%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+  opacity: 0.15;
+  z-index: 0;
+}
+
+.book-cover-skeleton:not(.is-loaded)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--kanban-card-placeholder);
+  z-index: -1;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

@@ -109,9 +109,7 @@ export const KanbanBoard = () => {
           window.dispatchEvent(new CustomEvent('books-updated'))
           setAnnouncement(`Status changed to ${newStatus.replace(/_/g, ' ')}`)
         })
-        .catch((err) => {
-          setErrorToast('Failed to update status')
-        })
+        .catch(() => setErrorToast('Failed to update status'))
     }
 
     window.addEventListener('keydown', handleKeyDown)
