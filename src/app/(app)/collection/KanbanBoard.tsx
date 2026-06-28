@@ -372,7 +372,7 @@ export const KanbanBoard = () => {
           </>
         ) : (
           <p className='text-sm' style={{ color: 'var(--kanban-text)' }}>
-            No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2'>open the Bookmarks panel</button> to create them, then filter books by shelf.
+            No bookmarks yet — <button type='button' onClick={() => window.dispatchEvent(new CustomEvent('open-bookmarks'))} className='underline underline-offset-2 cursor-pointer'>open the Bookmarks panel</button> to create them, then filter books by shelf.
           </p>
         )}
       </div>
